@@ -9,7 +9,7 @@ import com.madmaxlgndklr.pokedex.R
 
 val PressStart2P = FontFamily(Font(R.font.press_start_2p))
 
-val Typography = Typography(
+val PokedexTypography = Typography(
     displayLarge  = TextStyle(fontFamily = PressStart2P, fontSize = 18.sp),
     titleLarge    = TextStyle(fontFamily = PressStart2P, fontSize = 14.sp),
     titleMedium   = TextStyle(fontFamily = PressStart2P, fontSize = 11.sp),
