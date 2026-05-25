@@ -1,6 +1,10 @@
 package com.madmaxlgndklr.pokedex.list
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.madmaxlgndklr.pokedex.data.remote.PokeApiService
+import com.madmaxlgndklr.pokedex.data.remote.dto.EvolutionChainResponse
+import com.madmaxlgndklr.pokedex.data.remote.dto.PokemonDetailResponse
+import com.madmaxlgndklr.pokedex.data.remote.dto.PokemonListResponse
+import com.madmaxlgndklr.pokedex.data.remote.dto.PokemonSpeciesResponse
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.model.PokemonSummary
 import com.madmaxlgndklr.pokedex.repository.FakeCaughtPokemonDao
@@ -18,12 +22,10 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class PokemonListViewModelTest {
-    @get:Rule val instantTaskRule = InstantTaskExecutorRule()
     private val dispatcher = StandardTestDispatcher()
     private lateinit var viewModel: PokemonListViewModel
 
@@ -50,5 +52,22 @@ class PokemonListViewModelTest {
         val list = (state as UiState.Success<List<PokemonSummary>>).data
         assertEquals(2, list.size)
         assertEquals("bulbasaur", list[0].name)
+    }
+
+    @Test
+    fun `when repository throws, state is Error`() = runTest {
+        val throwingApi = object : PokeApiService {
+            override suspend fun getPokemonList(limit: Int, offset: Int): PokemonListResponse =
+                throw RuntimeException("network failure")
+            override suspend fun getPokemonDetail(id: Int): PokemonDetailResponse = throw UnsupportedOperationException()
+            override suspend fun getPokemonSpecies(id: Int): PokemonSpeciesResponse = throw UnsupportedOperationException()
+            override suspend fun getEvolutionChain(id: Int): EvolutionChainResponse = throw UnsupportedOperationException()
+        }
+        val repo = PokemonRepository(throwingApi, FakeCaughtPokemonDao())
+        viewModel = PokemonListViewModel(repo)
+        advanceUntilIdle()
+        val state = viewModel.uiState.value
+        assertTrue(state is UiState.Error)
+        assertEquals("network failure", (state as UiState.Error).message)
     }
 }
