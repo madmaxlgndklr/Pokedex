@@ -1,5 +1,6 @@
 package com.madmaxlgndklr.pokedex.mycollection
 
+import com.madmaxlgndklr.pokedex.data.local.CaughtPokemonEntity
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.repository.FakeCaughtPokemonDao
 import com.madmaxlgndklr.pokedex.repository.FakePokeApiService
@@ -46,8 +47,7 @@ class MyCollectionViewModelTest {
     fun `reflects newly caught pokemon`() = runTest {
         val job = launch { viewModel.caughtList.collect {} }
         advanceUntilIdle()
-        val repo = PokemonRepository(FakePokeApiService(), fakeDao)
-        repo.setCaught(1, "bulbasaur", true)
+        fakeDao.insert(CaughtPokemonEntity(id = 1, name = "bulbasaur"))
         advanceUntilIdle()
         assertEquals(1, viewModel.caughtList.value.size)
         assertEquals("bulbasaur", viewModel.caughtList.value[0].name)
