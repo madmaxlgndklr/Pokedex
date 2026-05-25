@@ -8,6 +8,7 @@ import com.madmaxlgndklr.pokedex.ui.common.UiState
 import com.madmaxlgndklr.pokedex.ui.detail.PokemonDetailViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -52,9 +53,11 @@ class PokemonDetailViewModelTest {
 
     @Test
     fun `toggling caught inserts into dao`() = runTest {
+        val job = launch { viewModel.isCaught.collect {} }
         advanceUntilIdle()
         viewModel.toggleCaught()
         advanceUntilIdle()
         assertTrue(viewModel.isCaught.value)
+        job.cancel()
     }
 }

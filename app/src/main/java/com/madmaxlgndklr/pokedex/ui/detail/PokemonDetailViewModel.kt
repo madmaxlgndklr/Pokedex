@@ -22,7 +22,7 @@ class PokemonDetailViewModel(
     val uiState: StateFlow<UiState<PokemonDetail>> = _uiState
 
     val isCaught: StateFlow<Boolean> = repository.isCaught(pokemonId)
-        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     private var currentDetail: PokemonDetail? = null
 
@@ -40,12 +40,9 @@ class PokemonDetailViewModel(
 
     fun toggleCaught() {
         val detail = currentDetail ?: return
+        val wasCaught = isCaught.value
         viewModelScope.launch {
-            repository.setCaught(
-                id = detail.id,
-                name = detail.name,
-                caught = !isCaught.value
-            )
+            repository.setCaught(id = detail.id, name = detail.name, caught = !wasCaught)
         }
     }
 
