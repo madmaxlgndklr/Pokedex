@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
@@ -56,26 +57,37 @@ fun AppNavigation() {
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .background(PokedexDarkRed)
-                    .padding(24.dp)
-            ) {
-                Spacer(Modifier.height(48.dp))
-                DrawerItem("● POKÉDEX") {
-                    navController.navigate(Routes.LIST) { launchSingleTop = true }
-                    scope.launch { drawerState.close() }
-                }
-                Spacer(Modifier.height(24.dp))
-                DrawerItem("◌ SEARCH") {
-                    navController.navigate(Routes.SEARCH) { launchSingleTop = true }
-                    scope.launch { drawerState.close() }
-                }
-                Spacer(Modifier.height(24.dp))
-                DrawerItem("◌ MY POKÉDEX") {
-                    navController.navigate(Routes.MY_COLLECTION) { launchSingleTop = true }
-                    scope.launch { drawerState.close() }
+            ModalDrawerSheet {
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .background(PokedexDarkRed)
+                        .padding(24.dp)
+                ) {
+                    Spacer(Modifier.height(48.dp))
+                    DrawerItem("● POKÉDEX") {
+                        navController.navigate(Routes.LIST) {
+                            popUpTo(Routes.LIST) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                        scope.launch { drawerState.close() }
+                    }
+                    Spacer(Modifier.height(24.dp))
+                    DrawerItem("◌ SEARCH") {
+                        navController.navigate(Routes.SEARCH) {
+                            popUpTo(Routes.LIST) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                        scope.launch { drawerState.close() }
+                    }
+                    Spacer(Modifier.height(24.dp))
+                    DrawerItem("◌ MY POKÉDEX") {
+                        navController.navigate(Routes.MY_COLLECTION) {
+                            popUpTo(Routes.LIST) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                        scope.launch { drawerState.close() }
+                    }
                 }
             }
         }
@@ -101,9 +113,8 @@ fun AppNavigation() {
                 route = Routes.DETAIL,
                 arguments = listOf(navArgument("pokemonId") { type = NavType.IntType })
             ) { backStackEntry ->
-                val pokemonId = backStackEntry.arguments!!.getInt("pokemonId")
+                val pokemonId = backStackEntry.arguments?.getInt("pokemonId") ?: return@composable
                 val vm: PokemonDetailViewModel = viewModel(
-                    key = "detail_$pokemonId",
                     factory = PokemonDetailViewModel.factory(repo, pokemonId)
                 )
                 DetailScreen(
