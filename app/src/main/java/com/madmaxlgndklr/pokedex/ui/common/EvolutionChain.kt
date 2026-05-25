@@ -35,7 +35,7 @@ fun EvolutionChain(
     ) {
         stages.forEachIndexed { index, stage ->
             if (index > 0) {
-                Text("→", fontFamily = PressStart2P, fontSize = 12.sp, color = PokedexCream)
+                Text("->", fontFamily = PressStart2P, fontSize = 12.sp, color = PokedexCream)
             }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -45,7 +45,7 @@ fun EvolutionChain(
                     val spriteUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${node.id}.png"
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.clickable { onPokemonClick(node.id) }
+                        modifier = Modifier.clickable(onClickLabel = node.name) { onPokemonClick(node.id) }
                     ) {
                         AsyncImage(
                             model = spriteUrl,

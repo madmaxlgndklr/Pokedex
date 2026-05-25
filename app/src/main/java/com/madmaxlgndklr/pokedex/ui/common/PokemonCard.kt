@@ -38,7 +38,7 @@ fun PokemonCard(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .background(PokedexDarkRed)
-            .clickable(onClick = onClick)
+            .clickable(onClickLabel = name, onClick = onClick)
             .padding(8.dp)
     ) {
         AsyncImage(
