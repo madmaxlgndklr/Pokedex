@@ -5,7 +5,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = "http://10.0.2.2:89/api/v2/"
+    private const val BASE_URL = "http://192.168.1.190:89/api/v2/"
 
     val api: PokeApiService by lazy {
         Retrofit.Builder()
