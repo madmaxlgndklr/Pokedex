@@ -28,6 +28,11 @@ class SearchViewModel(private val repository: PokemonRepository) : ViewModel() {
     private val _navigationEvent = MutableSharedFlow<Int>(extraBufferCapacity = 1)
     val navigationEvent: SharedFlow<Int> = _navigationEvent
 
+    var animationCompleted: Boolean = false
+        private set
+
+    fun markAnimationCompleted() { animationCompleted = true }
+
     fun onQueryChange(query: String) {
         _query.value = query
         if (_uiState.value !is SearchUiState.Idle) _uiState.value = SearchUiState.Idle

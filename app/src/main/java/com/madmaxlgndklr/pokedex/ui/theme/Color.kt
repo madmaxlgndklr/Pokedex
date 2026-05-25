@@ -2,12 +2,16 @@ package com.madmaxlgndklr.pokedex.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val PokedexRed    = Color(0xFFCC0000)
-val PokedexDarkRed = Color(0xFF8B0000)
-val PokedexGreen  = Color(0xFF88CC00)
-val PokedexDark   = Color(0xFF1A1A1A)
-val PokedexCream  = Color(0xFFF5F5DC)
-val CaughtGold    = Color(0xFFFFD700)
+val PokedexRed      = Color(0xFFCC0000)
+val PokedexDarkRed  = Color(0xFF8B0000)
+val PokedexGreen    = Color(0xFF88CC00)
+val PokedexDark     = Color(0xFF1A1A1A)
+val PokedexCream    = Color(0xFFF5F5DC)
+val CaughtGold      = Color(0xFFFFD700)
+val PokedexLightBlue = Color(0xFFB8DCE8)
+val PokedexMetal    = Color(0xFF1C1C1C)
+val PokedexMetalRim = Color(0xFF505050)
+val GlowBlue        = Color(0xFF00C8FF)
 
 val TypeNormal    = Color(0xFFA8A878)
 val TypeFire      = Color(0xFFF08030)

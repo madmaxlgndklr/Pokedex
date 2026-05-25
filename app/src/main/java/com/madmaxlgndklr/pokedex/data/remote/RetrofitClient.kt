@@ -5,7 +5,10 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = "http://192.168.1.190:89/api/v2/"
+    const val SERVER_ROOT = "http://192.168.1.190:89"
+    private const val BASE_URL = "$SERVER_ROOT/api/v2/"
+
+    fun spriteUrl(id: Int) = "$SERVER_ROOT/media/sprites/pokemon/$id.png"
 
     val api: PokeApiService by lazy {
         Retrofit.Builder()
