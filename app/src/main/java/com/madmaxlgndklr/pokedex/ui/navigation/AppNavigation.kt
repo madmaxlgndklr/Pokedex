@@ -1,9 +1,15 @@
 package com.madmaxlgndklr.pokedex.ui.navigation
 
+import android.media.MediaPlayer
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -11,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.madmaxlgndklr.pokedex.PokedexApplication
+import com.madmaxlgndklr.pokedex.R
 import com.madmaxlgndklr.pokedex.ui.detail.DetailScreen
 import com.madmaxlgndklr.pokedex.ui.detail.PokemonDetailViewModel
 import com.madmaxlgndklr.pokedex.ui.list.FullListScreen
@@ -31,7 +38,31 @@ private object Routes {
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    val repo = (LocalContext.current.applicationContext as PokedexApplication).repository
+    val context = LocalContext.current
+    val repo = (context.applicationContext as PokedexApplication).repository
+
+    val mediaPlayer = remember {
+        MediaPlayer.create(context, R.raw.title_screen).apply {
+            isLooping = true
+            start()
+        }
+    }
+
+    val activity = context as? ComponentActivity
+    DisposableEffect(activity) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> if (!mediaPlayer.isPlaying) mediaPlayer.start()
+                Lifecycle.Event.ON_PAUSE -> if (mediaPlayer.isPlaying) mediaPlayer.pause()
+                else -> {}
+            }
+        }
+        activity?.lifecycle?.addObserver(observer)
+        onDispose {
+            activity?.lifecycle?.removeObserver(observer)
+            mediaPlayer.release()
+        }
+    }
 
     NavHost(
         navController = navController,
@@ -43,6 +74,7 @@ fun AppNavigation() {
             SearchScreen(
                 viewModel = vm,
                 onPokemonClick = { id -> navController.navigate(Routes.detail(id)) },
+                onBack = { navController.popBackStack() },
                 onNavigateFullList = { navController.navigate(Routes.FULL_LIST) },
                 onNavigateMyCollection = { navController.navigate(Routes.MY_COLLECTION) }
             )
@@ -52,7 +84,13 @@ fun AppNavigation() {
             FullListScreen(
                 viewModel = vm,
                 onPokemonClick = { id -> navController.navigate(Routes.detail(id)) },
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onNavigateSearch = { navController.popBackStack() },
+                onNavigateMyCollection = {
+                    navController.navigate(Routes.MY_COLLECTION) {
+                        popUpTo(Routes.FULL_LIST) { inclusive = true }
+                    }
+                }
             )
         }
         composable(Routes.MY_COLLECTION) {
@@ -60,7 +98,17 @@ fun AppNavigation() {
             MyCollectionScreen(
                 viewModel = vm,
                 onPokemonClick = { id -> navController.navigate(Routes.detail(id)) },
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onNavigateSearch = {
+                    navController.navigate(Routes.SEARCH) {
+                        popUpTo(Routes.MY_COLLECTION) { inclusive = true }
+                    }
+                },
+                onNavigateFullList = {
+                    navController.navigate(Routes.FULL_LIST) {
+                        popUpTo(Routes.MY_COLLECTION) { inclusive = true }
+                    }
+                }
             )
         }
         composable(

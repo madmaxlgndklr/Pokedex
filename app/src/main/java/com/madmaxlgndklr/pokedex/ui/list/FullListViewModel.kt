@@ -9,12 +9,19 @@ import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.model.PokemonSummary
 import com.madmaxlgndklr.pokedex.ui.common.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class FullListViewModel(private val repository: PokemonRepository) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<List<PokemonSummary>>>(UiState.Loading)
     val uiState: StateFlow<UiState<List<PokemonSummary>>> = _uiState
+
+    val caughtIds: StateFlow<Set<Int>> = repository.getCaughtPokemon()
+        .map { list -> list.map { it.id }.toSet() }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
 
     init {
         viewModelScope.launch {
@@ -23,6 +30,12 @@ class FullListViewModel(private val repository: PokemonRepository) : ViewModel()
             } catch (e: Exception) {
                 UiState.Error(e.message ?: "Failed to load")
             }
+        }
+    }
+
+    fun toggleCaught(id: Int, name: String) {
+        viewModelScope.launch {
+            repository.setCaught(id, name, id !in caughtIds.value)
         }
     }
 

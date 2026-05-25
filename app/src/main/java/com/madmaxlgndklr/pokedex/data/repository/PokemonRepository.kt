@@ -3,6 +3,7 @@ package com.madmaxlgndklr.pokedex.data.repository
 import com.madmaxlgndklr.pokedex.data.local.CaughtPokemonDao
 import com.madmaxlgndklr.pokedex.data.local.CaughtPokemonEntity
 import com.madmaxlgndklr.pokedex.data.remote.PokeApiService
+import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
 import com.madmaxlgndklr.pokedex.data.remote.dto.ChainLinkDto
 import com.madmaxlgndklr.pokedex.data.remote.dto.EvolutionChainResponse
 import com.madmaxlgndklr.pokedex.data.remote.dto.PokemonDetailResponse
@@ -79,7 +80,7 @@ class PokemonRepository(
         return PokemonDetail(
             id = detail.id,
             name = detail.name,
-            spriteUrl = detail.sprites.frontDefault ?: "",
+            spriteUrl = RetrofitClient.spriteUrl(detail.id),
             types = detail.types.map { it.type.name },
             stats = detail.stats.map { PokemonStat(it.stat.name, it.baseStat) },
             moves = levelUpMoves,

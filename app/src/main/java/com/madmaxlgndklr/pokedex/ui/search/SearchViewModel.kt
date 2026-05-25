@@ -45,6 +45,7 @@ class SearchViewModel(private val repository: PokemonRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 val detail = repository.searchPokemon(q)
+                _query.value = ""
                 _uiState.value = SearchUiState.Idle
                 _navigationEvent.emit(detail.id)
             } catch (e: Exception) {

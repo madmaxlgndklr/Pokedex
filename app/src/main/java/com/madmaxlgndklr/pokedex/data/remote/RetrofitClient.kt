@@ -8,7 +8,7 @@ object RetrofitClient {
     const val SERVER_ROOT = "http://192.168.1.190:89"
     private const val BASE_URL = "$SERVER_ROOT/api/v2/"
 
-    fun spriteUrl(id: Int) = "$SERVER_ROOT/media/sprites/pokemon/$id.png"
+    fun spriteUrl(id: Int) = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png"
 
     val api: PokeApiService by lazy {
         Retrofit.Builder()
