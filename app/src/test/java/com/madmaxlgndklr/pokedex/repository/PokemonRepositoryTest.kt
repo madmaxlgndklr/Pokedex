@@ -8,6 +8,7 @@ import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -36,7 +37,7 @@ class PokemonRepositoryTest {
     @Test
     fun `getPokemonDetail returns level-up moves only sorted by level`() = runTest {
         val detail = repo.getPokemonDetail(1)
-        assertTrue(detail.moves.all { it.levelLearnedAt > 0 || it.levelLearnedAt == 1 })
+        assertEquals(listOf("tackle"), detail.moves.map { it.name })
         val levels = detail.moves.map { it.levelLearnedAt }
         assertEquals(levels.sorted(), levels)
     }
@@ -143,5 +144,5 @@ class FakeCaughtPokemonDao : CaughtPokemonDao {
     override fun getAll(): Flow<List<CaughtPokemonEntity>> = _all
 
     override fun isCaught(id: Int): Flow<Boolean> =
-        MutableStateFlow(_all.value.any { it.id == id })
+        _all.map { list -> list.any { it.id == id } }
 }
