@@ -59,7 +59,8 @@ fun FullListScreen(
     onPokemonClick: (Int) -> Unit,
     onBack: () -> Unit,
     onNavigateSearch: () -> Unit,
-    onNavigateMyCollection: () -> Unit
+    onNavigateMyCollection: () -> Unit,
+    onNavigateSettings: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val caughtIds by viewModel.caughtIds.collectAsState()
@@ -137,6 +138,7 @@ fun FullListScreen(
             onNavigateSearch = onNavigateSearch,
             onNavigateFullList = {},
             onNavigateMyCollection = onNavigateMyCollection,
+            onNavigateSettings = onNavigateSettings,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 20.dp)

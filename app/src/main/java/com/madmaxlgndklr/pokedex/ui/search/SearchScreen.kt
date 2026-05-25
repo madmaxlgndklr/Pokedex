@@ -72,7 +72,8 @@ fun SearchScreen(
     onPokemonClick: (Int) -> Unit,
     onBack: () -> Unit,
     onNavigateFullList: () -> Unit,
-    onNavigateMyCollection: () -> Unit
+    onNavigateMyCollection: () -> Unit,
+    onNavigateSettings: () -> Unit
 ) {
     val query by viewModel.query.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
@@ -248,6 +249,7 @@ fun SearchScreen(
             onNavigateSearch = {},
             onNavigateFullList = onNavigateFullList,
             onNavigateMyCollection = onNavigateMyCollection,
+            onNavigateSettings = onNavigateSettings,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 20.dp)

@@ -1,0 +1,211 @@
+package com.madmaxlgndklr.pokedex.ui.settings
+
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.madmaxlgndklr.pokedex.R
+import com.madmaxlgndklr.pokedex.ui.common.BottomNavBar
+import com.madmaxlgndklr.pokedex.ui.common.NavDestination
+import com.madmaxlgndklr.pokedex.ui.common.swipeBack
+import com.madmaxlgndklr.pokedex.ui.theme.CaughtGold
+import com.madmaxlgndklr.pokedex.ui.theme.PokedexCream
+import com.madmaxlgndklr.pokedex.ui.theme.PokedexDark
+import com.madmaxlgndklr.pokedex.ui.theme.PokedexGreen
+import com.madmaxlgndklr.pokedex.ui.theme.PressStart2P
+
+@Composable
+fun SettingsScreen(
+    viewModel: SettingsViewModel,
+    isMuted: Boolean,
+    onToggleMute: () -> Unit,
+    onBack: () -> Unit,
+    onNavigateSearch: () -> Unit,
+    onNavigateFullList: () -> Unit,
+    onNavigateMyCollection: () -> Unit
+) {
+    val musicOnLaunch by viewModel.musicOnLaunch.collectAsState()
+    val context = LocalContext.current
+    val version = remember {
+        runCatching {
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "1.0"
+        }.getOrDefault("1.0")
+    }
+
+    BoxWithConstraints(Modifier.fillMaxSize().swipeBack(onBack)) {
+        val sw = maxWidth
+        val sh = maxHeight
+
+        Image(
+            painter = painterResource(R.drawable.pdex_open_v2),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        // Back button
+        IconButton(
+            onClick = onBack,
+            modifier = Modifier.offset(x = 2.dp, y = 2.dp).size(36.dp)
+        ) {
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = PokedexCream)
+        }
+
+        // Settings panel inside the blue strip
+        Column(
+            modifier = Modifier
+                .offset(x = sw * 0.04f, y = sh * 0.37f)
+                .fillMaxWidth(0.92f)
+                .height(sh * 0.40f)
+                .background(PokedexDark.copy(alpha = 0.60f), RoundedCornerShape(8.dp))
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(
+                text = "SETTINGS",
+                fontFamily = PressStart2P,
+                fontSize = 9.sp,
+                color = CaughtGold
+            )
+
+            HorizontalDivider(color = PokedexCream.copy(alpha = 0.25f))
+
+            // Music on launch row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "MUSIC ON LAUNCH",
+                    fontFamily = PressStart2P,
+                    fontSize = 7.sp,
+                    color = PokedexCream
+                )
+                Switch(
+                    checked = musicOnLaunch,
+                    onCheckedChange = { viewModel.setMusicOnLaunch(it) },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = PokedexDark,
+                        checkedTrackColor = PokedexGreen,
+                        uncheckedThumbColor = PokedexCream.copy(alpha = 0.6f),
+                        uncheckedTrackColor = PokedexDark.copy(alpha = 0.6f)
+                    )
+                )
+            }
+
+            HorizontalDivider(color = PokedexCream.copy(alpha = 0.25f))
+
+            // Mute this session row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "MUTE THIS SESSION",
+                    fontFamily = PressStart2P,
+                    fontSize = 7.sp,
+                    color = PokedexCream
+                )
+                Switch(
+                    checked = isMuted,
+                    onCheckedChange = { onToggleMute() },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = PokedexDark,
+                        checkedTrackColor = PokedexGreen,
+                        uncheckedThumbColor = PokedexCream.copy(alpha = 0.6f),
+                        uncheckedTrackColor = PokedexDark.copy(alpha = 0.6f)
+                    )
+                )
+            }
+
+            HorizontalDivider(color = PokedexCream.copy(alpha = 0.25f))
+
+            // Version
+            Text(
+                text = "VERSION $version",
+                fontFamily = PressStart2P,
+                fontSize = 7.sp,
+                color = PokedexCream.copy(alpha = 0.7f)
+            )
+
+            HorizontalDivider(color = PokedexCream.copy(alpha = 0.25f))
+
+            // Official site link
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        context.startActivity(
+                            Intent(Intent.ACTION_VIEW, Uri.parse("https://www.pokemon.com"))
+                        )
+                    },
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "OFFICIAL WEBSITE",
+                    fontFamily = PressStart2P,
+                    fontSize = 7.sp,
+                    color = PokedexCream
+                )
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.OpenInNew,
+                    contentDescription = "Open",
+                    tint = PokedexCream,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+        }
+
+        BottomNavBar(
+            current = NavDestination.SETTINGS,
+            onNavigateSearch = onNavigateSearch,
+            onNavigateFullList = onNavigateFullList,
+            onNavigateMyCollection = onNavigateMyCollection,
+            onNavigateSettings = {},
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 20.dp)
+        )
+    }
+}

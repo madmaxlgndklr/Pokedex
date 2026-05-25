@@ -11,6 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -18,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -27,7 +31,7 @@ import com.madmaxlgndklr.pokedex.R
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexCream
 import com.madmaxlgndklr.pokedex.ui.theme.PressStart2P
 
-enum class NavDestination { SEARCH, FULL_LIST, MY_COLLECTION }
+enum class NavDestination { SEARCH, FULL_LIST, MY_COLLECTION, SETTINGS }
 
 @Composable
 fun BottomNavBar(
@@ -35,6 +39,7 @@ fun BottomNavBar(
     onNavigateSearch: () -> Unit,
     onNavigateFullList: () -> Unit,
     onNavigateMyCollection: () -> Unit,
+    onNavigateSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -57,11 +62,22 @@ fun BottomNavBar(
             isActive = current == NavDestination.MY_COLLECTION,
             onClick = onNavigateMyCollection
         )
+        NavIcon(
+            label = "MENU",
+            isActive = current == NavDestination.SETTINGS,
+            onClick = onNavigateSettings,
+            iconVector = Icons.Filled.Settings
+        )
     }
 }
 
 @Composable
-private fun NavIcon(label: String, isActive: Boolean, onClick: () -> Unit) {
+private fun NavIcon(
+    label: String,
+    isActive: Boolean,
+    onClick: () -> Unit,
+    iconVector: ImageVector? = null
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -73,14 +89,23 @@ private fun NavIcon(label: String, isActive: Boolean, onClick: () -> Unit) {
                 onClick = onClick
             )
     ) {
-        Image(
-            painter = painterResource(R.drawable.pdex_icon),
-            contentDescription = label,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(52.dp)
-                .clip(CircleShape)
-        )
+        if (iconVector != null) {
+            Icon(
+                imageVector = iconVector,
+                contentDescription = label,
+                tint = PokedexCream,
+                modifier = Modifier.size(52.dp)
+            )
+        } else {
+            Image(
+                painter = painterResource(R.drawable.pdex_icon),
+                contentDescription = label,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(52.dp)
+                    .clip(CircleShape)
+            )
+        }
         Spacer(Modifier.height(4.dp))
         Text(
             text = label,

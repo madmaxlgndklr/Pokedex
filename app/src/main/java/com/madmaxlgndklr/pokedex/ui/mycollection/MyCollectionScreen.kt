@@ -49,7 +49,8 @@ fun MyCollectionScreen(
     onPokemonClick: (Int) -> Unit,
     onBack: () -> Unit,
     onNavigateSearch: () -> Unit,
-    onNavigateFullList: () -> Unit
+    onNavigateFullList: () -> Unit,
+    onNavigateSettings: () -> Unit
 ) {
     val caughtList by viewModel.caughtList.collectAsState()
 
@@ -109,6 +110,7 @@ fun MyCollectionScreen(
             onNavigateSearch = onNavigateSearch,
             onNavigateFullList = onNavigateFullList,
             onNavigateMyCollection = {},
+            onNavigateSettings = onNavigateSettings,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 20.dp)
