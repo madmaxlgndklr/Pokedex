@@ -4,6 +4,9 @@ import com.madmaxlgndklr.pokedex.data.local.CaughtPokemonDao
 import com.madmaxlgndklr.pokedex.data.local.CaughtPokemonEntity
 import com.madmaxlgndklr.pokedex.data.remote.PokeApiService
 import com.madmaxlgndklr.pokedex.data.remote.dto.ChainLinkDto
+import com.madmaxlgndklr.pokedex.data.remote.dto.EvolutionChainResponse
+import com.madmaxlgndklr.pokedex.data.remote.dto.PokemonDetailResponse
+import com.madmaxlgndklr.pokedex.data.remote.dto.PokemonSpeciesResponse
 import com.madmaxlgndklr.pokedex.model.EvolutionNode
 import com.madmaxlgndklr.pokedex.model.EvolutionStage
 import com.madmaxlgndklr.pokedex.model.PokemonDetail
@@ -25,14 +28,38 @@ class PokemonRepository(
         }
 
     suspend fun getPokemonDetail(id: Int): PokemonDetail = coroutineScope {
-        val detailDeferred = async { api.getPokemonDetail(id) }
+        val detailDeferred = async { api.getPokemonDetail(id.toString()) }
         val speciesDeferred = async { api.getPokemonSpecies(id) }
-
         val detail = detailDeferred.await()
         val species = speciesDeferred.await()
-        val evoChainId = species.evolutionChain.extractId()
-        val evoChain = api.getEvolutionChain(evoChainId)
+        val evoChain = api.getEvolutionChain(species.evolutionChain.extractId())
+        mapDetail(detail, species, evoChain)
+    }
 
+    suspend fun searchPokemon(nameOrId: String): PokemonDetail {
+        val detail = api.getPokemonDetail(nameOrId.trim().lowercase())
+        val species = api.getPokemonSpecies(detail.id)
+        val evoChain = api.getEvolutionChain(species.evolutionChain.extractId())
+        return mapDetail(detail, species, evoChain)
+    }
+
+    fun getCaughtPokemon(): Flow<List<PokemonSummary>> =
+        dao.getAll().map { entities ->
+            entities.map { PokemonSummary(it.id, it.name) }
+        }
+
+    fun isCaught(id: Int): Flow<Boolean> = dao.isCaught(id)
+
+    suspend fun setCaught(id: Int, name: String, caught: Boolean) {
+        if (caught) dao.insert(CaughtPokemonEntity(id, name))
+        else dao.delete(CaughtPokemonEntity(id, name))
+    }
+
+    private fun mapDetail(
+        detail: PokemonDetailResponse,
+        species: PokemonSpeciesResponse,
+        evoChain: EvolutionChainResponse
+    ): PokemonDetail {
         val levelUpMoves = detail.moves
             .flatMap { slot ->
                 slot.versionGroupDetails
@@ -49,7 +76,7 @@ class PokemonRepository(
             ?.replace("", " ")
             ?: ""
 
-        PokemonDetail(
+        return PokemonDetail(
             id = detail.id,
             name = detail.name,
             spriteUrl = detail.sprites.frontDefault ?: "",
@@ -59,18 +86,6 @@ class PokemonRepository(
             evolutionChain = parseEvolutionChain(evoChain.chain),
             flavorText = flavorText
         )
-    }
-
-    fun getCaughtPokemon(): Flow<List<PokemonSummary>> =
-        dao.getAll().map { entities ->
-            entities.map { PokemonSummary(it.id, it.name) }
-        }
-
-    fun isCaught(id: Int): Flow<Boolean> = dao.isCaught(id)
-
-    suspend fun setCaught(id: Int, name: String, caught: Boolean) {
-        if (caught) dao.insert(CaughtPokemonEntity(id, name))
-        else dao.delete(CaughtPokemonEntity(id, name))
     }
 
     private fun parseEvolutionChain(link: ChainLinkDto): List<EvolutionStage> {

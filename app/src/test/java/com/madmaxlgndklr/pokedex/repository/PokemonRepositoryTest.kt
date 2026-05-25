@@ -80,7 +80,7 @@ class FakePokeApiService : PokeApiService {
         )
     )
 
-    override suspend fun getPokemonDetail(id: Int) = PokemonDetailResponse(
+    override suspend fun getPokemonDetail(id: String) = PokemonDetailResponse(
         id = 1,
         name = "bulbasaur",
         sprites = SpritesDto("https://example.com/1.png"),

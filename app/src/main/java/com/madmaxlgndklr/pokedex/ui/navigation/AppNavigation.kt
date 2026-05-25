@@ -28,8 +28,6 @@ import androidx.navigation.navArgument
 import com.madmaxlgndklr.pokedex.PokedexApplication
 import com.madmaxlgndklr.pokedex.ui.detail.DetailScreen
 import com.madmaxlgndklr.pokedex.ui.detail.PokemonDetailViewModel
-import com.madmaxlgndklr.pokedex.ui.list.ListScreen
-import com.madmaxlgndklr.pokedex.ui.list.PokemonListViewModel
 import com.madmaxlgndklr.pokedex.ui.mycollection.MyCollectionScreen
 import com.madmaxlgndklr.pokedex.ui.mycollection.MyCollectionViewModel
 import com.madmaxlgndklr.pokedex.ui.search.SearchScreen
@@ -40,7 +38,6 @@ import com.madmaxlgndklr.pokedex.ui.theme.PressStart2P
 import kotlinx.coroutines.launch
 
 private object Routes {
-    const val LIST = "list"
     const val SEARCH = "search"
     const val MY_COLLECTION = "my_collection"
     const val DETAIL = "detail/{pokemonId}"
@@ -65,25 +62,17 @@ fun AppNavigation() {
                         .padding(24.dp)
                 ) {
                     Spacer(Modifier.height(48.dp))
-                    DrawerItem("● POKÉDEX") {
-                        navController.navigate(Routes.LIST) {
-                            popUpTo(Routes.LIST) { inclusive = false }
-                            launchSingleTop = true
-                        }
-                        scope.launch { drawerState.close() }
-                    }
-                    Spacer(Modifier.height(24.dp))
-                    DrawerItem("◌ SEARCH") {
+                    DrawerItem("● SEARCH") {
                         navController.navigate(Routes.SEARCH) {
-                            popUpTo(Routes.LIST) { inclusive = false }
+                            popUpTo(Routes.SEARCH) { inclusive = false }
                             launchSingleTop = true
                         }
                         scope.launch { drawerState.close() }
                     }
                     Spacer(Modifier.height(24.dp))
-                    DrawerItem("◌ MY POKÉDEX") {
+                    DrawerItem("◌ MY POKEDEX") {
                         navController.navigate(Routes.MY_COLLECTION) {
-                            popUpTo(Routes.LIST) { inclusive = false }
+                            popUpTo(Routes.SEARCH) { inclusive = false }
                             launchSingleTop = true
                         }
                         scope.launch { drawerState.close() }
@@ -94,13 +83,9 @@ fun AppNavigation() {
     ) {
         NavHost(
             navController = navController,
-            startDestination = Routes.LIST,
+            startDestination = Routes.SEARCH,
             modifier = Modifier.fillMaxSize()
         ) {
-            composable(Routes.LIST) {
-                val vm: PokemonListViewModel = viewModel(factory = PokemonListViewModel.factory(repo))
-                ListScreen(vm) { id -> navController.navigate(Routes.detail(id)) }
-            }
             composable(Routes.SEARCH) {
                 val vm: SearchViewModel = viewModel(factory = SearchViewModel.factory(repo))
                 SearchScreen(vm) { id -> navController.navigate(Routes.detail(id)) }
