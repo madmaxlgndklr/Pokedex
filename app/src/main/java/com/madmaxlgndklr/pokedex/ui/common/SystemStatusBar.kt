@@ -9,15 +9,15 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.BatteryManager
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.SignalCellularAlt
-import androidx.compose.material.icons.filled.SignalCellularOff
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.SignalCellularAlt
+import androidx.compose.material.icons.filled.SignalCellularOff
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.Icon
@@ -26,19 +26,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.madmaxlgndklr.pokedex.ui.theme.PokedexCream
 import com.madmaxlgndklr.pokedex.ui.theme.PressStart2P
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.cos
+import kotlin.math.sin
 
 private data class NetworkStatus(val wifi: Boolean, val cellular: Boolean)
+
+private val NeonGreen = Color(0xFF39FF14)
 
 @Composable
 fun SystemStatusBar(
@@ -84,42 +87,71 @@ fun SystemStatusBar(
         awaitDispose { cm.unregisterNetworkCallback(callback) }
     }
 
-    Row(
-        modifier = modifier.padding(horizontal = 6.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton(onClick = onToggleMute, modifier = Modifier.size(24.dp)) {
+    BoxWithConstraints(modifier.fillMaxSize()) {
+        val swF = maxWidth.value
+        val shF = maxHeight.value
+
+        // Arc follows the inner edge of the dark semicircle at the top of the background.
+        // Center is at the base of the semicircle (where the screen strip begins).
+        // Radius is just inside the outer dark ring.
+        val arcCx = swF / 2f
+        val arcCy = shF * 0.20f
+        val arcR  = swF * 0.43f
+
+        fun arcPos(angleDeg: Float): Pair<Float, Float> {
+            val rad = Math.toRadians(angleDeg.toDouble())
+            return (arcCx + arcR * sin(rad).toFloat()) to (arcCy - arcR * cos(rad).toFloat())
+        }
+
+        // Items ordered left → right: mute, wifi, cellular, battery, time
+        // Angles from vertical (0° = top center), negative = left, positive = right
+        val (mx, my) = arcPos(-55f)
+        IconButton(
+            onClick = onToggleMute,
+            modifier = Modifier.offset((mx - 12f).dp, (my - 12f).dp).size(24.dp)
+        ) {
             Icon(
-                imageVector = if (isMuted) Icons.AutoMirrored.Filled.VolumeOff else Icons.AutoMirrored.Filled.VolumeUp,
+                imageVector = if (isMuted) Icons.AutoMirrored.Filled.VolumeOff
+                              else Icons.AutoMirrored.Filled.VolumeUp,
                 contentDescription = if (isMuted) "Unmute" else "Mute",
-                tint = PokedexCream,
-                modifier = Modifier.size(14.dp)
+                tint = NeonGreen,
+                modifier = Modifier.size(16.dp)
             )
         }
+
+        val (wx, wy) = arcPos(-27.5f)
         Icon(
             imageVector = if (network.wifi) Icons.Filled.Wifi else Icons.Filled.WifiOff,
             contentDescription = "WiFi",
-            tint = PokedexCream,
-            modifier = Modifier.size(14.dp)
+            tint = NeonGreen,
+            modifier = Modifier.offset((wx - 8f).dp, (wy - 8f).dp).size(16.dp)
         )
+
+        val (cellX, cellY) = arcPos(0f)
         Icon(
-            imageVector = if (network.cellular) Icons.Filled.SignalCellularAlt else Icons.Filled.SignalCellularOff,
+            imageVector = if (network.cellular) Icons.Filled.SignalCellularAlt
+                          else Icons.Filled.SignalCellularOff,
             contentDescription = "Cellular",
-            tint = PokedexCream,
-            modifier = Modifier.size(14.dp)
+            tint = NeonGreen,
+            modifier = Modifier.offset((cellX - 8f).dp, (cellY - 8f).dp).size(16.dp)
         )
+
+        val (battX, battY) = arcPos(27.5f)
         Text(
             text = "$batteryPct%",
             fontFamily = PressStart2P,
-            fontSize = 6.sp,
-            color = PokedexCream
+            fontSize = 7.sp,
+            color = NeonGreen,
+            modifier = Modifier.offset((battX - 16f).dp, (battY - 7f).dp)
         )
+
+        val (timeX, timeY) = arcPos(55f)
         Text(
             text = currentTime,
             fontFamily = PressStart2P,
-            fontSize = 6.sp,
-            color = PokedexCream
+            fontSize = 7.sp,
+            color = NeonGreen,
+            modifier = Modifier.offset((timeX - 24f).dp, (timeY - 7f).dp)
         )
     }
 }

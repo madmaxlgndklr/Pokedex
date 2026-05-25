@@ -13,7 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
@@ -59,6 +59,15 @@ fun AppNavigation() {
 
     // null = not yet loaded from DataStore; avoids starting music before we know the preference
     val musicOnLaunch: Boolean? by settingsRepo.musicOnLaunch.collectAsState(initial = null)
+
+    // Hidden until DataStore loads AND the background has had time to render
+    var statusBarVisible by remember { mutableStateOf(false) }
+    LaunchedEffect(musicOnLaunch) {
+        if (musicOnLaunch != null && !statusBarVisible) {
+            delay(600)
+            statusBarVisible = true
+        }
+    }
     val currentMusicOnLaunch by rememberUpdatedState(musicOnLaunch ?: true)
 
     val mediaPlayer = remember {
@@ -186,14 +195,16 @@ fun AppNavigation() {
             }
         }
 
-        SystemStatusBar(
-            isMuted = isMuted,
-            onToggleMute = {
-                isMuted = !isMuted
-                if (isMuted) mediaPlayer.pause()
-                else if (currentMusicOnLaunch && !mediaPlayer.isPlaying) mediaPlayer.start()
-            },
-            modifier = Modifier.align(Alignment.TopEnd)
-        )
+        if (statusBarVisible) {
+            SystemStatusBar(
+                isMuted = isMuted,
+                onToggleMute = {
+                    isMuted = !isMuted
+                    if (isMuted) mediaPlayer.pause()
+                    else if (currentMusicOnLaunch && !mediaPlayer.isPlaying) mediaPlayer.start()
+                },
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
