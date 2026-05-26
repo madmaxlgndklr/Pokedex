@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -34,7 +35,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -65,7 +68,63 @@ fun SettingsScreen(
 ) {
     val musicOnLaunch by viewModel.musicOnLaunch.collectAsState()
     val syncState by viewModel.syncState.collectAsState()
+    var showSyncWarning by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    if (showSyncWarning) {
+        AlertDialog(
+            onDismissRequest = { showSyncWarning = false },
+            containerColor = PokedexDark,
+            title = {
+                Text(
+                    text = "DATA WARNING",
+                    fontFamily = PressStart2P,
+                    fontSize = 8.sp,
+                    color = CaughtGold
+                )
+            },
+            text = {
+                Text(
+                    text = "Downloading this data (~80 MB) may result in additional charges from your mobile carrier depending on your data plan.\n\nDo you wish to continue?",
+                    fontFamily = PressStart2P,
+                    fontSize = 7.sp,
+                    color = PokedexCream,
+                    lineHeight = 14.sp
+                )
+            },
+            confirmButton = {
+                Text(
+                    text = "YES",
+                    fontFamily = PressStart2P,
+                    fontSize = 7.sp,
+                    color = GlowBlue,
+                    modifier = Modifier
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            showSyncWarning = false
+                            viewModel.syncAll()
+                        }
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                )
+            },
+            dismissButton = {
+                Text(
+                    text = "NO",
+                    fontFamily = PressStart2P,
+                    fontSize = 7.sp,
+                    color = PokedexCream.copy(alpha = 0.6f),
+                    modifier = Modifier
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) { showSyncWarning = false }
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                )
+            }
+        )
+    }
     val version = remember {
         runCatching {
             context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "1.0"
@@ -181,7 +240,7 @@ fun SettingsScreen(
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null
-                            ) { viewModel.syncAll() },
+                            ) { showSyncWarning = true },
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -258,7 +317,7 @@ fun SettingsScreen(
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null
-                            ) { viewModel.resetSyncState() },
+                            ) { viewModel.resetSyncState(); showSyncWarning = true },
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
