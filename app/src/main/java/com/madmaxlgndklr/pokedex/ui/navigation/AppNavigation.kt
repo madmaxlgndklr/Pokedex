@@ -58,6 +58,7 @@ fun AppNavigation() {
 
     val scope = rememberCoroutineScope()
     var statusBarVisible by remember { mutableStateOf(false) }
+    var isDetailLoading by remember { mutableStateOf(false) }
 
     var isMuted by remember { mutableStateOf(false) }
     val currentIsMuted by rememberUpdatedState(isMuted)
@@ -194,12 +195,27 @@ fun AppNavigation() {
                 DetailScreen(
                     viewModel = vm,
                     onBack = { navController.popBackStack() },
+                    onNavigatePrev = {
+                        if (pokemonId > 1) {
+                            navController.navigate(Routes.detail(pokemonId - 1)) {
+                                popUpTo(Routes.detail(pokemonId)) { inclusive = true }
+                            }
+                        }
+                    },
+                    onNavigateNext = {
+                        if (pokemonId < 1025) {
+                            navController.navigate(Routes.detail(pokemonId + 1)) {
+                                popUpTo(Routes.detail(pokemonId)) { inclusive = true }
+                            }
+                        }
+                    },
+                    onLoadingChanged = { isDetailLoading = it },
                     onEvolutionClick = { id -> navController.navigate(Routes.detail(id)) }
                 )
             }
         }
 
-        if (statusBarVisible) {
+        if (statusBarVisible && !isDetailLoading) {
             SystemStatusBar(
                 isMuted = isMuted,
                 modifier = Modifier.fillMaxSize()

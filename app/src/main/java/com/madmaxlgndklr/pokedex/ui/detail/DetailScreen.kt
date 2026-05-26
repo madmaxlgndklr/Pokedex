@@ -28,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -47,6 +48,7 @@ import com.madmaxlgndklr.pokedex.model.PokemonDetail
 import com.madmaxlgndklr.pokedex.model.PokemonStat
 import com.madmaxlgndklr.pokedex.ui.common.UiState
 import com.madmaxlgndklr.pokedex.ui.common.swipeBack
+import com.madmaxlgndklr.pokedex.ui.common.swipeNavigation
 import com.madmaxlgndklr.pokedex.ui.theme.CaughtGold
 import com.madmaxlgndklr.pokedex.ui.theme.GlowBlue
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexCream
@@ -58,10 +60,15 @@ import com.madmaxlgndklr.pokedex.ui.theme.PressStart2P
 fun DetailScreen(
     viewModel: PokemonDetailViewModel,
     onBack: () -> Unit,
+    onNavigatePrev: () -> Unit,
+    onNavigateNext: () -> Unit,
+    onLoadingChanged: (Boolean) -> Unit,
     onEvolutionClick: (Int) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isCaught by viewModel.isCaught.collectAsState()
+
+    LaunchedEffect(uiState) { onLoadingChanged(uiState is UiState.Loading) }
 
     Box(Modifier.fillMaxSize()) {
         when (val state = uiState) {
@@ -80,6 +87,8 @@ fun DetailScreen(
                 detail = state.data,
                 isCaught = isCaught,
                 onBack = onBack,
+                onNavigatePrev = onNavigatePrev,
+                onNavigateNext = onNavigateNext,
                 onToggleCaught = viewModel::toggleCaught,
                 onEvolutionClick = onEvolutionClick
             )
@@ -92,10 +101,16 @@ private fun DetailContent(
     detail: PokemonDetail,
     isCaught: Boolean,
     onBack: () -> Unit,
+    onNavigatePrev: () -> Unit,
+    onNavigateNext: () -> Unit,
     onToggleCaught: () -> Unit,
     onEvolutionClick: (Int) -> Unit
 ) {
-    BoxWithConstraints(Modifier.fillMaxSize().swipeBack(onBack)) {
+    BoxWithConstraints(Modifier.fillMaxSize().swipeNavigation(
+        onBack = onBack,
+        onSwipeLeft = onNavigateNext,
+        onSwipeRight = onNavigatePrev
+    )) {
         val sw = maxWidth
         val sh = maxHeight
         val panelShape = androidx.compose.foundation.shape.RoundedCornerShape(6.dp)
