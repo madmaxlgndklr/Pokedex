@@ -8,7 +8,10 @@ data class PokemonDetailResponse(
     val sprites: SpritesDto,
     val types: List<PokemonTypeSlotDto>,
     val stats: List<PokemonStatDto>,
-    val moves: List<PokemonMoveSlotDto>
+    val moves: List<PokemonMoveSlotDto>,
+    val height: Int = 0,
+    val weight: Int = 0,
+    val abilities: List<PokemonAbilitySlotDto> = emptyList()
 )
 
 data class SpritesDto(@SerializedName("front_default") val frontDefault: String?)
@@ -19,6 +22,8 @@ data class PokemonStatDto(
     @SerializedName("base_stat") val baseStat: Int,
     val stat: NamedDto
 )
+
+data class PokemonAbilitySlotDto(val ability: NamedDto)
 
 data class PokemonMoveSlotDto(
     val move: NamedDto,

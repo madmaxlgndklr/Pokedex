@@ -16,5 +16,8 @@ data class PokemonDetail(
     val stats: List<PokemonStat>,
     val moves: List<PokemonMove>,
     val evolutionChain: List<EvolutionStage>,
-    val flavorText: String
+    val flavorText: String,
+    val height: Int = 0,
+    val weight: Int = 0,
+    val abilities: List<String> = emptyList()
 )
