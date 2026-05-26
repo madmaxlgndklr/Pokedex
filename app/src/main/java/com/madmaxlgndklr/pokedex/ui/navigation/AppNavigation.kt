@@ -11,9 +11,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
@@ -54,20 +56,15 @@ fun AppNavigation() {
     val repo = (context.applicationContext as PokedexApplication).repository
     val settingsRepo = (context.applicationContext as PokedexApplication).settingsRepository
 
+    val scope = rememberCoroutineScope()
+    var statusBarVisible by remember { mutableStateOf(false) }
+
     var isMuted by remember { mutableStateOf(false) }
     val currentIsMuted by rememberUpdatedState(isMuted)
 
     // null = not yet loaded from DataStore; avoids starting music before we know the preference
     val musicOnLaunch: Boolean? by settingsRepo.musicOnLaunch.collectAsState(initial = null)
 
-    // Hidden until DataStore loads AND the background has had time to render
-    var statusBarVisible by remember { mutableStateOf(false) }
-    LaunchedEffect(musicOnLaunch) {
-        if (musicOnLaunch != null && !statusBarVisible) {
-            delay(600)
-            statusBarVisible = true
-        }
-    }
     val currentMusicOnLaunch by rememberUpdatedState(musicOnLaunch ?: true)
 
     val mediaPlayer = remember {
@@ -114,7 +111,14 @@ fun AppNavigation() {
                     onBack = { navController.popBackStack() },
                     onNavigateFullList = { navController.navigate(Routes.FULL_LIST) },
                     onNavigateMyCollection = { navController.navigate(Routes.MY_COLLECTION) },
-                    onNavigateSettings = { navController.navigate(Routes.SETTINGS) }
+                    onNavigateSettings = { navController.navigate(Routes.SETTINGS) },
+                    onAnimationStarted = { statusBarVisible = false },
+                    onAnimationEnded = {
+                        scope.launch {
+                            delay(500)
+                            statusBarVisible = true
+                        }
+                    }
                 )
             }
             composable(Routes.FULL_LIST) {
@@ -198,11 +202,6 @@ fun AppNavigation() {
         if (statusBarVisible) {
             SystemStatusBar(
                 isMuted = isMuted,
-                onToggleMute = {
-                    isMuted = !isMuted
-                    if (isMuted) mediaPlayer.pause()
-                    else if (currentMusicOnLaunch && !mediaPlayer.isPlaying) mediaPlayer.start()
-                },
                 modifier = Modifier.fillMaxSize()
             )
         }

@@ -9,6 +9,10 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.BatteryManager
+import android.provider.Settings
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -21,11 +25,12 @@ import androidx.compose.material.icons.filled.SignalCellularOff
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -46,7 +51,6 @@ private val NeonGreen = Color(0xFF39FF14)
 @Composable
 fun SystemStatusBar(
     isMuted: Boolean,
-    onToggleMute: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -91,9 +95,6 @@ fun SystemStatusBar(
         val swF = maxWidth.value
         val shF = maxHeight.value
 
-        // Arc follows the inner edge of the dark semicircle at the top of the background.
-        // Center is at the base of the semicircle (where the screen strip begins).
-        // Radius is just inside the outer dark ring.
         val arcCx = swF / 2f
         val arcCy = shF * 0.20f
         val arcR  = swF * 0.43f
@@ -103,56 +104,101 @@ fun SystemStatusBar(
             return (arcCx + arcR * sin(rad).toFloat()) to (arcCy - arcR * cos(rad).toFloat())
         }
 
-        // Items ordered left → right: mute, wifi, cellular, battery, time
-        // Angles from vertical (0° = top center), negative = left, positive = right
-        val (mx, my) = arcPos(-55f)
-        IconButton(
-            onClick = onToggleMute,
-            modifier = Modifier.offset((mx - 12f).dp, (my - 12f).dp).size(24.dp)
+        fun launch(action: String) = context.startActivity(Intent(action))
+        fun noRipple() = MutableInteractionSource()
+
+        // Mute — sound settings
+        val (mx, my) = arcPos(-62f)
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .offset((mx - 12f).dp, (my - 12f).dp)
+                .size(24.dp)
+                .clickable(interactionSource = remember { noRipple() }, indication = null) {
+                    launch(Settings.ACTION_SOUND_SETTINGS)
+                }
         ) {
             Icon(
                 imageVector = if (isMuted) Icons.AutoMirrored.Filled.VolumeOff
                               else Icons.AutoMirrored.Filled.VolumeUp,
-                contentDescription = if (isMuted) "Unmute" else "Mute",
+                contentDescription = "Sound settings",
                 tint = NeonGreen,
                 modifier = Modifier.size(16.dp)
             )
         }
 
-        val (wx, wy) = arcPos(-27.5f)
-        Icon(
-            imageVector = if (network.wifi) Icons.Filled.Wifi else Icons.Filled.WifiOff,
-            contentDescription = "WiFi",
-            tint = NeonGreen,
-            modifier = Modifier.offset((wx - 8f).dp, (wy - 8f).dp).size(16.dp)
-        )
+        // WiFi — wifi settings
+        val (wx, wy) = arcPos(-31f)
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .offset((wx - 12f).dp, (wy - 12f).dp)
+                .size(24.dp)
+                .clickable(interactionSource = remember { noRipple() }, indication = null) {
+                    launch(Settings.ACTION_WIFI_SETTINGS)
+                }
+        ) {
+            Icon(
+                imageVector = if (network.wifi) Icons.Filled.Wifi else Icons.Filled.WifiOff,
+                contentDescription = "WiFi settings",
+                tint = NeonGreen,
+                modifier = Modifier.size(16.dp)
+            )
+        }
 
+        // Cellular — wireless settings
         val (cellX, cellY) = arcPos(0f)
-        Icon(
-            imageVector = if (network.cellular) Icons.Filled.SignalCellularAlt
-                          else Icons.Filled.SignalCellularOff,
-            contentDescription = "Cellular",
-            tint = NeonGreen,
-            modifier = Modifier.offset((cellX - 8f).dp, (cellY - 8f).dp).size(16.dp)
-        )
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .offset((cellX - 12f).dp, (cellY - 12f).dp)
+                .size(24.dp)
+                .clickable(interactionSource = remember { noRipple() }, indication = null) {
+                    launch(Settings.ACTION_WIRELESS_SETTINGS)
+                }
+        ) {
+            Icon(
+                imageVector = if (network.cellular) Icons.Filled.SignalCellularAlt
+                              else Icons.Filled.SignalCellularOff,
+                contentDescription = "Network settings",
+                tint = NeonGreen,
+                modifier = Modifier.size(16.dp)
+            )
+        }
 
-        val (battX, battY) = arcPos(27.5f)
-        Text(
-            text = "$batteryPct%",
-            fontFamily = PressStart2P,
-            fontSize = 7.sp,
-            color = NeonGreen,
-            modifier = Modifier.offset((battX - 16f).dp, (battY - 7f).dp)
-        )
+        // Battery — battery usage
+        val (battX, battY) = arcPos(31f)
+        Box(
+            modifier = Modifier
+                .offset((battX - 16f).dp, (battY - 7f).dp)
+                .clickable(interactionSource = remember { noRipple() }, indication = null) {
+                    launch(Intent.ACTION_POWER_USAGE_SUMMARY)
+                }
+        ) {
+            Text(
+                text = "$batteryPct%",
+                fontFamily = PressStart2P,
+                fontSize = 7.sp,
+                color = NeonGreen
+            )
+        }
 
-        val (timeX, timeY) = arcPos(55f)
-        Text(
-            text = currentTime,
-            fontFamily = PressStart2P,
-            fontSize = 7.sp,
-            color = NeonGreen,
-            modifier = Modifier.offset((timeX - 24f).dp, (timeY - 7f).dp)
-        )
+        // Time — date & time settings
+        val (timeX, timeY) = arcPos(62f)
+        Box(
+            modifier = Modifier
+                .offset((timeX - 24f).dp, (timeY - 7f).dp)
+                .clickable(interactionSource = remember { noRipple() }, indication = null) {
+                    launch(Settings.ACTION_DATE_SETTINGS)
+                }
+        ) {
+            Text(
+                text = currentTime,
+                fontFamily = PressStart2P,
+                fontSize = 7.sp,
+                color = NeonGreen
+            )
+        }
     }
 }
 

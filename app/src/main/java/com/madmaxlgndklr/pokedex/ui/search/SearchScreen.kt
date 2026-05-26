@@ -73,7 +73,9 @@ fun SearchScreen(
     onBack: () -> Unit,
     onNavigateFullList: () -> Unit,
     onNavigateMyCollection: () -> Unit,
-    onNavigateSettings: () -> Unit
+    onNavigateSettings: () -> Unit,
+    onAnimationStarted: () -> Unit = {},
+    onAnimationEnded: () -> Unit = {}
 ) {
     val query by viewModel.query.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
@@ -116,6 +118,13 @@ fun SearchScreen(
 
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collect { id -> onPokemonClick(id) }
+    }
+
+    LaunchedEffect(phase) {
+        when (phase) {
+            PokedexPhase.VIDEO -> onAnimationStarted()
+            PokedexPhase.INTERACTIVE -> onAnimationEnded()
+        }
     }
 
     val contentAlpha by animateFloatAsState(
