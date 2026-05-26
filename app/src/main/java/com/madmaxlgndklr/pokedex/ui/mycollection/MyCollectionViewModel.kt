@@ -23,8 +23,9 @@ class MyCollectionViewModel(repository: PokemonRepository) : ViewModel() {
 
     val caughtList: StateFlow<List<PokemonSummary>> =
         combine(_allCaught, _selectedGens) { list, gens ->
-            if (gens.isEmpty()) list
-            else list.filter { p -> gens.any { p.id in it.idRange } }
+            val filtered = if (gens.isEmpty()) list
+                           else list.filter { p -> gens.any { p.id in it.idRange } }
+            filtered.sortedBy { it.id }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun toggleGeneration(gen: Generation) {
