@@ -96,8 +96,15 @@ fun SystemStatusBar(
         val shF = maxHeight.value
 
         val arcCx = swF / 2f
-        val arcCy = shF * 0.20f
+        val arcCy = shF * 0.22f
         val arcR  = swF * 0.43f
+
+        // Independent x nudges for the outer items — angle changes y more than x at
+        // large angles (sin saturates past ~60°), so use these to dial in horizontal
+        // position without affecting vertical position.
+        val timeXNudge = swF * 0.06f   // extra push right for time
+        val battXNudge = swF * 0.04f   // extra push right for battery (2× time increment)
+        val muteXNudge = swF * 0.04f   // extra push left for mute
 
         fun arcPos(angleDeg: Float): Pair<Float, Float> {
             val rad = Math.toRadians(angleDeg.toDouble())
@@ -108,11 +115,11 @@ fun SystemStatusBar(
         fun noRipple() = MutableInteractionSource()
 
         // Mute — sound settings
-        val (mx, my) = arcPos(-62f)
+        val (mx, my) = arcPos(-67f)
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .offset((mx - 12f).dp, (my - 12f).dp)
+                .offset((mx - 12f - muteXNudge).dp, (my - 12f).dp)
                 .size(24.dp)
                 .clickable(interactionSource = remember { noRipple() }, indication = null) {
                     launch(Settings.ACTION_SOUND_SETTINGS)
@@ -170,7 +177,7 @@ fun SystemStatusBar(
         val (battX, battY) = arcPos(31f)
         Box(
             modifier = Modifier
-                .offset((battX - 16f).dp, (battY - 7f).dp)
+                .offset((battX - 16f + battXNudge).dp, (battY - 7f).dp)
                 .clickable(interactionSource = remember { noRipple() }, indication = null) {
                     launch(Intent.ACTION_POWER_USAGE_SUMMARY)
                 }
@@ -187,7 +194,7 @@ fun SystemStatusBar(
         val (timeX, timeY) = arcPos(62f)
         Box(
             modifier = Modifier
-                .offset((timeX - 24f).dp, (timeY - 7f).dp)
+                .offset((timeX - 24f + timeXNudge).dp, (timeY - 7f).dp)
                 .clickable(interactionSource = remember { noRipple() }, indication = null) {
                     launch(Settings.ACTION_DATE_SETTINGS)
                 }
