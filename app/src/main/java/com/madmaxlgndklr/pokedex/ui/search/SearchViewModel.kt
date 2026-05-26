@@ -28,10 +28,25 @@ class SearchViewModel(private val repository: PokemonRepository) : ViewModel() {
     private val _navigationEvent = MutableSharedFlow<Int>(extraBufferCapacity = 1)
     val navigationEvent: SharedFlow<Int> = _navigationEvent
 
+    private val _cacheIsEmpty = MutableStateFlow(false)
+    val cacheIsEmpty: StateFlow<Boolean> = _cacheIsEmpty
+
     var animationCompleted: Boolean = false
         private set
 
+    var bootPromptAcknowledged: Boolean = false
+        private set
+
+    init {
+        viewModelScope.launch {
+            val (detailCount, _) = repository.getCachedCount()
+            _cacheIsEmpty.value = detailCount == 0
+        }
+    }
+
     fun markAnimationCompleted() { animationCompleted = true }
+
+    fun acknowledgeBootPrompt() { bootPromptAcknowledged = true }
 
     fun onQueryChange(query: String) {
         _query.value = query

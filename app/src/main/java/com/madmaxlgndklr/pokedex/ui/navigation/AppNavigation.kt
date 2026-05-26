@@ -113,6 +113,7 @@ fun AppNavigation() {
                     onNavigateFullList = { navController.navigate(Routes.FULL_LIST) },
                     onNavigateMyCollection = { navController.navigate(Routes.MY_COLLECTION) },
                     onNavigateSettings = { navController.navigate(Routes.SETTINGS) },
+                    onSyncNow = { navController.navigate(Routes.SETTINGS) },
                     onAnimationStarted = { statusBarVisible = false },
                     onAnimationEnded = {
                         scope.launch {

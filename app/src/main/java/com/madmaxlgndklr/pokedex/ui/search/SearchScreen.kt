@@ -5,16 +5,22 @@ import androidx.annotation.OptIn
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -60,10 +66,99 @@ import com.madmaxlgndklr.pokedex.ui.common.NavDestination
 import com.madmaxlgndklr.pokedex.ui.common.swipeBack
 import com.madmaxlgndklr.pokedex.ui.theme.GlowBlue
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexCream
+import com.madmaxlgndklr.pokedex.ui.theme.PokedexDark
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexRed
 import com.madmaxlgndklr.pokedex.ui.theme.PressStart2P
+import kotlinx.coroutines.delay
 
 private enum class PokedexPhase { VIDEO, INTERACTIVE }
+
+@Composable
+private fun BootDiagnosticOverlay(
+    sw: androidx.compose.ui.unit.Dp,
+    sh: androidx.compose.ui.unit.Dp,
+    alpha: Float,
+    onSyncNow: () -> Unit,
+    onSkip: () -> Unit
+) {
+    val lines = remember {
+        listOf(
+            "> POKEDEX DATA CHECK",
+            "> SCANNING LOCAL CACHE...",
+            "> ENTRIES FOUND: 0",
+            "> OFFLINE MODE: UNAVAILABLE",
+            "",
+            "> SYNC RECOMMENDED",
+            "> (~80 MB REQUIRED)"
+        )
+    }
+    var visibleLines by remember { mutableStateOf(0) }
+    var showButtons by remember { mutableStateOf(false) }
+    val buttonsAlpha by animateFloatAsState(
+        targetValue = if (showButtons) 1f else 0f,
+        animationSpec = tween(400),
+        label = "diagButtons"
+    )
+
+    LaunchedEffect(Unit) {
+        lines.forEachIndexed { i, _ ->
+            delay(if (i == 0) 0L else 300L)
+            visibleLines = i + 1
+        }
+        delay(300)
+        showButtons = true
+    }
+
+    Column(
+        modifier = Modifier
+            .offset(x = sw * 0.04f, y = sh * 0.36f)
+            .fillMaxWidth(0.92f)
+            .height(sh * 0.27f)
+            .alpha(alpha)
+            .background(PokedexDark.copy(alpha = 0.90f), RoundedCornerShape(6.dp))
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        lines.take(visibleLines).forEach { line ->
+            Text(
+                text = line,
+                fontFamily = PressStart2P,
+                fontSize = 6.sp,
+                color = when {
+                    line.contains("ENTRIES FOUND: 0") || line.contains("UNAVAILABLE") -> PokedexRed
+                    else -> GlowBlue
+                },
+                lineHeight = 10.sp
+            )
+        }
+        Spacer(Modifier.weight(1f))
+        Row(
+            modifier = Modifier.fillMaxWidth().alpha(buttonsAlpha),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "[ SKIP ]",
+                fontFamily = PressStart2P,
+                fontSize = 7.sp,
+                color = PokedexCream.copy(alpha = 0.45f),
+                modifier = Modifier.clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) { onSkip() }
+            )
+            Text(
+                text = "[ SYNC NOW ]",
+                fontFamily = PressStart2P,
+                fontSize = 7.sp,
+                color = GlowBlue,
+                modifier = Modifier.clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) { onSyncNow() }
+            )
+        }
+    }
+}
 
 @OptIn(UnstableApi::class)
 @Composable
@@ -74,13 +169,23 @@ fun SearchScreen(
     onNavigateFullList: () -> Unit,
     onNavigateMyCollection: () -> Unit,
     onNavigateSettings: () -> Unit,
+    onSyncNow: () -> Unit = {},
     onAnimationStarted: () -> Unit = {},
     onAnimationEnded: () -> Unit = {}
 ) {
     val query by viewModel.query.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
+    val cacheIsEmpty by viewModel.cacheIsEmpty.collectAsState()
     val context = LocalContext.current
     val focusRequester = remember { FocusRequester() }
+
+    var bootPromptDismissed by remember { mutableStateOf(viewModel.bootPromptAcknowledged) }
+    var bootPromptVisible by remember { mutableStateOf(false) }
+    val bootPromptAlpha by animateFloatAsState(
+        targetValue = if (bootPromptVisible && !bootPromptDismissed) 1f else 0f,
+        animationSpec = tween(500),
+        label = "bootPrompt"
+    )
 
     var phase by remember {
         mutableStateOf(
@@ -124,6 +229,13 @@ fun SearchScreen(
         when (phase) {
             PokedexPhase.VIDEO -> onAnimationStarted()
             PokedexPhase.INTERACTIVE -> onAnimationEnded()
+        }
+    }
+
+    LaunchedEffect(phase, cacheIsEmpty) {
+        if (phase == PokedexPhase.INTERACTIVE && cacheIsEmpty && !viewModel.bootPromptAcknowledged) {
+            delay(700)
+            bootPromptVisible = true
         }
     }
 
@@ -264,5 +376,22 @@ fun SearchScreen(
                 .padding(bottom = 20.dp)
                 .alpha(contentAlpha)
         )
+
+        if (cacheIsEmpty && !bootPromptDismissed) {
+            BootDiagnosticOverlay(
+                sw = sw,
+                sh = sh,
+                alpha = bootPromptAlpha,
+                onSyncNow = {
+                    viewModel.acknowledgeBootPrompt()
+                    bootPromptDismissed = true
+                    onSyncNow()
+                },
+                onSkip = {
+                    viewModel.acknowledgeBootPrompt()
+                    bootPromptDismissed = true
+                }
+            )
+        }
     }
 }
