@@ -4,6 +4,8 @@ import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.model.PokemonDetail
 import com.madmaxlgndklr.pokedex.repository.FakeCaughtPokemonDao
 import com.madmaxlgndklr.pokedex.repository.FakePokeApiService
+import com.madmaxlgndklr.pokedex.repository.FakePokemonDetailCacheDao
+import com.madmaxlgndklr.pokedex.repository.FakePokemonListCacheDao
 import com.madmaxlgndklr.pokedex.ui.common.UiState
 import com.madmaxlgndklr.pokedex.ui.detail.PokemonDetailViewModel
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +30,7 @@ class PokemonDetailViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        val repo = PokemonRepository(FakePokeApiService(), FakeCaughtPokemonDao())
+        val repo = PokemonRepository(FakePokeApiService(), FakeCaughtPokemonDao(), FakePokemonListCacheDao(), FakePokemonDetailCacheDao())
         viewModel = PokemonDetailViewModel(repo, pokemonId = 1)
     }
 

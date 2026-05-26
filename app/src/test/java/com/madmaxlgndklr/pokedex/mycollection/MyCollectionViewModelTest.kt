@@ -4,6 +4,8 @@ import com.madmaxlgndklr.pokedex.data.local.CaughtPokemonEntity
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.repository.FakeCaughtPokemonDao
 import com.madmaxlgndklr.pokedex.repository.FakePokeApiService
+import com.madmaxlgndklr.pokedex.repository.FakePokemonDetailCacheDao
+import com.madmaxlgndklr.pokedex.repository.FakePokemonListCacheDao
 import com.madmaxlgndklr.pokedex.ui.mycollection.MyCollectionViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,7 +30,7 @@ class MyCollectionViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        val repo = PokemonRepository(FakePokeApiService(), fakeDao)
+        val repo = PokemonRepository(FakePokeApiService(), fakeDao, FakePokemonListCacheDao(), FakePokemonDetailCacheDao())
         viewModel = MyCollectionViewModel(repo)
     }
 

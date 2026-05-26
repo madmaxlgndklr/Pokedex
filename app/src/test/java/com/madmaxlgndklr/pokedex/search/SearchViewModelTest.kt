@@ -8,6 +8,8 @@ import com.madmaxlgndklr.pokedex.data.remote.dto.PokemonSpeciesResponse
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.repository.FakeCaughtPokemonDao
 import com.madmaxlgndklr.pokedex.repository.FakePokeApiService
+import com.madmaxlgndklr.pokedex.repository.FakePokemonDetailCacheDao
+import com.madmaxlgndklr.pokedex.repository.FakePokemonListCacheDao
 import com.madmaxlgndklr.pokedex.ui.search.SearchUiState
 import com.madmaxlgndklr.pokedex.ui.search.SearchViewModel
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +34,7 @@ class SearchViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        val repo = PokemonRepository(FakePokeApiService(), FakeCaughtPokemonDao())
+        val repo = PokemonRepository(FakePokeApiService(), FakeCaughtPokemonDao(), FakePokemonListCacheDao(), FakePokemonDetailCacheDao())
         viewModel = SearchViewModel(repo)
     }
 
@@ -73,7 +75,7 @@ class SearchViewModelTest {
             override suspend fun getPokemonSpecies(id: Int): PokemonSpeciesResponse = throw UnsupportedOperationException()
             override suspend fun getEvolutionChain(id: Int): EvolutionChainResponse = throw UnsupportedOperationException()
         }
-        val repo = PokemonRepository(throwingApi, FakeCaughtPokemonDao())
+        val repo = PokemonRepository(throwingApi, FakeCaughtPokemonDao(), FakePokemonListCacheDao(), FakePokemonDetailCacheDao())
         viewModel = SearchViewModel(repo)
         viewModel.onQueryChange("missingno")
         viewModel.search()
@@ -89,7 +91,7 @@ class SearchViewModelTest {
             override suspend fun getPokemonSpecies(id: Int): PokemonSpeciesResponse = throw UnsupportedOperationException()
             override suspend fun getEvolutionChain(id: Int): EvolutionChainResponse = throw UnsupportedOperationException()
         }
-        val repo = PokemonRepository(throwingApi, FakeCaughtPokemonDao())
+        val repo = PokemonRepository(throwingApi, FakeCaughtPokemonDao(), FakePokemonListCacheDao(), FakePokemonDetailCacheDao())
         viewModel = SearchViewModel(repo)
         viewModel.onQueryChange("missingno")
         viewModel.search()
