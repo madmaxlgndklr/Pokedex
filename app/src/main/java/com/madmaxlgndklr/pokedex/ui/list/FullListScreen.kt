@@ -3,6 +3,7 @@ package com.madmaxlgndklr.pokedex.ui.list
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Checkbox
@@ -62,7 +65,8 @@ fun FullListScreen(
     onNavigateMyCollection: () -> Unit,
     onNavigateSettings: () -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.filteredState.collectAsState()
+    val selectedGen by viewModel.selectedGen.collectAsState()
     val caughtIds by viewModel.caughtIds.collectAsState()
 
     BoxWithConstraints(Modifier.fillMaxSize().swipeBack(onBack)) {
@@ -121,6 +125,41 @@ fun FullListScreen(
                             onClick = { onPokemonClick(pokemon.id) }
                         )
                     }
+                }
+            }
+        }
+
+        // Region filter chips
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .offset(y = stripTop + stripHeight + 6.dp)
+                .padding(horizontal = 8.dp)
+                .horizontalScroll(rememberScrollState())
+        ) {
+            Generation.entries.forEach { gen ->
+                val isSelected = gen == selectedGen
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .background(
+                            color = if (isSelected) CaughtGold else PokedexDark.copy(alpha = 0.75f),
+                            shape = RoundedCornerShape(4.dp)
+                        )
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) { viewModel.selectGeneration(gen) }
+                        .padding(horizontal = 8.dp, vertical = 5.dp)
+                ) {
+                    Text(
+                        text = gen.label,
+                        fontFamily = PressStart2P,
+                        fontSize = 5.sp,
+                        color = if (isSelected) PokedexDark else PokedexCream
+                    )
                 }
             }
         }

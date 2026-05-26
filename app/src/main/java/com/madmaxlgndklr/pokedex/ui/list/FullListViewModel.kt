@@ -11,13 +11,37 @@ import com.madmaxlgndklr.pokedex.ui.common.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+enum class Generation(val label: String, val idRange: IntRange) {
+    KANTO("KANTO",  1..151),
+    JOHTO("JOHTO",  152..251),
+    HOENN("HOENN",  252..386),
+    SINNOH("SINNOH", 387..493),
+    UNOVA("UNOVA",  494..649),
+    KALOS("KALOS",  650..721),
+    ALOLA("ALOLA",  722..809),
+    GALAR("GALAR",  810..905),
+    PALDEA("PALDEA", 906..1025)
+}
+
 class FullListViewModel(private val repository: PokemonRepository) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<List<PokemonSummary>>>(UiState.Loading)
-    val uiState: StateFlow<UiState<List<PokemonSummary>>> = _uiState
+
+    private val _selectedGen = MutableStateFlow<Generation?>(null)
+    val selectedGen: StateFlow<Generation?> = _selectedGen
+
+    val filteredState: StateFlow<UiState<List<PokemonSummary>>> =
+        combine(_uiState, _selectedGen) { state, gen ->
+            when {
+                state is UiState.Success && gen != null ->
+                    UiState.Success(state.data.filter { it.id in gen.idRange })
+                else -> state
+            }
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), UiState.Loading)
 
     val caughtIds: StateFlow<Set<Int>> = repository.getCaughtPokemon()
         .map { list -> list.map { it.id }.toSet() }
@@ -31,6 +55,10 @@ class FullListViewModel(private val repository: PokemonRepository) : ViewModel()
                 UiState.Error(e.message ?: "Failed to load")
             }
         }
+    }
+
+    fun selectGeneration(gen: Generation?) {
+        _selectedGen.value = if (_selectedGen.value == gen) null else gen
     }
 
     fun toggleCaught(id: Int, name: String) {
