@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.model.PokemonSummary
+import com.madmaxlgndklr.pokedex.ui.common.Generation
 import com.madmaxlgndklr.pokedex.ui.common.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,29 +17,17 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-enum class Generation(val label: String, val idRange: IntRange) {
-    KANTO("KANTO",  1..151),
-    JOHTO("JOHTO",  152..251),
-    HOENN("HOENN",  252..386),
-    SINNOH("SINNOH", 387..493),
-    UNOVA("UNOVA",  494..649),
-    KALOS("KALOS",  650..721),
-    ALOLA("ALOLA",  722..809),
-    GALAR("GALAR",  810..905),
-    PALDEA("PALDEA", 906..1025)
-}
-
 class FullListViewModel(private val repository: PokemonRepository) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<List<PokemonSummary>>>(UiState.Loading)
 
-    private val _selectedGen = MutableStateFlow<Generation?>(null)
-    val selectedGen: StateFlow<Generation?> = _selectedGen
+    private val _selectedGens = MutableStateFlow<Set<Generation>>(emptySet())
+    val selectedGens: StateFlow<Set<Generation>> = _selectedGens
 
     val filteredState: StateFlow<UiState<List<PokemonSummary>>> =
-        combine(_uiState, _selectedGen) { state, gen ->
+        combine(_uiState, _selectedGens) { state, gens ->
             when {
-                state is UiState.Success && gen != null ->
-                    UiState.Success(state.data.filter { it.id in gen.idRange })
+                state is UiState.Success && gens.isNotEmpty() ->
+                    UiState.Success(state.data.filter { p -> gens.any { p.id in it.idRange } })
                 else -> state
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), UiState.Loading)
@@ -57,8 +46,14 @@ class FullListViewModel(private val repository: PokemonRepository) : ViewModel()
         }
     }
 
-    fun selectGeneration(gen: Generation?) {
-        _selectedGen.value = if (_selectedGen.value == gen) null else gen
+    fun toggleGeneration(gen: Generation) {
+        _selectedGens.value = _selectedGens.value.toMutableSet().apply {
+            if (!add(gen)) remove(gen)
+        }
+    }
+
+    fun clearGenerations() {
+        _selectedGens.value = emptySet()
     }
 
     fun toggleCaught(id: Int, name: String) {

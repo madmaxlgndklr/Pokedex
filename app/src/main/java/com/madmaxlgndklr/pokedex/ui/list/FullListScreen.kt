@@ -3,7 +3,6 @@ package com.madmaxlgndklr.pokedex.ui.list
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,10 +19,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -33,7 +32,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -47,6 +48,7 @@ import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
 import com.madmaxlgndklr.pokedex.model.PokemonSummary
 import com.madmaxlgndklr.pokedex.ui.common.BottomNavBar
 import com.madmaxlgndklr.pokedex.ui.common.NavDestination
+import com.madmaxlgndklr.pokedex.ui.common.RegionFilterDialog
 import com.madmaxlgndklr.pokedex.ui.common.UiState
 import com.madmaxlgndklr.pokedex.ui.common.swipeBack
 import com.madmaxlgndklr.pokedex.ui.theme.CaughtGold
@@ -66,8 +68,19 @@ fun FullListScreen(
     onNavigateSettings: () -> Unit
 ) {
     val uiState by viewModel.filteredState.collectAsState()
-    val selectedGen by viewModel.selectedGen.collectAsState()
+    val selectedGens by viewModel.selectedGens.collectAsState()
     val caughtIds by viewModel.caughtIds.collectAsState()
+
+    var showFilterDialog by remember { mutableStateOf(false) }
+
+    if (showFilterDialog) {
+        RegionFilterDialog(
+            selectedGens = selectedGens,
+            onToggle = { viewModel.toggleGeneration(it) },
+            onClear = { viewModel.clearGenerations() },
+            onDismiss = { showFilterDialog = false }
+        )
+    }
 
     BoxWithConstraints(Modifier.fillMaxSize().swipeBack(onBack)) {
         val sw = maxWidth
@@ -82,6 +95,35 @@ fun FullListScreen(
 
         val stripTop = sh * 0.36f
         val stripHeight = sh * 0.32f
+
+        // Filter button above the sprite strip
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .offset(y = stripTop - 28.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) { showFilterDialog = true }
+        ) {
+            Icon(
+                imageVector = Icons.Filled.FilterList,
+                contentDescription = "Filter",
+                tint = if (selectedGens.isNotEmpty()) CaughtGold else PokedexCream,
+                modifier = Modifier.size(14.dp)
+            )
+            Text(
+                text = if (selectedGens.isNotEmpty())
+                    " FILTER BY REGION (${selectedGens.size})"
+                else
+                    " FILTER BY REGION",
+                fontFamily = PressStart2P,
+                fontSize = 6.sp,
+                color = if (selectedGens.isNotEmpty()) CaughtGold else PokedexCream
+            )
+        }
 
         when (val state = uiState) {
             is UiState.Loading -> {
@@ -125,41 +167,6 @@ fun FullListScreen(
                             onClick = { onPokemonClick(pokemon.id) }
                         )
                     }
-                }
-            }
-        }
-
-        // Region filter chips
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(y = stripTop + stripHeight + 6.dp)
-                .padding(horizontal = 8.dp)
-                .horizontalScroll(rememberScrollState())
-        ) {
-            Generation.entries.forEach { gen ->
-                val isSelected = gen == selectedGen
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .background(
-                            color = if (isSelected) CaughtGold else PokedexDark.copy(alpha = 0.75f),
-                            shape = RoundedCornerShape(4.dp)
-                        )
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) { viewModel.selectGeneration(gen) }
-                        .padding(horizontal = 8.dp, vertical = 5.dp)
-                ) {
-                    Text(
-                        text = gen.label,
-                        fontFamily = PressStart2P,
-                        fontSize = 5.sp,
-                        color = if (isSelected) PokedexDark else PokedexCream
-                    )
                 }
             }
         }
