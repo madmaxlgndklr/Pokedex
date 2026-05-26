@@ -18,13 +18,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -44,6 +47,7 @@ import com.madmaxlgndklr.pokedex.ui.common.BottomNavBar
 import com.madmaxlgndklr.pokedex.ui.common.NavDestination
 import com.madmaxlgndklr.pokedex.ui.common.swipeBack
 import com.madmaxlgndklr.pokedex.ui.theme.CaughtGold
+import com.madmaxlgndklr.pokedex.ui.theme.GlowBlue
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexCream
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexDark
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexGreen
@@ -60,6 +64,7 @@ fun SettingsScreen(
     onNavigateMyCollection: () -> Unit
 ) {
     val musicOnLaunch by viewModel.musicOnLaunch.collectAsState()
+    val syncState by viewModel.syncState.collectAsState()
     val context = LocalContext.current
     val version = remember {
         runCatching {
@@ -91,7 +96,7 @@ fun SettingsScreen(
             modifier = Modifier
                 .offset(x = sw * 0.04f, y = sh * 0.37f)
                 .fillMaxWidth(0.92f)
-                .height(sh * 0.40f)
+                .height(sh * 0.50f)
                 .background(PokedexDark.copy(alpha = 0.60f), RoundedCornerShape(8.dp))
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -164,6 +169,114 @@ fun SettingsScreen(
                 fontSize = 7.sp,
                 color = PokedexCream.copy(alpha = 0.7f)
             )
+
+            HorizontalDivider(color = PokedexCream.copy(alpha = 0.25f))
+
+            // Offline sync
+            when (val state = syncState) {
+                is SyncState.Idle -> {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) { viewModel.syncAll() },
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "SYNC FOR OFFLINE",
+                            fontFamily = PressStart2P,
+                            fontSize = 7.sp,
+                            color = PokedexCream
+                        )
+                        Text(
+                            text = "SYNC",
+                            fontFamily = PressStart2P,
+                            fontSize = 7.sp,
+                            color = GlowBlue
+                        )
+                    }
+                }
+                is SyncState.Syncing -> {
+                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "SYNCING...",
+                                fontFamily = PressStart2P,
+                                fontSize = 7.sp,
+                                color = GlowBlue
+                            )
+                            Text(
+                                text = "${state.completed}/${state.total}",
+                                fontFamily = PressStart2P,
+                                fontSize = 7.sp,
+                                color = PokedexCream.copy(alpha = 0.7f)
+                            )
+                        }
+                        LinearProgressIndicator(
+                            progress = { if (state.total > 0) state.completed.toFloat() / state.total else 0f },
+                            modifier = Modifier.fillMaxWidth(),
+                            color = GlowBlue,
+                            trackColor = PokedexCream.copy(alpha = 0.15f)
+                        )
+                    }
+                }
+                is SyncState.Done -> {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) { viewModel.resetSyncState() },
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "SYNC COMPLETE",
+                            fontFamily = PressStart2P,
+                            fontSize = 7.sp,
+                            color = PokedexGreen
+                        )
+                        Text(
+                            text = "${state.cached}/${state.total}",
+                            fontFamily = PressStart2P,
+                            fontSize = 7.sp,
+                            color = PokedexCream.copy(alpha = 0.6f)
+                        )
+                    }
+                }
+                is SyncState.Error -> {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) { viewModel.resetSyncState() },
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "SYNC FAILED",
+                            fontFamily = PressStart2P,
+                            fontSize = 7.sp,
+                            color = PokedexCream.copy(alpha = 0.5f)
+                        )
+                        Text(
+                            text = "RETRY",
+                            fontFamily = PressStart2P,
+                            fontSize = 7.sp,
+                            color = GlowBlue
+                        )
+                    }
+                }
+            }
 
             HorizontalDivider(color = PokedexCream.copy(alpha = 0.25f))
 

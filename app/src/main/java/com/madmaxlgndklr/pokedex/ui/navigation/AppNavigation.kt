@@ -156,7 +156,7 @@ fun AppNavigation() {
                 )
             }
             composable(Routes.SETTINGS) {
-                val vm: SettingsViewModel = viewModel(factory = SettingsViewModel.factory(settingsRepo))
+                val vm: SettingsViewModel = viewModel(factory = SettingsViewModel.factory(settingsRepo, repo))
                 SettingsScreen(
                     viewModel = vm,
                     isMuted = isMuted,

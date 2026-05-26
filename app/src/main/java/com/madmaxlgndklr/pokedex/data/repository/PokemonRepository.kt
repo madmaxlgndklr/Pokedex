@@ -1,7 +1,12 @@
 package com.madmaxlgndklr.pokedex.data.repository
 
+import com.google.gson.Gson
 import com.madmaxlgndklr.pokedex.data.local.CaughtPokemonDao
 import com.madmaxlgndklr.pokedex.data.local.CaughtPokemonEntity
+import com.madmaxlgndklr.pokedex.data.local.PokemonDetailCacheDao
+import com.madmaxlgndklr.pokedex.data.local.PokemonDetailCacheEntity
+import com.madmaxlgndklr.pokedex.data.local.PokemonListCacheDao
+import com.madmaxlgndklr.pokedex.data.local.PokemonListCacheEntity
 import com.madmaxlgndklr.pokedex.data.remote.PokeApiService
 import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
 import com.madmaxlgndklr.pokedex.data.remote.dto.ChainLinkDto
@@ -18,30 +23,95 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
+import java.util.concurrent.atomic.AtomicInteger
 
 class PokemonRepository(
     private val api: PokeApiService,
-    private val dao: CaughtPokemonDao
+    private val dao: CaughtPokemonDao,
+    private val listCacheDao: PokemonListCacheDao,
+    private val detailCacheDao: PokemonDetailCacheDao
 ) {
-    suspend fun getPokemonList(): List<PokemonSummary> =
-        api.getPokemonList().results.map { dto ->
+    private val gson = Gson()
+
+    suspend fun getPokemonList(): List<PokemonSummary> {
+        val cached = listCacheDao.getAll()
+        if (cached.isNotEmpty()) return cached.map { PokemonSummary(it.id, it.name) }
+
+        val list = api.getPokemonList().results.map { dto ->
             PokemonSummary(id = dto.extractId(), name = dto.name)
         }
+        listCacheDao.insertAll(list.map { PokemonListCacheEntity(it.id, it.name) })
+        return list
+    }
 
-    suspend fun getPokemonDetail(id: Int): PokemonDetail = coroutineScope {
-        val detailDeferred = async { api.getPokemonDetail(id.toString()) }
-        val speciesDeferred = async { api.getPokemonSpecies(id) }
-        val detail = detailDeferred.await()
-        val species = speciesDeferred.await()
-        val evoChain = api.getEvolutionChain(species.evolutionChain.extractId())
-        mapDetail(detail, species, evoChain)
+    suspend fun getPokemonDetail(id: Int): PokemonDetail {
+        detailCacheDao.getById(id)?.let {
+            return gson.fromJson(it.detailJson, PokemonDetail::class.java)
+        }
+        return fetchAndCacheDetail(id.toString())
     }
 
     suspend fun searchPokemon(nameOrId: String): PokemonDetail {
-        val detail = api.getPokemonDetail(nameOrId.trim().lowercase())
-        val species = api.getPokemonSpecies(detail.id)
+        val trimmed = nameOrId.trim().lowercase()
+
+        trimmed.toIntOrNull()?.let { id ->
+            detailCacheDao.getById(id)?.let {
+                return gson.fromJson(it.detailJson, PokemonDetail::class.java)
+            }
+        } ?: run {
+            listCacheDao.getByName(trimmed)?.let { entry ->
+                detailCacheDao.getById(entry.id)?.let {
+                    return gson.fromJson(it.detailJson, PokemonDetail::class.java)
+                }
+                return fetchAndCacheDetail(entry.id.toString())
+            }
+        }
+
+        return fetchAndCacheDetail(trimmed)
+    }
+
+    suspend fun getCachedCount(): Pair<Int, Int> =
+        detailCacheDao.count() to listCacheDao.count()
+
+    suspend fun syncAll(onProgress: (completed: Int, total: Int) -> Unit) {
+        if (listCacheDao.count() == 0) {
+            val list = api.getPokemonList().results.map { dto ->
+                PokemonSummary(id = dto.extractId(), name = dto.name)
+            }
+            listCacheDao.insertAll(list.map { PokemonListCacheEntity(it.id, it.name) })
+        }
+
+        val allPokemon = listCacheDao.getAll()
+        val uncached = allPokemon.filter { detailCacheDao.getById(it.id) == null }
+        val total = allPokemon.size
+        val completed = AtomicInteger(total - uncached.size)
+
+        onProgress(completed.get(), total)
+
+        val semaphore = Semaphore(10)
+        coroutineScope {
+            uncached.map { entity ->
+                async {
+                    semaphore.withPermit {
+                        try { fetchAndCacheDetail(entity.id.toString()) } catch (_: Exception) {}
+                        onProgress(completed.incrementAndGet(), total)
+                    }
+                }
+            }.forEach { it.await() }
+        }
+    }
+
+    private suspend fun fetchAndCacheDetail(idOrName: String): PokemonDetail = coroutineScope {
+        val detailDeferred = async { api.getPokemonDetail(idOrName) }
+        val speciesDeferred = async { api.getPokemonSpecies(idOrName.toIntOrNull() ?: detailDeferred.await().id) }
+        val detail = detailDeferred.await()
+        val species = speciesDeferred.await()
         val evoChain = api.getEvolutionChain(species.evolutionChain.extractId())
-        return mapDetail(detail, species, evoChain)
+        val pokemonDetail = mapDetail(detail, species, evoChain)
+        detailCacheDao.insert(PokemonDetailCacheEntity(pokemonDetail.id, gson.toJson(pokemonDetail)))
+        pokemonDetail
     }
 
     fun getCaughtPokemon(): Flow<List<PokemonSummary>> =

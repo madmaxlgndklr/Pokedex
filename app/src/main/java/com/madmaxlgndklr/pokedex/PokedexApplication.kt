@@ -10,7 +10,12 @@ import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 class PokedexApplication : Application() {
     private val database by lazy { AppDatabase.getInstance(this) }
     val repository by lazy {
-        PokemonRepository(RetrofitClient.api, database.caughtPokemonDao())
+        PokemonRepository(
+            RetrofitClient.api,
+            database.caughtPokemonDao(),
+            database.pokemonListCacheDao(),
+            database.pokemonDetailCacheDao()
+        )
     }
     val settingsRepository by lazy { SettingsRepository(settingsDataStore) }
 }
