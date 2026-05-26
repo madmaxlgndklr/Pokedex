@@ -155,7 +155,10 @@ class PokemonRepository(
             stats = detail.stats.map { PokemonStat(it.stat.name, it.baseStat) },
             moves = levelUpMoves,
             evolutionChain = parseEvolutionChain(evoChain.chain),
-            flavorText = flavorText
+            flavorText = flavorText,
+            height = detail.height,
+            weight = detail.weight,
+            abilities = detail.abilities.map { it.ability.name }
         )
     }
 
