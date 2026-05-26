@@ -2,6 +2,10 @@ package com.madmaxlgndklr.pokedex.repository
 
 import com.madmaxlgndklr.pokedex.data.local.CaughtPokemonDao
 import com.madmaxlgndklr.pokedex.data.local.CaughtPokemonEntity
+import com.madmaxlgndklr.pokedex.data.local.PokemonDetailCacheDao
+import com.madmaxlgndklr.pokedex.data.local.PokemonDetailCacheEntity
+import com.madmaxlgndklr.pokedex.data.local.PokemonListCacheDao
+import com.madmaxlgndklr.pokedex.data.local.PokemonListCacheEntity
 import com.madmaxlgndklr.pokedex.data.remote.PokeApiService
 import com.madmaxlgndklr.pokedex.data.remote.dto.*
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
@@ -17,7 +21,9 @@ import org.junit.Test
 class PokemonRepositoryTest {
     private val fakeApi = FakePokeApiService()
     private val fakeDao = FakeCaughtPokemonDao()
-    private val repo = PokemonRepository(fakeApi, fakeDao)
+    private val fakeListCacheDao = FakePokemonListCacheDao()
+    private val fakeDetailCacheDao = FakePokemonDetailCacheDao()
+    private val repo = PokemonRepository(fakeApi, fakeDao, fakeListCacheDao, fakeDetailCacheDao)
 
     @Test
     fun `getPokemonList maps DTOs to domain summaries`() = runTest {
@@ -32,6 +38,19 @@ class PokemonRepositoryTest {
         val detail = repo.getPokemonDetail(1)
         assertEquals("bulbasaur", detail.name)
         assertEquals(listOf("grass", "poison"), detail.types)
+    }
+
+    @Test
+    fun `getPokemonDetail returns height and weight`() = runTest {
+        val detail = repo.getPokemonDetail(1)
+        assertEquals(7, detail.height)
+        assertEquals(69, detail.weight)
+    }
+
+    @Test
+    fun `getPokemonDetail returns ability names`() = runTest {
+        val detail = repo.getPokemonDetail(1)
+        assertEquals(listOf("overgrow"), detail.abilities)
     }
 
     @Test
@@ -105,7 +124,10 @@ class FakePokeApiService : PokeApiService {
                     MoveVersionDetailDto(0, NamedDto("machine"))
                 )
             )
-        )
+        ),
+        height = 7,
+        weight = 69,
+        abilities = listOf(PokemonAbilitySlotDto(NamedDto("overgrow")))
     )
 
     override suspend fun getPokemonSpecies(id: Int) = PokemonSpeciesResponse(
@@ -145,4 +167,19 @@ class FakeCaughtPokemonDao : CaughtPokemonDao {
 
     override fun isCaught(id: Int): Flow<Boolean> =
         _all.map { list -> list.any { it.id == id } }
+}
+
+class FakePokemonListCacheDao : PokemonListCacheDao {
+    private val store = mutableListOf<PokemonListCacheEntity>()
+    override suspend fun getAll() = store.toList()
+    override suspend fun getByName(name: String) = store.firstOrNull { it.name == name }
+    override suspend fun insertAll(entities: List<PokemonListCacheEntity>) { store.addAll(entities) }
+    override suspend fun count() = store.size
+}
+
+class FakePokemonDetailCacheDao : PokemonDetailCacheDao {
+    private val store = mutableMapOf<Int, PokemonDetailCacheEntity>()
+    override suspend fun getById(id: Int) = store[id]
+    override suspend fun insert(entity: PokemonDetailCacheEntity) { store[entity.id] = entity }
+    override suspend fun count() = store.size
 }
