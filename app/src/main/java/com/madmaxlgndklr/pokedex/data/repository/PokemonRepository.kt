@@ -23,7 +23,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.sync.withPermit
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -90,12 +92,14 @@ class PokemonRepository(
 
         onProgress(completed.get(), total)
 
-        val semaphore = Semaphore(10)
+        val semaphore = Semaphore(40)
+        val evoChainCache = mutableMapOf<Int, EvolutionChainResponse>()
+        val evoChainMutex = Mutex()
         coroutineScope {
             uncached.map { entity ->
                 async {
                     semaphore.withPermit {
-                        try { fetchAndCacheDetail(entity.id.toString()) } catch (_: Exception) {}
+                        try { fetchAndCacheDetail(entity.id.toString(), evoChainCache, evoChainMutex) } catch (_: Exception) {}
                         onProgress(completed.incrementAndGet(), total)
                     }
                 }
@@ -103,12 +107,24 @@ class PokemonRepository(
         }
     }
 
-    private suspend fun fetchAndCacheDetail(idOrName: String): PokemonDetail = coroutineScope {
+    private suspend fun fetchAndCacheDetail(
+        idOrName: String,
+        evoChainCache: MutableMap<Int, EvolutionChainResponse>? = null,
+        evoChainMutex: Mutex? = null
+    ): PokemonDetail = coroutineScope {
         val detailDeferred = async { api.getPokemonDetail(idOrName) }
         val speciesDeferred = async { api.getPokemonSpecies(idOrName.toIntOrNull() ?: detailDeferred.await().id) }
         val detail = detailDeferred.await()
         val species = speciesDeferred.await()
-        val evoChain = api.getEvolutionChain(species.evolutionChain.extractId())
+        val chainId = species.evolutionChain.extractId()
+        val evoChain = if (evoChainCache != null && evoChainMutex != null) {
+            evoChainMutex.withLock { evoChainCache[chainId] }
+                ?: api.getEvolutionChain(chainId).also { fetched ->
+                    evoChainMutex.withLock { evoChainCache[chainId] = fetched }
+                }
+        } else {
+            api.getEvolutionChain(chainId)
+        }
         val pokemonDetail = mapDetail(detail, species, evoChain)
         detailCacheDao.insert(PokemonDetailCacheEntity(pokemonDetail.id, gson.toJson(pokemonDetail)))
         pokemonDetail
