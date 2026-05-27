@@ -77,7 +77,8 @@ fun DetailScreen(
     onEvolutionClick: (Int) -> Unit,
     isOnTeam: Boolean = false,
     onToggleTeam: () -> Unit = {},
-    onCompare: (Int) -> Unit = {}
+    onCompare: (Int) -> Unit = {},
+    onMoveClick: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isCaught by viewModel.isCaught.collectAsState()
@@ -107,11 +108,14 @@ fun DetailScreen(
                 onToggleCaught = viewModel::toggleCaught,
                 onToggleTeam = onToggleTeam,
                 onCompare = onCompare,
-                onEvolutionClick = onEvolutionClick
+                onEvolutionClick = onEvolutionClick,
+                onMoveClick = onMoveClick
             )
         }
     }
 }
+
+private enum class LeftPanel { DEX_ENTRY, ABILITIES, MOVES }
 
 @Composable
 private fun DetailContent(
@@ -124,10 +128,11 @@ private fun DetailContent(
     onToggleCaught: () -> Unit,
     onToggleTeam: () -> Unit,
     onCompare: (Int) -> Unit,
-    onEvolutionClick: (Int) -> Unit
+    onEvolutionClick: (Int) -> Unit,
+    onMoveClick: (String) -> Unit
 ) {
     var showShiny by remember { mutableStateOf(false) }
-    var showAbilities by remember { mutableStateOf(false) }
+    var leftPanel by remember { mutableStateOf(LeftPanel.DEX_ENTRY) }
     var showWeakness by remember { mutableStateOf(false) }
 
     BoxWithConstraints(Modifier.fillMaxSize().swipeNavigation(
@@ -236,7 +241,7 @@ private fun DetailContent(
                 }
         )
 
-        // Left panel — DEX ENTRY / ABILITIES toggle
+        // Left panel — DEX ENTRY / ABILITIES / MOVES cycle
         Box(
             modifier = Modifier
                 .offset(x = sw * 0.02f, y = sh * 0.38f)
@@ -246,8 +251,13 @@ private fun DetailContent(
                 .padding(6.dp)
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
+                val panelLabel = when (leftPanel) {
+                    LeftPanel.DEX_ENTRY -> "DEX ENTRY"
+                    LeftPanel.ABILITIES -> "ABILITIES"
+                    LeftPanel.MOVES     -> "MOVES"
+                }
                 Text(
-                    text = if (showAbilities) "ABILITIES" else "DEX ENTRY",
+                    text = panelLabel,
                     fontFamily = PressStart2P,
                     fontSize = 5.sp,
                     color = GlowBlue,
@@ -255,21 +265,30 @@ private fun DetailContent(
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null
-                        ) { showAbilities = !showAbilities }
+                        ) {
+                            leftPanel = when (leftPanel) {
+                                LeftPanel.DEX_ENTRY -> LeftPanel.ABILITIES
+                                LeftPanel.ABILITIES -> LeftPanel.MOVES
+                                LeftPanel.MOVES     -> LeftPanel.DEX_ENTRY
+                            }
+                        }
                         .padding(bottom = 4.dp)
                 )
-                if (showAbilities) {
-                    Column(
+                when (leftPanel) {
+                    LeftPanel.DEX_ENTRY -> Text(
+                        text = detail.flavorText,
+                        fontFamily = PressStart2P,
+                        fontSize = 8.sp,
+                        color = PokedexCream,
+                        lineHeight = 13.sp,
+                        modifier = Modifier.verticalScroll(rememberScrollState())
+                    )
+                    LeftPanel.ABILITIES -> Column(
                         verticalArrangement = Arrangement.spacedBy(4.dp),
                         modifier = Modifier.verticalScroll(rememberScrollState())
                     ) {
                         if (detail.abilities.isEmpty()) {
-                            Text(
-                                text = "—",
-                                fontFamily = PressStart2P,
-                                fontSize = 6.sp,
-                                color = PokedexCream
-                            )
+                            Text("—", fontFamily = PressStart2P, fontSize = 6.sp, color = PokedexCream)
                         } else {
                             detail.abilities.forEach { ability ->
                                 Text(
@@ -282,15 +301,42 @@ private fun DetailContent(
                             }
                         }
                     }
-                } else {
-                    Text(
-                        text = detail.flavorText,
-                        fontFamily = PressStart2P,
-                        fontSize = 8.sp,
-                        color = PokedexCream,
-                        lineHeight = 13.sp,
+                    LeftPanel.MOVES -> Column(
+                        verticalArrangement = Arrangement.spacedBy(3.dp),
                         modifier = Modifier.verticalScroll(rememberScrollState())
-                    )
+                    ) {
+                        if (detail.moves.isEmpty()) {
+                            Text("—", fontFamily = PressStart2P, fontSize = 6.sp, color = PokedexCream)
+                        } else {
+                            detail.moves.forEach { move ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable(
+                                            interactionSource = remember { MutableInteractionSource() },
+                                            indication = null
+                                        ) { onMoveClick(move.name) }
+                                        .padding(vertical = 1.dp)
+                                ) {
+                                    Text(
+                                        text = "${move.levelLearnedAt.toString().padStart(2)}",
+                                        fontFamily = PressStart2P,
+                                        fontSize = 5.sp,
+                                        color = PokedexCream.copy(alpha = 0.5f),
+                                        modifier = Modifier.width(sw * 0.06f)
+                                    )
+                                    Text(
+                                        text = move.name.uppercase().replace("-", " "),
+                                        fontFamily = PressStart2P,
+                                        fontSize = 5.sp,
+                                        color = GlowBlue,
+                                        maxLines = 1,
+                                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -3,6 +3,7 @@ package com.madmaxlgndklr.pokedex.mycollection
 import com.madmaxlgndklr.pokedex.data.local.CaughtPokemonEntity
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.repository.FakeCaughtPokemonDao
+import com.madmaxlgndklr.pokedex.repository.FakeMoveDao
 import com.madmaxlgndklr.pokedex.repository.FakePokeApiService
 import com.madmaxlgndklr.pokedex.repository.FakePokemonDetailCacheDao
 import com.madmaxlgndklr.pokedex.repository.FakePokemonListCacheDao
@@ -30,7 +31,7 @@ class MyCollectionViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        val repo = PokemonRepository(FakePokeApiService(), fakeDao, FakePokemonListCacheDao(), FakePokemonDetailCacheDao())
+        val repo = PokemonRepository(FakePokeApiService(), fakeDao, FakePokemonListCacheDao(), FakePokemonDetailCacheDao(), FakeMoveDao())
         viewModel = MyCollectionViewModel(repo)
     }
 

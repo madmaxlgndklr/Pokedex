@@ -31,6 +31,8 @@ import com.madmaxlgndklr.pokedex.R
 import com.madmaxlgndklr.pokedex.ui.common.SystemStatusBar
 import com.madmaxlgndklr.pokedex.ui.detail.DetailScreen
 import com.madmaxlgndklr.pokedex.ui.detail.PokemonDetailViewModel
+import com.madmaxlgndklr.pokedex.ui.move.MoveDetailScreen
+import com.madmaxlgndklr.pokedex.ui.move.MoveDetailViewModel
 import com.madmaxlgndklr.pokedex.ui.list.FullListScreen
 import com.madmaxlgndklr.pokedex.ui.list.FullListViewModel
 import com.madmaxlgndklr.pokedex.ui.mycollection.MyCollectionScreen
@@ -52,8 +54,10 @@ private object Routes {
     const val TEAM = "team"
     const val COMPARE = "compare/{firstId}"
     const val DETAIL = "detail/{pokemonId}"
+    const val MOVE = "move/{moveName}"
     fun detail(id: Int) = "detail/$id"
     fun compare(id: Int) = "compare/$id"
+    fun move(name: String) = "move/$name"
 }
 
 @Composable
@@ -272,7 +276,22 @@ fun AppNavigation() {
                         if (pokemonId in teamIds) teamVm.removeFromTeam(pokemonId)
                         else teamVm.addToTeam(pokemonId)
                     },
-                    onCompare = { id -> navController.navigate(Routes.compare(id)) }
+                    onCompare = { id -> navController.navigate(Routes.compare(id)) },
+                    onMoveClick = { name -> navController.navigate(Routes.move(name)) }
+                )
+            }
+            composable(
+                route = Routes.MOVE,
+                arguments = listOf(navArgument("moveName") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val moveName = backStackEntry.arguments?.getString("moveName") ?: return@composable
+                val vm: MoveDetailViewModel = viewModel(
+                    factory = MoveDetailViewModel.factory(repo, moveName)
+                )
+                MoveDetailScreen(
+                    viewModel = vm,
+                    onBack = { navController.popBackStack() },
+                    onPokemonClick = { id -> navController.navigate(Routes.detail(id)) }
                 )
             }
         }

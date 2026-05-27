@@ -2,14 +2,18 @@ package com.madmaxlgndklr.pokedex.search
 
 import com.madmaxlgndklr.pokedex.data.remote.PokeApiService
 import com.madmaxlgndklr.pokedex.data.remote.dto.EvolutionChainResponse
+import com.madmaxlgndklr.pokedex.data.remote.dto.MoveResponse
+import com.madmaxlgndklr.pokedex.data.remote.dto.PokedexInfoResponse
 import com.madmaxlgndklr.pokedex.data.remote.dto.PokemonDetailResponse
 import com.madmaxlgndklr.pokedex.data.remote.dto.PokemonListResponse
 import com.madmaxlgndklr.pokedex.data.remote.dto.PokemonSpeciesResponse
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.repository.FakeCaughtPokemonDao
+import com.madmaxlgndklr.pokedex.repository.FakeMoveDao
 import com.madmaxlgndklr.pokedex.repository.FakePokeApiService
 import com.madmaxlgndklr.pokedex.repository.FakePokemonDetailCacheDao
 import com.madmaxlgndklr.pokedex.repository.FakePokemonListCacheDao
+import com.madmaxlgndklr.pokedex.repository.fakeSettingsRepo
 import com.madmaxlgndklr.pokedex.ui.search.SearchUiState
 import com.madmaxlgndklr.pokedex.ui.search.SearchViewModel
 import kotlinx.coroutines.Dispatchers
@@ -34,8 +38,8 @@ class SearchViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(dispatcher)
-        val repo = PokemonRepository(FakePokeApiService(), FakeCaughtPokemonDao(), FakePokemonListCacheDao(), FakePokemonDetailCacheDao())
-        viewModel = SearchViewModel(repo)
+        val repo = PokemonRepository(FakePokeApiService(), FakeCaughtPokemonDao(), FakePokemonListCacheDao(), FakePokemonDetailCacheDao(), FakeMoveDao())
+        viewModel = SearchViewModel(repo, fakeSettingsRepo())
     }
 
     @After
@@ -67,16 +71,21 @@ class SearchViewModelTest {
         job.cancel()
     }
 
-    @Test
-    fun `search sets NotFound when api throws`() = runTest {
+    private fun throwingRepo(): PokemonRepository {
         val throwingApi = object : PokeApiService {
             override suspend fun getPokemonList(limit: Int, offset: Int): PokemonListResponse = throw UnsupportedOperationException()
             override suspend fun getPokemonDetail(id: String): PokemonDetailResponse = throw RuntimeException("not found")
             override suspend fun getPokemonSpecies(id: Int): PokemonSpeciesResponse = throw UnsupportedOperationException()
             override suspend fun getEvolutionChain(id: Int): EvolutionChainResponse = throw UnsupportedOperationException()
+            override suspend fun getPokedexInfo(name: String): PokedexInfoResponse = throw UnsupportedOperationException()
+            override suspend fun getMove(name: String): MoveResponse = throw UnsupportedOperationException()
         }
-        val repo = PokemonRepository(throwingApi, FakeCaughtPokemonDao(), FakePokemonListCacheDao(), FakePokemonDetailCacheDao())
-        viewModel = SearchViewModel(repo)
+        return PokemonRepository(throwingApi, FakeCaughtPokemonDao(), FakePokemonListCacheDao(), FakePokemonDetailCacheDao(), FakeMoveDao())
+    }
+
+    @Test
+    fun `search sets NotFound when api throws`() = runTest {
+        viewModel = SearchViewModel(throwingRepo(), fakeSettingsRepo())
         viewModel.onQueryChange("missingno")
         viewModel.search()
         advanceUntilIdle()
@@ -85,14 +94,7 @@ class SearchViewModelTest {
 
     @Test
     fun `onQueryChange resets NotFound state to Idle`() = runTest {
-        val throwingApi = object : PokeApiService {
-            override suspend fun getPokemonList(limit: Int, offset: Int): PokemonListResponse = throw UnsupportedOperationException()
-            override suspend fun getPokemonDetail(id: String): PokemonDetailResponse = throw RuntimeException("not found")
-            override suspend fun getPokemonSpecies(id: Int): PokemonSpeciesResponse = throw UnsupportedOperationException()
-            override suspend fun getEvolutionChain(id: Int): EvolutionChainResponse = throw UnsupportedOperationException()
-        }
-        val repo = PokemonRepository(throwingApi, FakeCaughtPokemonDao(), FakePokemonListCacheDao(), FakePokemonDetailCacheDao())
-        viewModel = SearchViewModel(repo)
+        viewModel = SearchViewModel(throwingRepo(), fakeSettingsRepo())
         viewModel.onQueryChange("missingno")
         viewModel.search()
         advanceUntilIdle()

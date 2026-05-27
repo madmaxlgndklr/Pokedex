@@ -1,6 +1,7 @@
 package com.madmaxlgndklr.pokedex.data.remote
 
 import com.madmaxlgndklr.pokedex.data.remote.dto.EvolutionChainResponse
+import com.madmaxlgndklr.pokedex.data.remote.dto.MoveResponse
 import com.madmaxlgndklr.pokedex.data.remote.dto.PokedexInfoResponse
 import com.madmaxlgndklr.pokedex.data.remote.dto.PokemonDetailResponse
 import com.madmaxlgndklr.pokedex.data.remote.dto.PokemonListResponse
@@ -27,4 +28,7 @@ interface PokeApiService {
 
     @GET("pokedex/{name}/")
     suspend fun getPokedexInfo(@Path("name") name: String): PokedexInfoResponse
+
+    @GET("move/{name}/")
+    suspend fun getMove(@Path("name") name: String): MoveResponse
 }

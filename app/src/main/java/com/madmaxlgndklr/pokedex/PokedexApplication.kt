@@ -14,7 +14,8 @@ class PokedexApplication : Application() {
             RetrofitClient.api,
             database.caughtPokemonDao(),
             database.pokemonListCacheDao(),
-            database.pokemonDetailCacheDao()
+            database.pokemonDetailCacheDao(),
+            database.moveDao()
         )
     }
     val settingsRepository by lazy { SettingsRepository(settingsDataStore) }

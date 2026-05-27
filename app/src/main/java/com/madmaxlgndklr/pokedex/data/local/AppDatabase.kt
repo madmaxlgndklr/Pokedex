@@ -11,15 +11,17 @@ import androidx.sqlite.db.SupportSQLiteDatabase
     entities = [
         CaughtPokemonEntity::class,
         PokemonListCacheEntity::class,
-        PokemonDetailCacheEntity::class
+        PokemonDetailCacheEntity::class,
+        MoveEntity::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun caughtPokemonDao(): CaughtPokemonDao
     abstract fun pokemonListCacheDao(): PokemonListCacheDao
     abstract fun pokemonDetailCacheDao(): PokemonDetailCacheDao
+    abstract fun moveDao(): MoveDao
 
     companion object {
         private val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -41,6 +43,15 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS moves " +
+                    "(name TEXT PRIMARY KEY NOT NULL, moveJson TEXT NOT NULL)"
+                )
+            }
+        }
+
         @Volatile private var INSTANCE: AppDatabase? = null
 
         fun getInstance(context: Context): AppDatabase =
@@ -49,7 +60,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "pokedex.db"
-                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3).build().also { INSTANCE = it }
+                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4).build().also { INSTANCE = it }
             }
     }
 }

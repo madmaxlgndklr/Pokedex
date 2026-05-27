@@ -2,12 +2,20 @@ package com.madmaxlgndklr.pokedex.repository
 
 import com.madmaxlgndklr.pokedex.data.local.CaughtPokemonDao
 import com.madmaxlgndklr.pokedex.data.local.CaughtPokemonEntity
+import com.madmaxlgndklr.pokedex.data.local.MoveDao
+import com.madmaxlgndklr.pokedex.data.local.MoveEntity
 import com.madmaxlgndklr.pokedex.data.local.PokemonDetailCacheDao
 import com.madmaxlgndklr.pokedex.data.local.PokemonDetailCacheEntity
 import com.madmaxlgndklr.pokedex.data.local.PokemonListCacheDao
 import com.madmaxlgndklr.pokedex.data.local.PokemonListCacheEntity
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.emptyPreferences
+import com.madmaxlgndklr.pokedex.data.local.SettingsRepository
 import com.madmaxlgndklr.pokedex.data.remote.PokeApiService
 import com.madmaxlgndklr.pokedex.data.remote.dto.*
+import com.madmaxlgndklr.pokedex.data.remote.dto.MoveEffectEntryDto
+import com.madmaxlgndklr.pokedex.data.remote.dto.MoveResponse
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +31,8 @@ class PokemonRepositoryTest {
     private val fakeDao = FakeCaughtPokemonDao()
     private val fakeListCacheDao = FakePokemonListCacheDao()
     private val fakeDetailCacheDao = FakePokemonDetailCacheDao()
-    private val repo = PokemonRepository(fakeApi, fakeDao, fakeListCacheDao, fakeDetailCacheDao)
+    private val fakeMoveDao = FakeMoveDao()
+    private val repo = PokemonRepository(fakeApi, fakeDao, fakeListCacheDao, fakeDetailCacheDao, fakeMoveDao)
 
     @Test
     fun `getPokemonList maps DTOs to domain summaries`() = runTest {
@@ -91,7 +100,19 @@ class PokemonRepositoryTest {
 
 // --- Fakes ---
 
-class FakePokeApiService : PokeApiService {
+class FakeDataStore : DataStore<Preferences> {
+    private val _prefs = MutableStateFlow(emptyPreferences())
+    override val data = _prefs
+    override suspend fun updateData(transform: suspend (t: Preferences) -> Preferences): Preferences {
+        val updated = transform(_prefs.value)
+        _prefs.value = updated
+        return updated
+    }
+}
+
+fun fakeSettingsRepo() = SettingsRepository(FakeDataStore())
+
+open class FakePokeApiService : PokeApiService {
     override suspend fun getPokemonList(limit: Int, offset: Int) = PokemonListResponse(
         results = listOf(
             PokemonResultDto("bulbasaur", "http://10.0.2.2:89/api/v2/pokemon/1/"),
@@ -149,6 +170,24 @@ class FakePokeApiService : PokeApiService {
             )
         )
     )
+
+    override suspend fun getPokedexInfo(name: String): PokedexInfoResponse {
+        throw UnsupportedOperationException()
+    }
+
+    override suspend fun getMove(name: String) = MoveResponse(
+        name = name,
+        type = NamedDto("fire"),
+        damageClass = NamedDto("special"),
+        power = 90,
+        accuracy = 100,
+        pp = 10,
+        effectEntries = listOf(MoveEffectEntryDto("Burns the target.", NamedDto("en"))),
+        learnedByPokemon = listOf(
+            NamedDto("charmander", "http://10.0.2.2:89/api/v2/pokemon/4/"),
+            NamedDto("charmeleon",  "http://10.0.2.2:89/api/v2/pokemon/5/")
+        )
+    )
 }
 
 class FakeCaughtPokemonDao : CaughtPokemonDao {
@@ -182,4 +221,10 @@ class FakePokemonDetailCacheDao : PokemonDetailCacheDao {
     override suspend fun getById(id: Int) = store[id]
     override suspend fun insert(entity: PokemonDetailCacheEntity) { store[entity.id] = entity }
     override suspend fun count() = store.size
+}
+
+class FakeMoveDao : MoveDao {
+    val store = mutableMapOf<String, MoveEntity>()
+    override suspend fun getByName(name: String) = store[name]
+    override suspend fun insert(entity: MoveEntity) { store[entity.name] = entity }
 }

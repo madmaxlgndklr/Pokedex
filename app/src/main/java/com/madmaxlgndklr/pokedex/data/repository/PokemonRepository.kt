@@ -3,6 +3,8 @@ package com.madmaxlgndklr.pokedex.data.repository
 import com.google.gson.Gson
 import com.madmaxlgndklr.pokedex.data.local.CaughtPokemonDao
 import com.madmaxlgndklr.pokedex.data.local.CaughtPokemonEntity
+import com.madmaxlgndklr.pokedex.data.local.MoveDao
+import com.madmaxlgndklr.pokedex.data.local.MoveEntity
 import com.madmaxlgndklr.pokedex.data.local.PokemonDetailCacheDao
 import com.madmaxlgndklr.pokedex.data.local.PokemonDetailCacheEntity
 import com.madmaxlgndklr.pokedex.data.local.PokemonListCacheDao
@@ -15,6 +17,7 @@ import com.madmaxlgndklr.pokedex.data.remote.dto.PokemonDetailResponse
 import com.madmaxlgndklr.pokedex.data.remote.dto.PokemonSpeciesResponse
 import com.madmaxlgndklr.pokedex.model.EvolutionNode
 import com.madmaxlgndklr.pokedex.model.EvolutionStage
+import com.madmaxlgndklr.pokedex.model.Move
 import com.madmaxlgndklr.pokedex.model.PokemonDetail
 import com.madmaxlgndklr.pokedex.model.PokemonMove
 import com.madmaxlgndklr.pokedex.model.PokemonStat
@@ -33,7 +36,8 @@ class PokemonRepository(
     private val api: PokeApiService,
     private val dao: CaughtPokemonDao,
     private val listCacheDao: PokemonListCacheDao,
-    private val detailCacheDao: PokemonDetailCacheDao
+    private val detailCacheDao: PokemonDetailCacheDao,
+    private val moveDao: MoveDao
 ) {
     private val gson = Gson()
 
@@ -158,6 +162,36 @@ class PokemonRepository(
     suspend fun setCaught(id: Int, name: String, caught: Boolean) {
         if (caught) dao.insert(CaughtPokemonEntity(id, name))
         else dao.delete(CaughtPokemonEntity(id, name))
+    }
+
+    suspend fun getMove(name: String): Move {
+        moveDao.getByName(name)?.let { entity ->
+            val cached = gson.fromJson(entity.moveJson, Move::class.java)
+            return cached.copy(learnedBy = cached.learnedBy.take(60))
+        }
+        val response = api.getMove(name)
+        val allLearners = response.learnedByPokemon
+            .mapNotNull { dto ->
+                try {
+                    val id = dto.url.trimEnd('/').substringAfterLast('/').toInt()
+                    PokemonSummary(id, dto.name)
+                } catch (_: Exception) { null }
+            }
+            .sortedBy { it.id }
+        val fullMove = Move(
+            name = response.name,
+            type = response.type.name,
+            category = response.damageClass.name,
+            power = response.power,
+            accuracy = response.accuracy,
+            pp = response.pp,
+            effectText = response.effectEntries
+                .firstOrNull { it.language.name == "en" }?.shortEffect ?: "",
+            learnedBy = allLearners,
+            totalLearnersCount = allLearners.size
+        )
+        moveDao.insert(MoveEntity(name, gson.toJson(fullMove)))
+        return fullMove.copy(learnedBy = allLearners.take(60))
     }
 
     private fun mapDetail(
