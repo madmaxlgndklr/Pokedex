@@ -14,10 +14,11 @@ data class PokemonDetail(
     val spriteUrl: String,
     val types: List<String>,
     val stats: List<PokemonStat>,
-    val moves: List<PokemonMove>,
+    val moves: List<PokemonMove>,       // level-up moves, sorted by levelLearnedAt
     val evolutionChain: List<EvolutionStage>,
     val flavorText: String,
     val height: Int = 0,
     val weight: Int = 0,
-    val abilities: List<String> = emptyList()
+    val abilities: List<String> = emptyList(),
+    val tmMoves: List<String> = emptyList() // machine/egg/tutor — no level restriction
 )

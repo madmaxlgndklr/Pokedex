@@ -216,8 +216,17 @@ class PokemonRepository(
                     .filter { it.moveLearnMethod.name == "level-up" }
                     .map { PokemonMove(slot.move.name, it.levelLearnedAt) }
             }
-            .distinctBy { it.name }
+            .groupBy { it.name }
+            .map { (_, entries) -> entries.minByOrNull { it.levelLearnedAt }!! }
             .sortedBy { it.levelLearnedAt }
+
+        val tmMoves = detail.moves
+            .filter { slot ->
+                slot.versionGroupDetails.any { it.moveLearnMethod.name in setOf("machine", "egg", "tutor") }
+            }
+            .map { it.move.name }
+            .distinct()
+            .sorted()
 
         val flavorText = species.flavorTextEntries
             .firstOrNull { it.language.name == "en" }
@@ -237,7 +246,8 @@ class PokemonRepository(
             flavorText = flavorText,
             height = detail.height,
             weight = detail.weight,
-            abilities = detail.abilities.map { it.ability.name }
+            abilities = detail.abilities.map { it.ability.name },
+            tmMoves = tmMoves
         )
     }
 

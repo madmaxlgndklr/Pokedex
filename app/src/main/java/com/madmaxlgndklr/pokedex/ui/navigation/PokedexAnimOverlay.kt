@@ -3,7 +3,6 @@ package com.madmaxlgndklr.pokedex.ui.navigation
 import android.net.Uri
 import androidx.annotation.OptIn
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -119,14 +117,11 @@ fun PokedexAnimOverlay(
         }
 
         if (state == PokedexState.CLOSED) {
-            // Green power button hotspot over the frozen closed frame.
-            // Nudge y until it aligns with the physical green LED in the frame.
+            // Invisible tap zone aligned with the green LED in the closed frame.
             Box(
                 modifier = Modifier
                     .offset(x = sw * 0.5f - 32.dp, y = sh * 0.78f - 32.dp)
                     .size(64.dp)
-                    .background(Color(0xFF00FF44).copy(alpha = 0.12f), CircleShape)
-                    .border(1.dp, Color(0xFF00FF44).copy(alpha = 0.35f), CircleShape)
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
