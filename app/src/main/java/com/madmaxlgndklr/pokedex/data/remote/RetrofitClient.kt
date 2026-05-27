@@ -9,13 +9,14 @@ object RetrofitClient {
     private const val BASE_URL = "$SERVER_ROOT/api/v2/"
 
     fun spriteUrl(id: Int) = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png"
-
     fun shinySpriteUrl(id: Int) = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/$id.png"
+
+    val httpClient: OkHttpClient by lazy { OkHttpClient.Builder().build() }
 
     val api: PokeApiService by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .client(OkHttpClient.Builder().build())
+            .client(httpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(PokeApiService::class.java)
