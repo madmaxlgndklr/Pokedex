@@ -2,8 +2,12 @@ package com.madmaxlgndklr.pokedex.ui.team
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.filled.PowerSettingsNew
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -55,10 +59,10 @@ fun TeamScreen(
     viewModel: TeamViewModel,
     onBack: () -> Unit,
     onPokemonClick: (Int) -> Unit,
-    onNavigateSearch: () -> Unit,
     onNavigateFullList: () -> Unit,
     onNavigateMyCollection: () -> Unit,
-    onNavigateSettings: () -> Unit
+    onNavigateSettings: () -> Unit,
+    onClosePokedex: () -> Unit = {}
 ) {
     val teamEntries by viewModel.teamEntries.collectAsState()
     val coverage by viewModel.teamCoverage.collectAsState()
@@ -75,6 +79,28 @@ fun TeamScreen(
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
+
+        // Red I/O power button — between the time and sound indicators on the arc
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .offset(x = sw * 0.5f - 20.dp, y = sh * 0.14f - 20.dp)
+                .size(40.dp)
+                .background(PokedexDark.copy(alpha = 0.72f), CircleShape)
+                .border(1.5.dp, Color(0xFFCC0000).copy(alpha = 0.80f), CircleShape)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onClosePokedex
+                )
+        ) {
+            Icon(
+                imageVector = Icons.Filled.PowerSettingsNew,
+                contentDescription = "Close Pokédex",
+                tint = Color(0xFFFF2222),
+                modifier = Modifier.size(22.dp)
+            )
+        }
 
         IconButton(onClick = onBack, modifier = Modifier.offset(x = 2.dp, y = 2.dp).size(36.dp)) {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = PokedexCream)
@@ -232,7 +258,6 @@ fun TeamScreen(
 
         BottomNavBar(
             current = NavDestination.TEAM,
-            onNavigateSearch = onNavigateSearch,
             onNavigateFullList = onNavigateFullList,
             onNavigateMyCollection = onNavigateMyCollection,
             onNavigateTeam = {},

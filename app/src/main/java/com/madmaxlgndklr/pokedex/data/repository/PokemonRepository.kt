@@ -146,6 +146,15 @@ class PokemonRepository(
         }
     }
 
+    suspend fun getDexDescription(pokedexName: String): String? = try {
+        api.getPokedexInfo(pokedexName)
+            .descriptions
+            .firstOrNull { it.language.name == "en" }
+            ?.description
+            ?.replace("\n", " ")
+            ?.replace("", " ")
+    } catch (_: Exception) { null }
+
     suspend fun setCaught(id: Int, name: String, caught: Boolean) {
         if (caught) dao.insert(CaughtPokemonEntity(id, name))
         else dao.delete(CaughtPokemonEntity(id, name))

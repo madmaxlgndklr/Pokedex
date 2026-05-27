@@ -69,6 +69,8 @@ fun AppNavigation() {
     var statusBarVisible by remember { mutableStateOf(false) }
     var isDetailLoading by remember { mutableStateOf(false) }
 
+    var pokedexState by remember { mutableStateOf(PokedexState.OPEN) }
+
     var isMuted by remember { mutableStateOf(false) }
     val currentIsMuted by rememberUpdatedState(isMuted)
 
@@ -86,6 +88,28 @@ fun AppNavigation() {
         val pref = musicOnLaunch ?: return@LaunchedEffect
         if (pref && !isMuted && !mediaPlayer.isPlaying) mediaPlayer.start()
         else if (!pref && mediaPlayer.isPlaying) mediaPlayer.pause()
+    }
+
+    // Music control tied to Pokédex state:
+    // - Silence immediately on close/closing.
+    // - Resume at the START of the opening animation (not after it finishes),
+    //   but only if the user has music enabled and hasn't muted.
+    LaunchedEffect(pokedexState) {
+        when (pokedexState) {
+            PokedexState.CLOSING, PokedexState.CLOSED -> {
+                if (mediaPlayer.isPlaying) mediaPlayer.pause()
+            }
+            PokedexState.OPENING -> {
+                if (currentMusicOnLaunch && !currentIsMuted) {
+                    mediaPlayer.seekTo(0)
+                    mediaPlayer.start()
+                }
+            }
+            PokedexState.OPEN -> {
+                if (currentMusicOnLaunch && !currentIsMuted && !mediaPlayer.isPlaying)
+                    mediaPlayer.start()
+            }
+        }
     }
 
     val activity = context as? ComponentActivity
@@ -126,6 +150,9 @@ fun AppNavigation() {
                     onSyncNow = { navController.navigate(Routes.SETTINGS) },
                     onAnimationStarted = { statusBarVisible = false },
                     onAnimationEnded = {
+                        navController.navigate(Routes.FULL_LIST) {
+                            popUpTo(Routes.SEARCH) { inclusive = true }
+                        }
                         scope.launch {
                             delay(500)
                             statusBarVisible = true
@@ -139,14 +166,14 @@ fun AppNavigation() {
                     viewModel = vm,
                     onPokemonClick = { id -> navController.navigate(Routes.detail(id)) },
                     onBack = { navController.popBackStack() },
-                    onNavigateSearch = { navController.popBackStack() },
                     onNavigateMyCollection = {
                         navController.navigate(Routes.MY_COLLECTION) {
                             popUpTo(Routes.FULL_LIST) { inclusive = true }
                         }
                     },
                     onNavigateTeam = { navController.navigate(Routes.TEAM) },
-                    onNavigateSettings = { navController.navigate(Routes.SETTINGS) }
+                    onNavigateSettings = { navController.navigate(Routes.SETTINGS) },
+                    onClosePokedex = { pokedexState = PokedexState.CLOSING }
                 )
             }
             composable(Routes.MY_COLLECTION) {
@@ -155,18 +182,14 @@ fun AppNavigation() {
                     viewModel = vm,
                     onPokemonClick = { id -> navController.navigate(Routes.detail(id)) },
                     onBack = { navController.popBackStack() },
-                    onNavigateSearch = {
-                        navController.navigate(Routes.SEARCH) {
-                            popUpTo(Routes.MY_COLLECTION) { inclusive = true }
-                        }
-                    },
                     onNavigateFullList = {
                         navController.navigate(Routes.FULL_LIST) {
                             popUpTo(Routes.MY_COLLECTION) { inclusive = true }
                         }
                     },
                     onNavigateTeam = { navController.navigate(Routes.TEAM) },
-                    onNavigateSettings = { navController.navigate(Routes.SETTINGS) }
+                    onNavigateSettings = { navController.navigate(Routes.SETTINGS) },
+                    onClosePokedex = { pokedexState = PokedexState.CLOSING }
                 )
             }
             composable(Routes.TEAM) {
@@ -174,10 +197,10 @@ fun AppNavigation() {
                     viewModel = teamVm,
                     onBack = { navController.popBackStack() },
                     onPokemonClick = { id -> navController.navigate(Routes.detail(id)) },
-                    onNavigateSearch = { navController.navigate(Routes.SEARCH) { popUpTo(Routes.TEAM) { inclusive = true } } },
                     onNavigateFullList = { navController.navigate(Routes.FULL_LIST) { popUpTo(Routes.TEAM) { inclusive = true } } },
                     onNavigateMyCollection = { navController.navigate(Routes.MY_COLLECTION) { popUpTo(Routes.TEAM) { inclusive = true } } },
-                    onNavigateSettings = { navController.navigate(Routes.SETTINGS) }
+                    onNavigateSettings = { navController.navigate(Routes.SETTINGS) },
+                    onClosePokedex = { pokedexState = PokedexState.CLOSING }
                 )
             }
             composable(
@@ -204,11 +227,6 @@ fun AppNavigation() {
                         else if (currentMusicOnLaunch && !mediaPlayer.isPlaying) mediaPlayer.start()
                     },
                     onBack = { navController.popBackStack() },
-                    onNavigateSearch = {
-                        navController.navigate(Routes.SEARCH) {
-                            popUpTo(Routes.SETTINGS) { inclusive = true }
-                        }
-                    },
                     onNavigateFullList = {
                         navController.navigate(Routes.FULL_LIST) {
                             popUpTo(Routes.SETTINGS) { inclusive = true }
@@ -263,6 +281,16 @@ fun AppNavigation() {
             SystemStatusBar(
                 isMuted = isMuted,
                 modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        // Full-screen overlay for close/open animations — sits on top of all nav content
+        if (pokedexState != PokedexState.OPEN) {
+            PokedexAnimOverlay(
+                state = pokedexState,
+                onClosingComplete = { pokedexState = PokedexState.CLOSED },
+                onOpeningComplete = { pokedexState = PokedexState.OPEN },
+                onPowerButtonTap  = { pokedexState = PokedexState.OPENING }
             )
         }
     }

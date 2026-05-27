@@ -62,7 +62,6 @@ fun SettingsScreen(
     isMuted: Boolean,
     onToggleMute: () -> Unit,
     onBack: () -> Unit,
-    onNavigateSearch: () -> Unit,
     onNavigateFullList: () -> Unit,
     onNavigateMyCollection: () -> Unit
 ) {
@@ -371,7 +370,6 @@ fun SettingsScreen(
 
         BottomNavBar(
             current = NavDestination.SETTINGS,
-            onNavigateSearch = onNavigateSearch,
             onNavigateFullList = onNavigateFullList,
             onNavigateMyCollection = onNavigateMyCollection,
             onNavigateSettings = {},

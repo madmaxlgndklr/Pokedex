@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.model.PokemonSummary
+import com.madmaxlgndklr.pokedex.ui.common.DexSelection
 import com.madmaxlgndklr.pokedex.ui.common.Generation
 import com.madmaxlgndklr.pokedex.ui.common.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,23 +32,47 @@ class FullListViewModel(private val repository: PokemonRepository) : ViewModel()
     private val _sortOrder = MutableStateFlow(SortOrder.NUMBER)
     val sortOrder: StateFlow<SortOrder> = _sortOrder
 
-    val filteredState: StateFlow<UiState<List<PokemonSummary>>> =
-        combine(_uiState, _selectedGens, _selectedTypes, _sortOrder) { state, gens, types, sort ->
+    private val _nameQuery = MutableStateFlow("")
+    val nameQuery: StateFlow<String> = _nameQuery
+
+    val selectedDex = MutableStateFlow<DexSelection>(DexSelection.National)
+
+    private val _filteredBase: StateFlow<UiState<List<PokemonSummary>>> =
+        combine(_uiState, _selectedGens, _selectedTypes, _sortOrder, _nameQuery) { state, gens, types, sort, query ->
             when (state) {
                 is UiState.Success -> {
                     var list = state.data
                     if (gens.isNotEmpty()) list = list.filter { p -> gens.any { p.id in it.idRange } }
                     if (types.isNotEmpty()) {
-                        // Pre-compute cache map so getCachedTypes (suspend) isn't called in filter lambda
                         val cachedTypesMap = list.associate { p -> p.id to repository.getCachedTypes(p.id) }
                         list = list.filter { p ->
                             val cached = cachedTypesMap[p.id]
                             cached == null || cached.any { it in types }
                         }
                     }
+                    if (query.isNotBlank()) {
+                        val q = query.trim().lowercase()
+                        list = list.filter { p ->
+                            p.name.contains(q, ignoreCase = true) || p.id.toString() == q
+                        }
+                    }
                     list = when (sort) {
                         SortOrder.NUMBER -> list.sortedBy { it.id }
                         SortOrder.NAME   -> list.sortedBy { it.name }
+                    }
+                    UiState.Success(list)
+                }
+                else -> state
+            }
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), UiState.Loading)
+
+    val filteredState: StateFlow<UiState<List<PokemonSummary>>> =
+        combine(_filteredBase, selectedDex) { state, dex ->
+            when (state) {
+                is UiState.Success -> {
+                    val list = when (dex) {
+                        is DexSelection.National -> state.data
+                        is DexSelection.Regional -> state.data.filter { it.id in dex.gen.idRange }
                     }
                     UiState.Success(list)
                 }
@@ -86,6 +111,10 @@ class FullListViewModel(private val repository: PokemonRepository) : ViewModel()
     fun clearTypes() { _selectedTypes.value = emptySet() }
 
     fun setSortOrder(order: SortOrder) { _sortOrder.value = order }
+
+    fun setNameQuery(q: String) { _nameQuery.value = q }
+
+    fun setSelectedDex(dex: DexSelection) { selectedDex.value = dex }
 
     fun toggleCaught(id: Int, name: String) {
         viewModelScope.launch {

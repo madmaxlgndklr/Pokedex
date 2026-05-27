@@ -368,8 +368,7 @@ fun SearchScreen(
         }
 
         BottomNavBar(
-            current = NavDestination.SEARCH,
-            onNavigateSearch = {},
+            current = NavDestination.FULL_LIST,
             onNavigateFullList = onNavigateFullList,
             onNavigateMyCollection = onNavigateMyCollection,
             onNavigateTeam = onNavigateTeam,

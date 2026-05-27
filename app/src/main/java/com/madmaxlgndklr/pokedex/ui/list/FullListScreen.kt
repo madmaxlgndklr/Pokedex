@@ -20,16 +20,30 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.PowerSettingsNew
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,8 +51,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,6 +68,8 @@ import com.madmaxlgndklr.pokedex.R
 import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
 import com.madmaxlgndklr.pokedex.model.PokemonSummary
 import com.madmaxlgndklr.pokedex.ui.common.BottomNavBar
+import com.madmaxlgndklr.pokedex.ui.common.DexSelection
+import com.madmaxlgndklr.pokedex.ui.common.Generation
 import com.madmaxlgndklr.pokedex.ui.common.NavDestination
 import com.madmaxlgndklr.pokedex.ui.common.RegionFilterDialog
 import com.madmaxlgndklr.pokedex.ui.common.TypeFilterDialog
@@ -64,19 +87,25 @@ fun FullListScreen(
     viewModel: FullListViewModel,
     onPokemonClick: (Int) -> Unit,
     onBack: () -> Unit,
-    onNavigateSearch: () -> Unit,
     onNavigateMyCollection: () -> Unit,
     onNavigateTeam: () -> Unit = {},
-    onNavigateSettings: () -> Unit
+    onNavigateSettings: () -> Unit,
+    onClosePokedex: () -> Unit = {}
 ) {
     val uiState by viewModel.filteredState.collectAsState()
     val selectedGens by viewModel.selectedGens.collectAsState()
     val selectedTypes by viewModel.selectedTypes.collectAsState()
     val sortOrder by viewModel.sortOrder.collectAsState()
     val caughtIds by viewModel.caughtIds.collectAsState()
+    val nameQuery by viewModel.nameQuery.collectAsState()
+    val selectedDex by viewModel.selectedDex.collectAsState()
 
     var showFilterDialog by remember { mutableStateOf(false) }
     var showTypeDialog by remember { mutableStateOf(false) }
+    var showDexDropdown by remember { mutableStateOf(false) }
+    var showSearch by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+    val keyboard = LocalSoftwareKeyboardController.current
 
     if (showFilterDialog) {
         RegionFilterDialog(
@@ -111,62 +140,125 @@ fun FullListScreen(
         val stripHeight = sh * 0.32f
 
         // Filter/sort row above the sprite strip
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(y = stripTop - 28.dp)
-        ) {
+        if (showSearch) {
+            LaunchedEffect(Unit) { focusRequester.requestFocus() }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null)
-                    { showFilterDialog = true }
-                    .padding(horizontal = 8.dp)
+                    .fillMaxWidth()
+                    .offset(y = stripTop - 28.dp)
+                    .padding(horizontal = 12.dp)
             ) {
+                BasicTextField(
+                    value = nameQuery,
+                    onValueChange = { viewModel.setNameQuery(it) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { keyboard?.hide() }),
+                    textStyle = TextStyle(
+                        fontFamily = PressStart2P,
+                        fontSize = 7.sp,
+                        color = Color.White
+                    ),
+                    cursorBrush = SolidColor(GlowBlue),
+                    decorationBox = { inner ->
+                        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart) {
+                            if (nameQuery.isEmpty()) {
+                                Text(
+                                    text = "SEARCH NAME OR #",
+                                    fontFamily = PressStart2P,
+                                    fontSize = 6.sp,
+                                    color = PokedexCream.copy(alpha = 0.35f)
+                                )
+                            }
+                            inner()
+                        }
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .focusRequester(focusRequester)
+                )
                 Icon(
-                    imageVector = Icons.Filled.FilterList,
-                    contentDescription = "Region",
-                    tint = if (selectedGens.isNotEmpty()) CaughtGold else PokedexCream,
-                    modifier = Modifier.size(12.dp)
-                )
-                Text(
-                    text = if (selectedGens.isNotEmpty()) " GEN(${selectedGens.size})" else " GEN",
-                    fontFamily = PressStart2P,
-                    fontSize = 5.sp,
-                    color = if (selectedGens.isNotEmpty()) CaughtGold else PokedexCream
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Close search",
+                    tint = PokedexCream.copy(alpha = 0.7f),
+                    modifier = Modifier
+                        .size(16.dp)
+                        .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
+                            viewModel.setNameQuery("")
+                            showSearch = false
+                            keyboard?.hide()
+                        }
                 )
             }
-            Text(text = "|", fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream.copy(alpha = 0.3f))
+        } else {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
-                    .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null)
-                    { showTypeDialog = true }
-                    .padding(horizontal = 8.dp)
+                    .fillMaxWidth()
+                    .offset(y = stripTop - 28.dp)
             ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null)
+                        { showFilterDialog = true }
+                        .padding(horizontal = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.FilterList,
+                        contentDescription = "Region",
+                        tint = if (selectedGens.isNotEmpty()) CaughtGold else PokedexCream,
+                        modifier = Modifier.size(12.dp)
+                    )
+                    Text(
+                        text = if (selectedGens.isNotEmpty()) " GEN(${selectedGens.size})" else " GEN",
+                        fontFamily = PressStart2P,
+                        fontSize = 5.sp,
+                        color = if (selectedGens.isNotEmpty()) CaughtGold else PokedexCream
+                    )
+                }
+                Text(text = "|", fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream.copy(alpha = 0.3f))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null)
+                        { showTypeDialog = true }
+                        .padding(horizontal = 8.dp)
+                ) {
+                    Text(
+                        text = if (selectedTypes.isNotEmpty()) "TYPE(${selectedTypes.size})" else "TYPE",
+                        fontFamily = PressStart2P,
+                        fontSize = 5.sp,
+                        color = if (selectedTypes.isNotEmpty()) CaughtGold else PokedexCream
+                    )
+                }
+                Text(text = "|", fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream.copy(alpha = 0.3f))
                 Text(
-                    text = if (selectedTypes.isNotEmpty()) "TYPE(${selectedTypes.size})" else "TYPE",
+                    text = if (sortOrder == SortOrder.NUMBER) "# SORT" else "A SORT",
                     fontFamily = PressStart2P,
                     fontSize = 5.sp,
-                    color = if (selectedTypes.isNotEmpty()) CaughtGold else PokedexCream
+                    color = PokedexCream,
+                    modifier = Modifier
+                        .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
+                            viewModel.setSortOrder(
+                                if (sortOrder == SortOrder.NUMBER) SortOrder.NAME else SortOrder.NUMBER
+                            )
+                        }
+                        .padding(horizontal = 8.dp)
+                )
+                Text(text = "|", fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream.copy(alpha = 0.3f))
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = "Search",
+                    tint = if (nameQuery.isNotBlank()) CaughtGold else PokedexCream,
+                    modifier = Modifier
+                        .size(12.dp)
+                        .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null)
+                        { showSearch = true }
                 )
             }
-            Text(text = "|", fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream.copy(alpha = 0.3f))
-            Text(
-                text = if (sortOrder == SortOrder.NUMBER) "# SORT" else "A SORT",
-                fontFamily = PressStart2P,
-                fontSize = 5.sp,
-                color = PokedexCream,
-                modifier = Modifier
-                    .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
-                        viewModel.setSortOrder(
-                            if (sortOrder == SortOrder.NUMBER) SortOrder.NAME else SortOrder.NUMBER
-                        )
-                    }
-                    .padding(horizontal = 8.dp)
-            )
         }
 
         when (val state = uiState) {
@@ -215,6 +307,91 @@ fun FullListScreen(
             }
         }
 
+        // Dex selector dropdown below sprite strip
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .offset(y = stripTop + stripHeight + 8.dp)
+                .padding(horizontal = 16.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(PokedexDark.copy(alpha = 0.6f), RoundedCornerShape(4.dp))
+                    .border(1.dp, GlowBlue.copy(alpha = 0.4f), RoundedCornerShape(4.dp))
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { showDexDropdown = true }
+                    .padding(horizontal = 10.dp, vertical = 6.dp)
+            ) {
+                Text(
+                    text = selectedDex.label,
+                    fontFamily = PressStart2P,
+                    fontSize = 6.sp,
+                    color = CaughtGold
+                )
+                Icon(
+                    imageVector = if (showDexDropdown) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+                    contentDescription = null,
+                    tint = CaughtGold,
+                    modifier = Modifier.size(14.dp)
+                )
+            }
+            DropdownMenu(
+                expanded = showDexDropdown,
+                onDismissRequest = { showDexDropdown = false },
+                modifier = Modifier
+                    .background(PokedexDark)
+                    .border(1.dp, GlowBlue.copy(alpha = 0.3f), RoundedCornerShape(4.dp))
+            ) {
+                val dexOptions: List<DexSelection> =
+                    listOf(DexSelection.National) + Generation.entries.map { DexSelection.Regional(it) }
+                dexOptions.forEach { dex ->
+                    val isSelected = dex == selectedDex
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = dex.label,
+                                fontFamily = PressStart2P,
+                                fontSize = 5.sp,
+                                color = if (isSelected) CaughtGold else PokedexCream
+                            )
+                        },
+                        onClick = {
+                            viewModel.setSelectedDex(dex)
+                            showDexDropdown = false
+                        },
+                        colors = MenuDefaults.itemColors(textColor = PokedexCream)
+                    )
+                }
+            }
+        }
+
+        // Red I/O power button — between the time and sound indicators on the arc
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .offset(x = sw * 0.5f - 20.dp, y = sh * 0.14f - 20.dp)
+                .size(40.dp)
+                .background(PokedexDark.copy(alpha = 0.72f), CircleShape)
+                .border(1.5.dp, Color(0xFFCC0000).copy(alpha = 0.80f), CircleShape)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onClosePokedex
+                )
+        ) {
+            Icon(
+                imageVector = Icons.Filled.PowerSettingsNew,
+                contentDescription = "Close Pokédex",
+                tint = Color(0xFFFF2222),
+                modifier = Modifier.size(22.dp)
+            )
+        }
+
         // Back button
         IconButton(
             onClick = onBack,
@@ -225,7 +402,6 @@ fun FullListScreen(
 
         BottomNavBar(
             current = NavDestination.FULL_LIST,
-            onNavigateSearch = onNavigateSearch,
             onNavigateFullList = {},
             onNavigateMyCollection = onNavigateMyCollection,
             onNavigateTeam = onNavigateTeam,

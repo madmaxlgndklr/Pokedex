@@ -32,12 +32,11 @@ import com.madmaxlgndklr.pokedex.R
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexCream
 import com.madmaxlgndklr.pokedex.ui.theme.PressStart2P
 
-enum class NavDestination { SEARCH, FULL_LIST, MY_COLLECTION, TEAM, SETTINGS }
+enum class NavDestination { FULL_LIST, MY_COLLECTION, TEAM, SETTINGS }
 
 @Composable
 fun BottomNavBar(
     current: NavDestination,
-    onNavigateSearch: () -> Unit,
     onNavigateFullList: () -> Unit,
     onNavigateMyCollection: () -> Unit,
     onNavigateTeam: () -> Unit = {},
@@ -49,11 +48,6 @@ fun BottomNavBar(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        NavIcon(
-            label = "SEARCH",
-            isActive = current == NavDestination.SEARCH,
-            onClick = onNavigateSearch
-        )
         NavIcon(
             label = "FULL DEX",
             isActive = current == NavDestination.FULL_LIST,

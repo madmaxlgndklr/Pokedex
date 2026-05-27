@@ -1,6 +1,7 @@
 package com.madmaxlgndklr.pokedex.data.remote
 
 import com.madmaxlgndklr.pokedex.data.remote.dto.EvolutionChainResponse
+import com.madmaxlgndklr.pokedex.data.remote.dto.PokedexInfoResponse
 import com.madmaxlgndklr.pokedex.data.remote.dto.PokemonDetailResponse
 import com.madmaxlgndklr.pokedex.data.remote.dto.PokemonListResponse
 import com.madmaxlgndklr.pokedex.data.remote.dto.PokemonSpeciesResponse
@@ -23,4 +24,7 @@ interface PokeApiService {
 
     @GET("evolution-chain/{id}/")
     suspend fun getEvolutionChain(@Path("id") id: Int): EvolutionChainResponse
+
+    @GET("pokedex/{name}/")
+    suspend fun getPokedexInfo(@Path("name") name: String): PokedexInfoResponse
 }
