@@ -2,6 +2,7 @@ package com.madmaxlgndklr.pokedex.ui.detail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -56,6 +57,7 @@ import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
 import com.madmaxlgndklr.pokedex.model.EvolutionNode
 import com.madmaxlgndklr.pokedex.model.PokemonDetail
 import com.madmaxlgndklr.pokedex.model.PokemonStat
+import com.madmaxlgndklr.pokedex.ui.common.CryPlayer
 import com.madmaxlgndklr.pokedex.ui.common.UiState
 import com.madmaxlgndklr.pokedex.ui.common.swipeBack
 import com.madmaxlgndklr.pokedex.ui.common.swipeNavigation
@@ -138,6 +140,13 @@ private fun DetailContent(
     var showShiny by remember { mutableStateOf(false) }
     var leftPanel by remember { mutableStateOf(LeftPanel.DEX_ENTRY) }
     var showWeakness by remember { mutableStateOf(false) }
+    var showCryButton by remember { mutableStateOf(false) }
+    LaunchedEffect(detail.id) {
+        CryPlayer.play(detail.name)
+    }
+    LaunchedEffect(detail.name) {
+        showCryButton = CryPlayer.isCryAvailable(detail.name)
+    }
 
     BoxWithConstraints(Modifier.fillMaxSize().swipeNavigation(
         onBack = onBack,
@@ -257,6 +266,30 @@ private fun DetailContent(
                     detectTapGestures { showShiny = !showShiny }
                 }
         )
+
+        if (showCryButton) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .offset(x = sw * 0.32f, y = sh * 0.575f)
+                    .width(sw * 0.36f)
+                    .background(PokedexDark.copy(alpha = 0.65f), RoundedCornerShape(4.dp))
+                    .border(1.dp, GlowBlue.copy(alpha = 0.5f), RoundedCornerShape(4.dp))
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { CryPlayer.play(detail.name) }
+                    .padding(horizontal = 4.dp, vertical = 3.dp)
+            ) {
+                Text(
+                    text = "♪ BATTLE CRY",
+                    fontFamily = PressStart2P,
+                    fontSize = 5.sp,
+                    color = GlowBlue,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
 
         // Left panel — DEX ENTRY / ABILITIES / MOVES cycle
         Box(
