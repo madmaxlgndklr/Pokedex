@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 
 class PokemonDetailViewModel(
     private val repository: PokemonRepository,
-    private val pokemonId: Int
+    val pokemonId: Int
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<PokemonDetail>>(UiState.Loading)
     val uiState: StateFlow<UiState<PokemonDetail>> = _uiState

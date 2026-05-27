@@ -62,6 +62,7 @@ fun MyCollectionScreen(
     onBack: () -> Unit,
     onNavigateSearch: () -> Unit,
     onNavigateFullList: () -> Unit,
+    onNavigateTeam: () -> Unit = {},
     onNavigateSettings: () -> Unit
 ) {
     val caughtList by viewModel.caughtList.collectAsState()
@@ -210,6 +211,7 @@ fun MyCollectionScreen(
             onNavigateSearch = onNavigateSearch,
             onNavigateFullList = onNavigateFullList,
             onNavigateMyCollection = {},
+            onNavigateTeam = onNavigateTeam,
             onNavigateSettings = onNavigateSettings,
             modifier = Modifier
                 .align(Alignment.BottomCenter)

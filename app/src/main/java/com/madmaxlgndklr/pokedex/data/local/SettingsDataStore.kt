@@ -40,4 +40,19 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
             prefs[SEARCH_HISTORY_KEY] = updated.joinToString("|||")
         }
     }
+
+    private val TEAM_KEY = stringPreferencesKey("team")
+
+    val team: Flow<List<Int>> = dataStore.data.map { prefs ->
+        prefs[TEAM_KEY]
+            ?.split(",")
+            ?.mapNotNull { it.trim().toIntOrNull() }
+            ?: emptyList()
+    }
+
+    suspend fun setTeam(ids: List<Int>) {
+        dataStore.edit { prefs ->
+            prefs[TEAM_KEY] = ids.take(6).joinToString(",")
+        }
+    }
 }

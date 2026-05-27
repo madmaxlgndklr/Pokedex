@@ -168,6 +168,7 @@ fun SearchScreen(
     onBack: () -> Unit,
     onNavigateFullList: () -> Unit,
     onNavigateMyCollection: () -> Unit,
+    onNavigateTeam: () -> Unit = {},
     onNavigateSettings: () -> Unit,
     onSyncNow: () -> Unit = {},
     onAnimationStarted: () -> Unit = {},
@@ -371,6 +372,7 @@ fun SearchScreen(
             onNavigateSearch = {},
             onNavigateFullList = onNavigateFullList,
             onNavigateMyCollection = onNavigateMyCollection,
+            onNavigateTeam = onNavigateTeam,
             onNavigateSettings = onNavigateSettings,
             modifier = Modifier
                 .align(Alignment.BottomCenter)

@@ -24,7 +24,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.CompareArrows
+import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -71,7 +74,10 @@ fun DetailScreen(
     onNavigatePrev: () -> Unit,
     onNavigateNext: () -> Unit,
     onLoadingChanged: (Boolean) -> Unit,
-    onEvolutionClick: (Int) -> Unit
+    onEvolutionClick: (Int) -> Unit,
+    isOnTeam: Boolean = false,
+    onToggleTeam: () -> Unit = {},
+    onCompare: (Int) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isCaught by viewModel.isCaught.collectAsState()
@@ -94,10 +100,13 @@ fun DetailScreen(
             is UiState.Success -> DetailContent(
                 detail = state.data,
                 isCaught = isCaught,
+                isOnTeam = isOnTeam,
                 onBack = onBack,
                 onNavigatePrev = onNavigatePrev,
                 onNavigateNext = onNavigateNext,
                 onToggleCaught = viewModel::toggleCaught,
+                onToggleTeam = onToggleTeam,
+                onCompare = onCompare,
                 onEvolutionClick = onEvolutionClick
             )
         }
@@ -108,10 +117,13 @@ fun DetailScreen(
 private fun DetailContent(
     detail: PokemonDetail,
     isCaught: Boolean,
+    isOnTeam: Boolean,
     onBack: () -> Unit,
     onNavigatePrev: () -> Unit,
     onNavigateNext: () -> Unit,
     onToggleCaught: () -> Unit,
+    onToggleTeam: () -> Unit,
+    onCompare: (Int) -> Unit,
     onEvolutionClick: (Int) -> Unit
 ) {
     var showShiny by remember { mutableStateOf(false) }
@@ -141,6 +153,32 @@ private fun DetailContent(
             modifier = Modifier.offset(x = 2.dp, y = 2.dp).size(36.dp)
         ) {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = PokedexCream)
+        }
+
+        // Compare button
+        IconButton(
+            onClick = { onCompare(detail.id) },
+            modifier = Modifier.offset(x = sw - 114.dp, y = 2.dp).size(36.dp)
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.CompareArrows,
+                contentDescription = "Compare",
+                tint = PokedexCream,
+                modifier = Modifier.size(22.dp)
+            )
+        }
+
+        // Team toggle
+        IconButton(
+            onClick = onToggleTeam,
+            modifier = Modifier.offset(x = sw - 76.dp, y = 2.dp).size(36.dp)
+        ) {
+            Icon(
+                imageVector = if (isOnTeam) Icons.Filled.Group else Icons.Outlined.Group,
+                contentDescription = if (isOnTeam) "Remove from team" else "Add to team",
+                tint = if (isOnTeam) CaughtGold else PokedexCream,
+                modifier = Modifier.size(22.dp)
+            )
         }
 
         // Caught toggle — top right

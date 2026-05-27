@@ -35,18 +35,25 @@ import com.madmaxlgndklr.pokedex.ui.list.FullListScreen
 import com.madmaxlgndklr.pokedex.ui.list.FullListViewModel
 import com.madmaxlgndklr.pokedex.ui.mycollection.MyCollectionScreen
 import com.madmaxlgndklr.pokedex.ui.mycollection.MyCollectionViewModel
+import com.madmaxlgndklr.pokedex.ui.compare.CompareScreen
+import com.madmaxlgndklr.pokedex.ui.compare.CompareViewModel
 import com.madmaxlgndklr.pokedex.ui.search.SearchScreen
 import com.madmaxlgndklr.pokedex.ui.search.SearchViewModel
 import com.madmaxlgndklr.pokedex.ui.settings.SettingsScreen
 import com.madmaxlgndklr.pokedex.ui.settings.SettingsViewModel
+import com.madmaxlgndklr.pokedex.ui.team.TeamScreen
+import com.madmaxlgndklr.pokedex.ui.team.TeamViewModel
 
 private object Routes {
     const val SEARCH = "search"
     const val FULL_LIST = "full_list"
     const val MY_COLLECTION = "my_collection"
     const val SETTINGS = "settings"
+    const val TEAM = "team"
+    const val COMPARE = "compare/{firstId}"
     const val DETAIL = "detail/{pokemonId}"
     fun detail(id: Int) = "detail/$id"
+    fun compare(id: Int) = "compare/$id"
 }
 
 @Composable
@@ -55,6 +62,8 @@ fun AppNavigation() {
     val context = LocalContext.current
     val repo = (context.applicationContext as PokedexApplication).repository
     val settingsRepo = (context.applicationContext as PokedexApplication).settingsRepository
+
+    val teamVm: TeamViewModel = viewModel(factory = TeamViewModel.factory(repo, settingsRepo))
 
     val scope = rememberCoroutineScope()
     var statusBarVisible by remember { mutableStateOf(false) }
@@ -112,6 +121,7 @@ fun AppNavigation() {
                     onBack = { navController.popBackStack() },
                     onNavigateFullList = { navController.navigate(Routes.FULL_LIST) },
                     onNavigateMyCollection = { navController.navigate(Routes.MY_COLLECTION) },
+                    onNavigateTeam = { navController.navigate(Routes.TEAM) },
                     onNavigateSettings = { navController.navigate(Routes.SETTINGS) },
                     onSyncNow = { navController.navigate(Routes.SETTINGS) },
                     onAnimationStarted = { statusBarVisible = false },
@@ -135,6 +145,7 @@ fun AppNavigation() {
                             popUpTo(Routes.FULL_LIST) { inclusive = true }
                         }
                     },
+                    onNavigateTeam = { navController.navigate(Routes.TEAM) },
                     onNavigateSettings = { navController.navigate(Routes.SETTINGS) }
                 )
             }
@@ -154,7 +165,32 @@ fun AppNavigation() {
                             popUpTo(Routes.MY_COLLECTION) { inclusive = true }
                         }
                     },
+                    onNavigateTeam = { navController.navigate(Routes.TEAM) },
                     onNavigateSettings = { navController.navigate(Routes.SETTINGS) }
+                )
+            }
+            composable(Routes.TEAM) {
+                TeamScreen(
+                    viewModel = teamVm,
+                    onBack = { navController.popBackStack() },
+                    onPokemonClick = { id -> navController.navigate(Routes.detail(id)) },
+                    onNavigateSearch = { navController.navigate(Routes.SEARCH) { popUpTo(Routes.TEAM) { inclusive = true } } },
+                    onNavigateFullList = { navController.navigate(Routes.FULL_LIST) { popUpTo(Routes.TEAM) { inclusive = true } } },
+                    onNavigateMyCollection = { navController.navigate(Routes.MY_COLLECTION) { popUpTo(Routes.TEAM) { inclusive = true } } },
+                    onNavigateSettings = { navController.navigate(Routes.SETTINGS) }
+                )
+            }
+            composable(
+                route = Routes.COMPARE,
+                arguments = listOf(navArgument("firstId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val firstId = backStackEntry.arguments?.getInt("firstId") ?: return@composable
+                val vm: CompareViewModel = viewModel(
+                    factory = CompareViewModel.factory(repo, firstId)
+                )
+                CompareScreen(
+                    viewModel = vm,
+                    onBack = { navController.popBackStack() }
                 )
             }
             composable(Routes.SETTINGS) {
@@ -193,6 +229,7 @@ fun AppNavigation() {
                 val vm: PokemonDetailViewModel = viewModel(
                     factory = PokemonDetailViewModel.factory(repo, pokemonId)
                 )
+                val teamIds by teamVm.teamIds.collectAsState()
                 DetailScreen(
                     viewModel = vm,
                     onBack = { navController.popBackStack() },
@@ -211,7 +248,13 @@ fun AppNavigation() {
                         }
                     },
                     onLoadingChanged = { isDetailLoading = it },
-                    onEvolutionClick = { id -> navController.navigate(Routes.detail(id)) }
+                    onEvolutionClick = { id -> navController.navigate(Routes.detail(id)) },
+                    isOnTeam = pokemonId in teamIds,
+                    onToggleTeam = {
+                        if (pokemonId in teamIds) teamVm.removeFromTeam(pokemonId)
+                        else teamVm.addToTeam(pokemonId)
+                    },
+                    onCompare = { id -> navController.navigate(Routes.compare(id)) }
                 )
             }
         }

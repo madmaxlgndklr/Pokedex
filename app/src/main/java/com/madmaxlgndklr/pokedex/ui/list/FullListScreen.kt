@@ -66,6 +66,7 @@ fun FullListScreen(
     onBack: () -> Unit,
     onNavigateSearch: () -> Unit,
     onNavigateMyCollection: () -> Unit,
+    onNavigateTeam: () -> Unit = {},
     onNavigateSettings: () -> Unit
 ) {
     val uiState by viewModel.filteredState.collectAsState()
@@ -227,6 +228,7 @@ fun FullListScreen(
             onNavigateSearch = onNavigateSearch,
             onNavigateFullList = {},
             onNavigateMyCollection = onNavigateMyCollection,
+            onNavigateTeam = onNavigateTeam,
             onNavigateSettings = onNavigateSettings,
             modifier = Modifier
                 .align(Alignment.BottomCenter)

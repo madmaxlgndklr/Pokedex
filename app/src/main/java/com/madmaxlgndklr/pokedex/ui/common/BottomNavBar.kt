@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -31,7 +32,7 @@ import com.madmaxlgndklr.pokedex.R
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexCream
 import com.madmaxlgndklr.pokedex.ui.theme.PressStart2P
 
-enum class NavDestination { SEARCH, FULL_LIST, MY_COLLECTION, SETTINGS }
+enum class NavDestination { SEARCH, FULL_LIST, MY_COLLECTION, TEAM, SETTINGS }
 
 @Composable
 fun BottomNavBar(
@@ -39,6 +40,7 @@ fun BottomNavBar(
     onNavigateSearch: () -> Unit,
     onNavigateFullList: () -> Unit,
     onNavigateMyCollection: () -> Unit,
+    onNavigateTeam: () -> Unit = {},
     onNavigateSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -61,6 +63,12 @@ fun BottomNavBar(
             label = "MY DEX",
             isActive = current == NavDestination.MY_COLLECTION,
             onClick = onNavigateMyCollection
+        )
+        NavIcon(
+            label = "TEAM",
+            isActive = current == NavDestination.TEAM,
+            onClick = onNavigateTeam,
+            iconVector = Icons.Filled.Group
         )
         NavIcon(
             label = "MENU",
