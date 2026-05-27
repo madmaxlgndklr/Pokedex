@@ -2,6 +2,8 @@ package com.madmaxlgndklr.pokedex.ui.common
 
 import android.content.Context
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
@@ -11,6 +13,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
+import kotlinx.coroutines.withContext
 import okhttp3.Request
 import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
@@ -33,33 +36,44 @@ object CryPlayer {
 
     private fun cryFile(name: String) = File(criesDir(), "$name.ogg")
 
-    suspend fun isCryAvailable(name: String): Boolean =
-        cryFile(name).exists() || networkObserver.isOnline.value
+    suspend fun isCryAvailable(name: String): Boolean {
+        if (!::networkObserver.isInitialized) return false
+        return withContext(Dispatchers.IO) { cryFile(name).exists() } || networkObserver.isOnline.value
+    }
 
     fun play(name: String) {
         if (!::appContext.isInitialized) return
         val file = cryFile(name)
         val uri = if (file.exists()) Uri.fromFile(file)
                   else Uri.parse("$CDN/$name.ogg")
-
-        if (player == null) {
-            player = ExoPlayer.Builder(appContext).build()
+        Handler(Looper.getMainLooper()).post {
+            if (player == null) {
+                player = ExoPlayer.Builder(appContext).build()
+            }
+            player!!.apply {
+                stop()
+                clearMediaItems()
+                setMediaItem(MediaItem.fromUri(uri))
+                prepare()
+                play()
+            }
         }
-        player!!.apply {
-            stop()
-            clearMediaItems()
-            setMediaItem(MediaItem.fromUri(uri))
-            prepare()
-            play()
-        }
-
         // Cache streamed audio in background so next play is local
         if (!file.exists()) {
             scope.launch { downloadCry(name) }
         }
     }
 
-    fun stop() { player?.stop() }
+    fun stop() {
+        Handler(Looper.getMainLooper()).post { player?.stop() }
+    }
+
+    fun release() {
+        Handler(Looper.getMainLooper()).post {
+            player?.release()
+            player = null
+        }
+    }
 
     suspend fun downloadCry(name: String): Boolean {
         if (!::appContext.isInitialized) return false
@@ -67,15 +81,18 @@ object CryPlayer {
         if (file.exists() && file.length() > 0) return true
         return try {
             val request = Request.Builder().url("$CDN/$name.ogg").build()
-            val response = RetrofitClient.httpClient.newCall(request).execute()
-            if (response.isSuccessful) {
-                val bytes = response.body?.bytes() ?: return false
-                if (bytes.isEmpty()) return false
+            val response = withContext(Dispatchers.IO) {
+                RetrofitClient.httpClient.newCall(request).execute()
+            }
+            response.use { resp ->
+                if (!resp.isSuccessful) return@use false
+                val bytes = resp.body?.bytes() ?: return@use false
+                if (bytes.isEmpty()) return@use false
                 val tmp = File(criesDir(), "$name.ogg.tmp")
                 tmp.writeBytes(bytes)
                 tmp.renameTo(file)
                 true
-            } else false
+            }
         } catch (_: Exception) { false }
     }
 

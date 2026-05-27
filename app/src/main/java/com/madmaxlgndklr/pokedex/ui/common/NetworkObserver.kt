@@ -22,6 +22,7 @@ class NetworkObserver(context: Context) {
     init {
         val request = NetworkRequest.Builder()
             .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
             .build()
         cm.registerNetworkCallback(request, callback)
     }
@@ -29,7 +30,8 @@ class NetworkObserver(context: Context) {
     private fun isCurrentlyOnline(): Boolean {
         val network = cm.activeNetwork ?: return false
         val caps = cm.getNetworkCapabilities(network) ?: return false
-        return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+               caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
     }
 
     fun unregister() { cm.unregisterNetworkCallback(callback) }
