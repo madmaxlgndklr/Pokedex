@@ -3,11 +3,13 @@ package com.madmaxlgndklr.pokedex.ui.detail
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -31,9 +34,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -49,12 +55,14 @@ import com.madmaxlgndklr.pokedex.model.PokemonStat
 import com.madmaxlgndklr.pokedex.ui.common.UiState
 import com.madmaxlgndklr.pokedex.ui.common.swipeBack
 import com.madmaxlgndklr.pokedex.ui.common.swipeNavigation
+import com.madmaxlgndklr.pokedex.ui.common.typeWeaknesses
 import com.madmaxlgndklr.pokedex.ui.theme.CaughtGold
 import com.madmaxlgndklr.pokedex.ui.theme.GlowBlue
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexCream
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexDark
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexRed
 import com.madmaxlgndklr.pokedex.ui.theme.PressStart2P
+import com.madmaxlgndklr.pokedex.ui.theme.typeColor
 
 @Composable
 fun DetailScreen(
@@ -106,6 +114,10 @@ private fun DetailContent(
     onToggleCaught: () -> Unit,
     onEvolutionClick: (Int) -> Unit
 ) {
+    var showShiny by remember { mutableStateOf(false) }
+    var showAbilities by remember { mutableStateOf(false) }
+    var showWeakness by remember { mutableStateOf(false) }
+
     BoxWithConstraints(Modifier.fillMaxSize().swipeNavigation(
         onBack = onBack,
         onSwipeLeft = onNavigateNext,
@@ -113,10 +125,9 @@ private fun DetailContent(
     )) {
         val sw = maxWidth
         val sh = maxHeight
-        val panelShape = androidx.compose.foundation.shape.RoundedCornerShape(6.dp)
+        val panelShape = RoundedCornerShape(6.dp)
         val panelBg = PokedexDark.copy(alpha = 0.55f)
 
-        // Same background as other screens
         Image(
             painter = painterResource(R.drawable.pdex_open_v2),
             contentDescription = null,
@@ -145,7 +156,7 @@ private fun DetailContent(
             )
         }
 
-        // Name + types — above sprite, moved higher
+        // Name + types + height/weight
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -164,19 +175,30 @@ private fun DetailContent(
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 detail.types.forEach { type -> TypeChip(type) }
             }
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = "${"%.1f".format(detail.height / 10f)}m / ${"%.1f".format(detail.weight / 10f)}kg",
+                fontFamily = PressStart2P,
+                fontSize = 6.sp,
+                color = PokedexCream.copy(alpha = 0.6f),
+                textAlign = TextAlign.Center
+            )
         }
 
-        // Sprite — center of screen
+        // Sprite — tappable to toggle shiny
         AsyncImage(
-            model = detail.spriteUrl,
+            model = if (showShiny) RetrofitClient.shinySpriteUrl(detail.id) else detail.spriteUrl,
             contentDescription = detail.name,
             contentScale = ContentScale.Fit,
             modifier = Modifier
                 .size(sw * 0.36f)
                 .offset(x = sw * 0.32f, y = sh * 0.38f)
+                .pointerInput(Unit) {
+                    detectTapGestures { showShiny = !showShiny }
+                }
         )
 
-        // Dex entry — left of sprite, scrollable, dark panel
+        // Left panel — DEX ENTRY / ABILITIES toggle
         Box(
             modifier = Modifier
                 .offset(x = sw * 0.02f, y = sh * 0.38f)
@@ -185,27 +207,138 @@ private fun DetailContent(
                 .background(panelBg, panelShape)
                 .padding(6.dp)
         ) {
-            Text(
-                text = detail.flavorText,
-                fontFamily = PressStart2P,
-                fontSize = 8.sp,
-                color = PokedexCream,
-                lineHeight = 13.sp,
-                modifier = Modifier.verticalScroll(rememberScrollState())
-            )
+            Column(modifier = Modifier.fillMaxSize()) {
+                Text(
+                    text = if (showAbilities) "ABILITIES" else "DEX ENTRY",
+                    fontFamily = PressStart2P,
+                    fontSize = 5.sp,
+                    color = GlowBlue,
+                    modifier = Modifier
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) { showAbilities = !showAbilities }
+                        .padding(bottom = 4.dp)
+                )
+                if (showAbilities) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.verticalScroll(rememberScrollState())
+                    ) {
+                        if (detail.abilities.isEmpty()) {
+                            Text(
+                                text = "—",
+                                fontFamily = PressStart2P,
+                                fontSize = 6.sp,
+                                color = PokedexCream
+                            )
+                        } else {
+                            detail.abilities.forEach { ability ->
+                                Text(
+                                    text = ability.uppercase().replace("-", "\n"),
+                                    fontFamily = PressStart2P,
+                                    fontSize = 6.sp,
+                                    color = PokedexCream,
+                                    lineHeight = 10.sp
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    Text(
+                        text = detail.flavorText,
+                        fontFamily = PressStart2P,
+                        fontSize = 8.sp,
+                        color = PokedexCream,
+                        lineHeight = 13.sp,
+                        modifier = Modifier.verticalScroll(rememberScrollState())
+                    )
+                }
+            }
         }
 
-        // Stats — right of sprite, dark panel
+        // Right panel — STATS / WEAKNESS toggle
         Column(
             modifier = Modifier
                 .offset(x = sw * 0.70f, y = sh * 0.38f)
                 .width(sw * 0.27f)
+                .height(sh * 0.26f)
                 .background(panelBg, panelShape)
                 .padding(6.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            detail.stats.forEach { stat ->
-                CompactStatRow(stat = stat, width = sw * 0.27f - 12.dp)
+            Text(
+                text = if (showWeakness) "WEAKNESS" else "STATS",
+                fontFamily = PressStart2P,
+                fontSize = 5.sp,
+                color = GlowBlue,
+                modifier = Modifier
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { showWeakness = !showWeakness }
+                    .padding(bottom = 2.dp)
+            )
+            if (showWeakness) {
+                val weaknesses = remember(detail.types) { typeWeaknesses(detail.types) }
+                val grouped = weaknesses.entries
+                    .sortedByDescending { it.value }
+                    .groupBy { it.value }
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(3.dp),
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                ) {
+                    listOf(4f, 2f, 0.5f, 0.25f, 0f).forEach { mult ->
+                        val entries = grouped[mult] ?: return@forEach
+                        val label = when (mult) {
+                            4f    -> "4×"
+                            2f    -> "2×"
+                            0.5f  -> "½×"
+                            0.25f -> "¼×"
+                            else  -> "0×"
+                        }
+                        Text(
+                            text = label,
+                            fontFamily = PressStart2P,
+                            fontSize = 5.sp,
+                            color = when (mult) {
+                                4f   -> PokedexRed
+                                2f   -> CaughtGold
+                                0f   -> GlowBlue
+                                else -> PokedexCream.copy(alpha = 0.5f)
+                            }
+                        )
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(2.dp),
+                            verticalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
+                            entries.forEach { (type, _) ->
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier
+                                        .background(typeColor(type), RoundedCornerShape(3.dp))
+                                        .padding(horizontal = 3.dp, vertical = 2.dp)
+                                ) {
+                                    Text(
+                                        text = type.uppercase().take(3),
+                                        fontFamily = PressStart2P,
+                                        fontSize = 4.sp,
+                                        color = PokedexCream
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                ) {
+                    detail.stats.forEach { stat ->
+                        CompactStatRow(stat = stat, width = sw * 0.27f - 12.dp)
+                    }
+                }
             }
         }
 
@@ -235,7 +368,7 @@ private fun TypeChip(type: String) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .background(typeColor(type), androidx.compose.foundation.shape.RoundedCornerShape(4.dp))
+            .background(typeColor(type), RoundedCornerShape(4.dp))
             .padding(horizontal = 6.dp, vertical = 3.dp)
     ) {
         Text(
@@ -294,7 +427,7 @@ private fun EvoStageBox(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = modifier
-            .background(PokedexDark.copy(alpha = 0.45f), androidx.compose.foundation.shape.RoundedCornerShape(6.dp))
+            .background(PokedexDark.copy(alpha = 0.45f), RoundedCornerShape(6.dp))
             .then(
                 if (node != null) Modifier.clickable(
                     interactionSource = remember { MutableInteractionSource() },
@@ -336,26 +469,4 @@ private fun abbreviateStat(name: String) = when (name) {
     "special-defense" -> "Sp.D"
     "speed" -> "SPD"
     else -> name.uppercase().take(4)
-}
-
-private fun typeColor(type: String) = when (type.lowercase()) {
-    "fire" -> androidx.compose.ui.graphics.Color(0xFFD62828)
-    "water" -> androidx.compose.ui.graphics.Color(0xFF2196F3)
-    "grass" -> androidx.compose.ui.graphics.Color(0xFF388E3C)
-    "electric" -> androidx.compose.ui.graphics.Color(0xFFFBC02D)
-    "psychic" -> androidx.compose.ui.graphics.Color(0xFFAB47BC)
-    "ice" -> androidx.compose.ui.graphics.Color(0xFF26C6DA)
-    "dragon" -> androidx.compose.ui.graphics.Color(0xFF1565C0)
-    "dark" -> androidx.compose.ui.graphics.Color(0xFF37474F)
-    "fairy" -> androidx.compose.ui.graphics.Color(0xFFEC407A)
-    "fighting" -> androidx.compose.ui.graphics.Color(0xFFBF360C)
-    "poison" -> androidx.compose.ui.graphics.Color(0xFF7B1FA2)
-    "ground" -> androidx.compose.ui.graphics.Color(0xFF8D6E63)
-    "flying" -> androidx.compose.ui.graphics.Color(0xFF5C6BC0)
-    "bug" -> androidx.compose.ui.graphics.Color(0xFF7CB342)
-    "rock" -> androidx.compose.ui.graphics.Color(0xFF78909C)
-    "ghost" -> androidx.compose.ui.graphics.Color(0xFF4527A0)
-    "steel" -> androidx.compose.ui.graphics.Color(0xFF546E7A)
-    "normal" -> androidx.compose.ui.graphics.Color(0xFF78909C)
-    else -> androidx.compose.ui.graphics.Color(0xFF607D8B)
 }
