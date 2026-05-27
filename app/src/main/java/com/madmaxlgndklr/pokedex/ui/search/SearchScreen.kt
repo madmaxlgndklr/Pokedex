@@ -176,6 +176,7 @@ fun SearchScreen(
     val query by viewModel.query.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
     val cacheIsEmpty by viewModel.cacheIsEmpty.collectAsState()
+    val searchHistory by viewModel.searchHistory.collectAsState()
     val context = LocalContext.current
     val focusRequester = remember { FocusRequester() }
 
@@ -376,6 +377,50 @@ fun SearchScreen(
                 .padding(bottom = 20.dp)
                 .alpha(contentAlpha)
         )
+
+        if (phase == PokedexPhase.INTERACTIVE && query.isEmpty() && searchHistory.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(y = sh * 0.67f)
+                    .padding(horizontal = 24.dp)
+                    .alpha(contentAlpha),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                searchHistory.take(5).forEach { item ->
+                    Text(
+                        text = "▸ ${item.uppercase()}",
+                        fontFamily = PressStart2P,
+                        fontSize = 6.sp,
+                        color = PokedexCream.copy(alpha = 0.55f),
+                        modifier = Modifier.clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            viewModel.onQueryChange(item)
+                            viewModel.search()
+                        }
+                    )
+                }
+            }
+        }
+
+        if (phase == PokedexPhase.INTERACTIVE && uiState !is SearchUiState.Loading) {
+            Text(
+                text = "? SURPRISE ME",
+                fontFamily = PressStart2P,
+                fontSize = 6.sp,
+                color = GlowBlue.copy(alpha = 0.8f),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 76.dp)
+                    .alpha(contentAlpha)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { viewModel.randomPokemon() }
+            )
+        }
 
         if (cacheIsEmpty && !bootPromptDismissed) {
             BootDiagnosticOverlay(

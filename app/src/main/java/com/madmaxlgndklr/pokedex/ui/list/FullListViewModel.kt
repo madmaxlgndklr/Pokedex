@@ -17,17 +17,40 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+enum class SortOrder { NUMBER, NAME }
+
 class FullListViewModel(private val repository: PokemonRepository) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<List<PokemonSummary>>>(UiState.Loading)
 
     private val _selectedGens = MutableStateFlow<Set<Generation>>(emptySet())
     val selectedGens: StateFlow<Set<Generation>> = _selectedGens
 
+    private val _selectedTypes = MutableStateFlow<Set<String>>(emptySet())
+    val selectedTypes: StateFlow<Set<String>> = _selectedTypes
+
+    private val _sortOrder = MutableStateFlow(SortOrder.NUMBER)
+    val sortOrder: StateFlow<SortOrder> = _sortOrder
+
     val filteredState: StateFlow<UiState<List<PokemonSummary>>> =
-        combine(_uiState, _selectedGens) { state, gens ->
-            when {
-                state is UiState.Success && gens.isNotEmpty() ->
-                    UiState.Success(state.data.filter { p -> gens.any { p.id in it.idRange } })
+        combine(_uiState, _selectedGens, _selectedTypes, _sortOrder) { state, gens, types, sort ->
+            when (state) {
+                is UiState.Success -> {
+                    var list = state.data
+                    if (gens.isNotEmpty()) list = list.filter { p -> gens.any { p.id in it.idRange } }
+                    if (types.isNotEmpty()) {
+                        // Pre-compute cache map so getCachedTypes (suspend) isn't called in filter lambda
+                        val cachedTypesMap = list.associate { p -> p.id to repository.getCachedTypes(p.id) }
+                        list = list.filter { p ->
+                            val cached = cachedTypesMap[p.id]
+                            cached == null || cached.any { it in types }
+                        }
+                    }
+                    list = when (sort) {
+                        SortOrder.NUMBER -> list.sortedBy { it.id }
+                        SortOrder.NAME   -> list.sortedBy { it.name }
+                    }
+                    UiState.Success(list)
+                }
                 else -> state
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), UiState.Loading)
@@ -52,9 +75,17 @@ class FullListViewModel(private val repository: PokemonRepository) : ViewModel()
         }
     }
 
-    fun clearGenerations() {
-        _selectedGens.value = emptySet()
+    fun clearGenerations() { _selectedGens.value = emptySet() }
+
+    fun toggleType(type: String) {
+        _selectedTypes.value = _selectedTypes.value.toMutableSet().apply {
+            if (!add(type)) remove(type)
+        }
     }
+
+    fun clearTypes() { _selectedTypes.value = emptySet() }
+
+    fun setSortOrder(order: SortOrder) { _sortOrder.value = order }
 
     fun toggleCaught(id: Int, name: String) {
         viewModelScope.launch {

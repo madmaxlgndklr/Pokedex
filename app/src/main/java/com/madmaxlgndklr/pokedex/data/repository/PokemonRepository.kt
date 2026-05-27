@@ -121,6 +121,15 @@ class PokemonRepository(
 
     fun isCaught(id: Int): Flow<Boolean> = dao.isCaught(id)
 
+    suspend fun getCachedTypes(id: Int): List<String>? {
+        val entity = detailCacheDao.getById(id) ?: return null
+        return try {
+            gson.fromJson(entity.detailJson, PokemonDetail::class.java).types
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     suspend fun setCaught(id: Int, name: String, caught: Boolean) {
         if (caught) dao.insert(CaughtPokemonEntity(id, name))
         else dao.delete(CaughtPokemonEntity(id, name))

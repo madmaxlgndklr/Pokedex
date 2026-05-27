@@ -105,7 +105,7 @@ fun AppNavigation() {
             modifier = Modifier.fillMaxSize()
         ) {
             composable(Routes.SEARCH) {
-                val vm: SearchViewModel = viewModel(factory = SearchViewModel.factory(repo))
+                val vm: SearchViewModel = viewModel(factory = SearchViewModel.factory(repo, settingsRepo))
                 SearchScreen(
                     viewModel = vm,
                     onPokemonClick = { id -> navController.navigate(Routes.detail(id)) },

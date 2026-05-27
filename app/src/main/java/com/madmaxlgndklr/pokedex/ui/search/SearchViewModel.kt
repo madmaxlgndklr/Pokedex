@@ -5,11 +5,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.madmaxlgndklr.pokedex.data.local.SettingsRepository
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 sealed class SearchUiState {
@@ -18,7 +21,10 @@ sealed class SearchUiState {
     object NotFound : SearchUiState()
 }
 
-class SearchViewModel(private val repository: PokemonRepository) : ViewModel() {
+class SearchViewModel(
+    private val repository: PokemonRepository,
+    private val settingsRepo: SettingsRepository
+) : ViewModel() {
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query
 
@@ -30,6 +36,9 @@ class SearchViewModel(private val repository: PokemonRepository) : ViewModel() {
 
     private val _cacheIsEmpty = MutableStateFlow(false)
     val cacheIsEmpty: StateFlow<Boolean> = _cacheIsEmpty
+
+    val searchHistory: StateFlow<List<String>> = settingsRepo.searchHistory
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     var animationCompleted: Boolean = false
         private set
@@ -62,6 +71,23 @@ class SearchViewModel(private val repository: PokemonRepository) : ViewModel() {
                 val detail = repository.searchPokemon(q)
                 _query.value = ""
                 _uiState.value = SearchUiState.Idle
+                settingsRepo.addSearchHistory(q)
+                _navigationEvent.emit(detail.id)
+            } catch (e: Exception) {
+                _uiState.value = SearchUiState.NotFound
+            }
+        }
+    }
+
+    fun randomPokemon() {
+        if (_uiState.value is SearchUiState.Loading) return
+        _uiState.value = SearchUiState.Loading
+        viewModelScope.launch {
+            try {
+                val id = (1..1025).random()
+                val detail = repository.searchPokemon(id.toString())
+                _query.value = ""
+                _uiState.value = SearchUiState.Idle
                 _navigationEvent.emit(detail.id)
             } catch (e: Exception) {
                 _uiState.value = SearchUiState.NotFound
@@ -70,8 +96,11 @@ class SearchViewModel(private val repository: PokemonRepository) : ViewModel() {
     }
 
     companion object {
-        fun factory(repository: PokemonRepository): ViewModelProvider.Factory = viewModelFactory {
-            initializer { SearchViewModel(repository) }
+        fun factory(
+            repository: PokemonRepository,
+            settingsRepo: SettingsRepository
+        ): ViewModelProvider.Factory = viewModelFactory {
+            initializer { SearchViewModel(repository, settingsRepo) }
         }
     }
 }

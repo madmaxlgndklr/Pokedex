@@ -49,6 +49,7 @@ import com.madmaxlgndklr.pokedex.model.PokemonSummary
 import com.madmaxlgndklr.pokedex.ui.common.BottomNavBar
 import com.madmaxlgndklr.pokedex.ui.common.NavDestination
 import com.madmaxlgndklr.pokedex.ui.common.RegionFilterDialog
+import com.madmaxlgndklr.pokedex.ui.common.TypeFilterDialog
 import com.madmaxlgndklr.pokedex.ui.common.UiState
 import com.madmaxlgndklr.pokedex.ui.common.swipeBack
 import com.madmaxlgndklr.pokedex.ui.theme.CaughtGold
@@ -69,9 +70,12 @@ fun FullListScreen(
 ) {
     val uiState by viewModel.filteredState.collectAsState()
     val selectedGens by viewModel.selectedGens.collectAsState()
+    val selectedTypes by viewModel.selectedTypes.collectAsState()
+    val sortOrder by viewModel.sortOrder.collectAsState()
     val caughtIds by viewModel.caughtIds.collectAsState()
 
     var showFilterDialog by remember { mutableStateOf(false) }
+    var showTypeDialog by remember { mutableStateOf(false) }
 
     if (showFilterDialog) {
         RegionFilterDialog(
@@ -79,6 +83,15 @@ fun FullListScreen(
             onToggle = { viewModel.toggleGeneration(it) },
             onClear = { viewModel.clearGenerations() },
             onDismiss = { showFilterDialog = false }
+        )
+    }
+
+    if (showTypeDialog) {
+        TypeFilterDialog(
+            selectedTypes = selectedTypes,
+            onToggle = { viewModel.toggleType(it) },
+            onClear = { viewModel.clearTypes() },
+            onDismiss = { showTypeDialog = false }
         )
     }
 
@@ -96,32 +109,62 @@ fun FullListScreen(
         val stripTop = sh * 0.36f
         val stripHeight = sh * 0.32f
 
-        // Filter button above the sprite strip
+        // Filter/sort row above the sprite strip
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxWidth()
                 .offset(y = stripTop - 28.dp)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) { showFilterDialog = true }
         ) {
-            Icon(
-                imageVector = Icons.Filled.FilterList,
-                contentDescription = "Filter",
-                tint = if (selectedGens.isNotEmpty()) CaughtGold else PokedexCream,
-                modifier = Modifier.size(14.dp)
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null)
+                    { showFilterDialog = true }
+                    .padding(horizontal = 8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.FilterList,
+                    contentDescription = "Region",
+                    tint = if (selectedGens.isNotEmpty()) CaughtGold else PokedexCream,
+                    modifier = Modifier.size(12.dp)
+                )
+                Text(
+                    text = if (selectedGens.isNotEmpty()) " GEN(${selectedGens.size})" else " GEN",
+                    fontFamily = PressStart2P,
+                    fontSize = 5.sp,
+                    color = if (selectedGens.isNotEmpty()) CaughtGold else PokedexCream
+                )
+            }
+            Text(text = "|", fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream.copy(alpha = 0.3f))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null)
+                    { showTypeDialog = true }
+                    .padding(horizontal = 8.dp)
+            ) {
+                Text(
+                    text = if (selectedTypes.isNotEmpty()) "TYPE(${selectedTypes.size})" else "TYPE",
+                    fontFamily = PressStart2P,
+                    fontSize = 5.sp,
+                    color = if (selectedTypes.isNotEmpty()) CaughtGold else PokedexCream
+                )
+            }
+            Text(text = "|", fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream.copy(alpha = 0.3f))
             Text(
-                text = if (selectedGens.isNotEmpty())
-                    " FILTER BY REGION (${selectedGens.size})"
-                else
-                    " FILTER BY REGION",
+                text = if (sortOrder == SortOrder.NUMBER) "# SORT" else "A SORT",
                 fontFamily = PressStart2P,
-                fontSize = 6.sp,
-                color = if (selectedGens.isNotEmpty()) CaughtGold else PokedexCream
+                fontSize = 5.sp,
+                color = PokedexCream,
+                modifier = Modifier
+                    .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
+                        viewModel.setSortOrder(
+                            if (sortOrder == SortOrder.NUMBER) SortOrder.NAME else SortOrder.NUMBER
+                        )
+                    }
+                    .padding(horizontal = 8.dp)
             )
         }
 
