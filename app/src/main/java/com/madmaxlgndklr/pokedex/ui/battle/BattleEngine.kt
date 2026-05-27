@@ -39,12 +39,18 @@ sealed class BattleState {
 
 object BattleEngine {
 
-    fun startBattle(player: PokemonDetail, opponent: PokemonDetail, gen: Int, level: Int = 50): BattleState.Ongoing {
+    fun startBattle(player: BattlePokemon, opponent: BattlePokemon, gen: Int): BattleState.Ongoing {
         return BattleState.Ongoing(
-            player = toBattlePokemon(player, level),
-            opponent = toBattlePokemon(opponent, level),
-            log = listOf("A wild ${opponent.name.uppercase()} appeared!")
+            player = player,
+            opponent = opponent,
+            log = listOf("A wild ${opponent.detail.name.uppercase()} appeared!")
         )
+    }
+
+    fun buildBattlePokemon(detail: PokemonDetail, level: Int, moves: List<BattleMove>): BattlePokemon {
+        val hpBase = detail.stats.firstOrNull { it.name == "hp" }?.value ?: 45
+        val maxHp = computeHp(hpBase, level)
+        return BattlePokemon(detail, level, maxHp, maxHp, moves)
     }
 
     fun resolveTurn(
@@ -118,7 +124,9 @@ object BattleEngine {
             return BattleState.Lost(log)
         }
 
-        val (sa, sd) = applyMove(secondAttacker.pokemon, secondAttacker.move, secondAttacker.target)
+        // Use updated player/opponent vars — not stale MoveAction references — so first-move HP changes carry over
+        val (secondPokemon, secondTarget) = if (playerGoesFirst) opponent to player else player to opponent
+        val (sa, sd) = applyMove(secondPokemon, secondAttacker.move, secondTarget)
         if (playerGoesFirst) { opponent = sa; player = sd } else { player = sa; opponent = sd }
 
         if (opponent.currentHp <= 0) {
@@ -145,14 +153,4 @@ object BattleEngine {
     fun computeHp(base: Int, level: Int): Int =
         ((2.0 * base + 31) * level / 100 + level + 10).toInt()
 
-    private fun toBattlePokemon(detail: PokemonDetail, level: Int): BattlePokemon {
-        val hpBase = detail.stats.firstOrNull { it.name == "hp" }?.value ?: 45
-        val maxHp = computeHp(hpBase, level)
-        val moves = detail.moves.take(4).map { pm ->
-            BattleMove(name = pm.name, type = "normal", category = "physical", power = 50, maxPp = 20, currentPp = 20)
-        }.ifEmpty {
-            listOf(BattleMove("struggle", "normal", "physical", 50, 1, 1))
-        }
-        return BattlePokemon(detail, level, maxHp, maxHp, moves)
-    }
 }

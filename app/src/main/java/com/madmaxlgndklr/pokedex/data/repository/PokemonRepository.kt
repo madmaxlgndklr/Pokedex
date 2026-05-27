@@ -164,6 +164,17 @@ class PokemonRepository(
         else dao.delete(CaughtPokemonEntity(id, name))
     }
 
+    suspend fun syncTeamMoves(teamIds: List<Int>) {
+        teamIds.forEach { id ->
+            try {
+                val detail = getPokemonDetail(id)
+                detail.moves.take(4).forEach { pm ->
+                    try { getMove(pm.name) } catch (_: Exception) {}
+                }
+            } catch (_: Exception) {}
+        }
+    }
+
     suspend fun getMove(name: String): Move {
         moveDao.getByName(name)?.let { entity ->
             val cached = gson.fromJson(entity.moveJson, Move::class.java)

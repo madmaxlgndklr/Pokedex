@@ -125,16 +125,16 @@ fun TeamScreen(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .background(GlowBlue.copy(alpha = 0.15f), androidx.compose.foundation.shape.RoundedCornerShape(4.dp))
-                    .border(1.dp, GlowBlue.copy(alpha = 0.5f), androidx.compose.foundation.shape.RoundedCornerShape(4.dp))
+                    .background(GlowBlue.copy(alpha = 0.25f), RoundedCornerShape(4.dp))
+                    .border(1.5.dp, GlowBlue, RoundedCornerShape(4.dp))
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
                         onClick = onNavigateBattle
                     )
-                    .padding(horizontal = 8.dp, vertical = 5.dp)
+                    .padding(horizontal = 10.dp, vertical = 6.dp)
             ) {
-                Text("BATTLE", fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue)
+                Text("BATTLE", fontFamily = PressStart2P, fontSize = 6.sp, color = GlowBlue)
             }
         }
 

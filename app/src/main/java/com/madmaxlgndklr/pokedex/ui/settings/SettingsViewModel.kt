@@ -10,6 +10,7 @@ import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -42,6 +43,8 @@ class SettingsViewModel(
                 pokemonRepo.syncAll { completed, total ->
                     _syncState.value = SyncState.Syncing(completed, total)
                 }
+                val teamIds = settingsRepo.team.first()
+                if (teamIds.isNotEmpty()) pokemonRepo.syncTeamMoves(teamIds)
                 val (cached, listSize) = pokemonRepo.getCachedCount()
                 _syncState.value = SyncState.Done(cached, listSize)
             } catch (e: Exception) {

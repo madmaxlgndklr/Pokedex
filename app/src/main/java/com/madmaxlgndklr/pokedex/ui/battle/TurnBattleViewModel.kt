@@ -32,18 +32,35 @@ class TurnBattleViewModel(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val allPokemon = repo.getPokemonList()
-                val opponentSummary = allPokemon.random()
-                val playerDetail = repo.getPokemonDetail(playerTeamIds[playerPickIndex])
-                val opponentDetail = repo.getPokemonDetail(opponentSummary.id)
                 val gen = settingsRepo.selectedGen.first()
-                _battleState.value = BattleEngine.startBattle(playerDetail, opponentDetail, gen)
+                val level = 50
+                val allPokemon = repo.getPokemonList()
+                val playerDetail = repo.getPokemonDetail(playerTeamIds[playerPickIndex])
+                val opponentDetail = repo.getPokemonDetail(allPokemon.random().id)
+                val playerMoves = resolveMoves(playerDetail.moves.take(4).map { it.name })
+                val opponentMoves = resolveMoves(opponentDetail.moves.take(4).map { it.name })
+                val playerBattle = BattleEngine.buildBattlePokemon(playerDetail, level, playerMoves)
+                val opponentBattle = BattleEngine.buildBattlePokemon(opponentDetail, level, opponentMoves)
+                _battleState.value = BattleEngine.startBattle(playerBattle, opponentBattle, gen)
             } catch (e: Exception) {
                 // leave state null — UI shows error
             } finally {
                 _isLoading.value = false
             }
         }
+    }
+
+    private suspend fun resolveMoves(moveNames: List<String>): List<BattleMove> {
+        val moves = moveNames.map { name ->
+            try {
+                val m = repo.getMove(name)
+                BattleMove(name = m.name, type = m.type, category = m.category,
+                    power = m.power, maxPp = m.pp, currentPp = m.pp)
+            } catch (_: Exception) {
+                BattleMove(name, "normal", "physical", 50, 20, 20)
+            }
+        }
+        return moves.ifEmpty { listOf(BattleMove("struggle", "normal", "physical", 50, 1, 1)) }
     }
 
     fun submitMove(moveIndex: Int) {
