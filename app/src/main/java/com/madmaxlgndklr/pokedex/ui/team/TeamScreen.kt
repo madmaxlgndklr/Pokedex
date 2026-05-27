@@ -62,6 +62,7 @@ fun TeamScreen(
     onNavigateFullList: () -> Unit,
     onNavigateMyCollection: () -> Unit,
     onNavigateSettings: () -> Unit,
+    onNavigateBattle: () -> Unit = {},
     onClosePokedex: () -> Unit = {}
 ) {
     val teamEntries by viewModel.teamEntries.collectAsState()
@@ -106,17 +107,36 @@ fun TeamScreen(
             Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = PokedexCream)
         }
 
-        Text(
-            text = "MY TEAM",
-            fontFamily = PressStart2P,
-            fontSize = 8.sp,
-            color = CaughtGold,
+        androidx.compose.foundation.layout.Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
                 .offset(y = sh * 0.22f)
-                .padding(horizontal = 16.dp),
-            textAlign = TextAlign.Center
-        )
+                .padding(horizontal = 16.dp)
+        ) {
+            Text(
+                text = "MY TEAM",
+                fontFamily = PressStart2P,
+                fontSize = 8.sp,
+                color = CaughtGold
+            )
+            androidx.compose.foundation.layout.Spacer(Modifier.weight(1f))
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .background(GlowBlue.copy(alpha = 0.15f), androidx.compose.foundation.shape.RoundedCornerShape(4.dp))
+                    .border(1.dp, GlowBlue.copy(alpha = 0.5f), androidx.compose.foundation.shape.RoundedCornerShape(4.dp))
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = onNavigateBattle
+                    )
+                    .padding(horizontal = 8.dp, vertical = 5.dp)
+            ) {
+                Text("BATTLE", fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue)
+            }
+        }
 
         // Team slots row
         Row(

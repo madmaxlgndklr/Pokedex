@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
@@ -54,5 +55,13 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         dataStore.edit { prefs ->
             prefs[TEAM_KEY] = ids.take(6).joinToString(",")
         }
+    }
+
+    private val SELECTED_GEN_KEY = intPreferencesKey("selected_gen")
+
+    val selectedGen: Flow<Int> = dataStore.data.map { it[SELECTED_GEN_KEY] ?: 5 }
+
+    suspend fun setGen(gen: Int) {
+        dataStore.edit { it[SELECTED_GEN_KEY] = gen }
     }
 }

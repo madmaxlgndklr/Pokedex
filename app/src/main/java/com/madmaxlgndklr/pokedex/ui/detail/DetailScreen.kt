@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.CompareArrows
 import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.SportsKabaddi
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material.icons.outlined.Star
@@ -78,7 +79,8 @@ fun DetailScreen(
     isOnTeam: Boolean = false,
     onToggleTeam: () -> Unit = {},
     onCompare: (Int) -> Unit = {},
-    onMoveClick: (String) -> Unit = {}
+    onMoveClick: (String) -> Unit = {},
+    onBattle: (Int) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isCaught by viewModel.isCaught.collectAsState()
@@ -109,7 +111,8 @@ fun DetailScreen(
                 onToggleTeam = onToggleTeam,
                 onCompare = onCompare,
                 onEvolutionClick = onEvolutionClick,
-                onMoveClick = onMoveClick
+                onMoveClick = onMoveClick,
+                onBattle = onBattle
             )
         }
     }
@@ -129,7 +132,8 @@ private fun DetailContent(
     onToggleTeam: () -> Unit,
     onCompare: (Int) -> Unit,
     onEvolutionClick: (Int) -> Unit,
-    onMoveClick: (String) -> Unit
+    onMoveClick: (String) -> Unit,
+    onBattle: (Int) -> Unit = {}
 ) {
     var showShiny by remember { mutableStateOf(false) }
     var leftPanel by remember { mutableStateOf(LeftPanel.DEX_ENTRY) }
@@ -158,6 +162,19 @@ private fun DetailContent(
             modifier = Modifier.offset(x = 2.dp, y = 2.dp).size(36.dp)
         ) {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = PokedexCream)
+        }
+
+        // Battle button
+        IconButton(
+            onClick = { onBattle(detail.id) },
+            modifier = Modifier.offset(x = sw - 152.dp, y = 2.dp).size(36.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.SportsKabaddi,
+                contentDescription = "Battle",
+                tint = PokedexCream,
+                modifier = Modifier.size(22.dp)
+            )
         }
 
         // Compare button

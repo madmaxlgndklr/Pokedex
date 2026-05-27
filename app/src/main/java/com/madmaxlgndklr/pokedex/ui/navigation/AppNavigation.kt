@@ -43,6 +43,10 @@ import com.madmaxlgndklr.pokedex.ui.search.SearchScreen
 import com.madmaxlgndklr.pokedex.ui.search.SearchViewModel
 import com.madmaxlgndklr.pokedex.ui.settings.SettingsScreen
 import com.madmaxlgndklr.pokedex.ui.settings.SettingsViewModel
+import com.madmaxlgndklr.pokedex.ui.battle.BattleHubScreen
+import com.madmaxlgndklr.pokedex.ui.battle.DamageCalcViewModel
+import com.madmaxlgndklr.pokedex.ui.battle.MatchupViewModel
+import com.madmaxlgndklr.pokedex.ui.battle.TurnBattleViewModel
 import com.madmaxlgndklr.pokedex.ui.team.TeamScreen
 import com.madmaxlgndklr.pokedex.ui.team.TeamViewModel
 
@@ -55,9 +59,11 @@ private object Routes {
     const val COMPARE = "compare/{firstId}"
     const val DETAIL = "detail/{pokemonId}"
     const val MOVE = "move/{moveName}"
+    const val BATTLE = "battle?preloadId={preloadId}"
     fun detail(id: Int) = "detail/$id"
     fun compare(id: Int) = "compare/$id"
     fun move(name: String) = "move/$name"
+    fun battle(preloadId: Int? = null) = if (preloadId != null) "battle?preloadId=$preloadId" else "battle?preloadId=-1"
 }
 
 @Composable
@@ -204,6 +210,7 @@ fun AppNavigation() {
                     onNavigateFullList = { navController.navigate(Routes.FULL_LIST) { popUpTo(Routes.TEAM) { inclusive = true } } },
                     onNavigateMyCollection = { navController.navigate(Routes.MY_COLLECTION) { popUpTo(Routes.TEAM) { inclusive = true } } },
                     onNavigateSettings = { navController.navigate(Routes.SETTINGS) },
+                    onNavigateBattle = { navController.navigate(Routes.battle()) },
                     onClosePokedex = { pokedexState = PokedexState.CLOSING }
                 )
             }
@@ -277,7 +284,8 @@ fun AppNavigation() {
                         else teamVm.addToTeam(pokemonId)
                     },
                     onCompare = { id -> navController.navigate(Routes.compare(id)) },
-                    onMoveClick = { name -> navController.navigate(Routes.move(name)) }
+                    onMoveClick = { name -> navController.navigate(Routes.move(name)) },
+                    onBattle = { id -> navController.navigate(Routes.battle(id)) }
                 )
             }
             composable(
@@ -292,6 +300,29 @@ fun AppNavigation() {
                     viewModel = vm,
                     onBack = { navController.popBackStack() },
                     onPokemonClick = { id -> navController.navigate(Routes.detail(id)) }
+                )
+            }
+            composable(
+                route = Routes.BATTLE,
+                arguments = listOf(navArgument("preloadId") { type = NavType.IntType; defaultValue = -1 })
+            ) { backStackEntry ->
+                val preloadId = backStackEntry.arguments?.getInt("preloadId")?.takeIf { it > 0 }
+                val teamIds by teamVm.teamIds.collectAsState()
+                val calcVm: DamageCalcViewModel = viewModel(
+                    factory = DamageCalcViewModel.factory(repo, settingsRepo, preloadId)
+                )
+                val battleVm: TurnBattleViewModel = viewModel(
+                    factory = TurnBattleViewModel.factory(repo, settingsRepo)
+                )
+                val matchupVm: MatchupViewModel = viewModel(
+                    factory = MatchupViewModel.factory(repo)
+                )
+                BattleHubScreen(
+                    calcVm = calcVm,
+                    battleVm = battleVm,
+                    matchupVm = matchupVm,
+                    teamIds = teamIds.toList(),
+                    onBack = { navController.popBackStack() }
                 )
             }
         }
