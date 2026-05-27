@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -68,6 +69,18 @@ class PokemonRepositoryTest {
         assertEquals(listOf("tackle"), detail.moves.map { it.name })
         val levels = detail.moves.map { it.levelLearnedAt }
         assertEquals(levels.sorted(), levels)
+    }
+
+    @Test
+    fun `getPokemonDetail populates tmMoves from machine slot`() = runTest {
+        val detail = repo.getPokemonDetail(1)
+        assertTrue("cut should be in tmMoves", "cut" in (detail.tmMoves ?: emptyList()))
+    }
+
+    @Test
+    fun `machine move is absent from level-up moves list`() = runTest {
+        val detail = repo.getPokemonDetail(1)
+        assertFalse("cut must not appear in level-up moves", detail.moves.any { it.name == "cut" })
     }
 
     @Test

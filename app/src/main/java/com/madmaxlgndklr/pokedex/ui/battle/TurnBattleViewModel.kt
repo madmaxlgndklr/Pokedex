@@ -29,12 +29,12 @@ data class LearnableMove(
 fun learnableMoves(detail: PokemonDetail, level: Int): List<LearnableMove> {
     val tmSet = (detail.tmMoves ?: emptyList()).toSet()
     val byName = mutableMapOf<String, LearnableMove>()
-    // Level-up moves: gate by level
+    // Level-up moves: gate by level; keep lowest level if duplicates present
     for (pm in detail.moves) {
-        byName.putIfAbsent(
-            pm.name,
-            LearnableMove(pm.name, pm.levelLearnedAt, pm.levelLearnedAt <= level)
-        )
+        val existing = byName[pm.name]
+        if (existing == null || pm.levelLearnedAt < (existing.requiredLevel ?: Int.MAX_VALUE)) {
+            byName[pm.name] = LearnableMove(pm.name, pm.levelLearnedAt, pm.levelLearnedAt <= level)
+        }
     }
     // TM/egg/tutor: always available, override any level-up entry
     for (name in tmSet) {
