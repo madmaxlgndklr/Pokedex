@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.madmaxlgndklr.pokedex.data.local.HeldItem
 import com.madmaxlgndklr.pokedex.data.local.SettingsRepository
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.model.PokemonDetail
@@ -11,13 +12,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 data class BattleSetup(
     val playerDetail: PokemonDetail,
     val level: Int,
-    val selectedMoveNames: List<String>
+    val selectedMoveNames: List<String>,
+    val statConfig: StatConfig = StatConfig.Gen3PlusConfig(IntArray(6) { 31 }, IntArray(6) { 0 }),
+    val nature: Nature = Natures.HARDY,
+    val heldItem: HeldItem? = null
 )
 
 data class LearnableMove(
@@ -63,6 +68,47 @@ class TurnBattleViewModel(
 
     val selectedGen: StateFlow<Int> = settingsRepo.selectedGen
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 5)
+
+    private val _heldItems = MutableStateFlow<List<HeldItem>>(emptyList())
+    val heldItems: StateFlow<List<HeldItem>> = _heldItems
+
+    private val _heldItemSyncError = MutableStateFlow(false)
+    val heldItemSyncError: StateFlow<Boolean> = _heldItemSyncError
+
+    val canStartBattle: StateFlow<Boolean> = _setup
+        .map { setup ->
+            val cfg = setup?.statConfig
+            if (cfg is StatConfig.Gen3PlusConfig) StatFormulas.isEvSumValid(cfg.evs) else true
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
+
+    fun setStatConfig(config: StatConfig) {
+        _setup.value = _setup.value?.copy(statConfig = config)
+    }
+
+    fun setNature(nature: Nature) {
+        _setup.value = _setup.value?.copy(nature = nature)
+    }
+
+    fun setHeldItem(item: HeldItem?) {
+        _setup.value = _setup.value?.copy(heldItem = item)
+    }
+
+    fun setGen(gen: Int) {
+        viewModelScope.launch {
+            settingsRepo.setGen(gen)
+        }
+    }
+
+    fun loadHeldItems(heldItemRepo: com.madmaxlgndklr.pokedex.data.repository.HeldItemRepository) {
+        viewModelScope.launch {
+            try {
+                _heldItems.value = heldItemRepo.getAll()
+            } catch (_: Exception) {
+                _heldItemSyncError.value = true
+            }
+        }
+    }
 
     fun loadSetup(teamIds: List<Int>, pickIndex: Int = 0) {
         if (_setup.value != null || _isLoading.value) return
@@ -113,7 +159,7 @@ class TurnBattleViewModel(
                 val opponentDetail = repo.getPokemonDetail(allPokemon.random().id)
                 val playerMoves = resolveMoves(s.selectedMoveNames)
                 val opponentMoves = resolveMoves(opponentDetail.moves.take(4).map { it.name })
-                val playerBattle = BattleEngine.buildBattlePokemon(s.playerDetail, s.level, playerMoves)
+                val playerBattle = BattleEngine.buildBattlePokemon(s.playerDetail, s.level, playerMoves, s.statConfig, s.nature, s.heldItem)
                 val opponentBattle = BattleEngine.buildBattlePokemon(opponentDetail, s.level, opponentMoves)
                 _battleState.value = BattleEngine.startBattle(playerBattle, opponentBattle, gen)
             } catch (_: Exception) {

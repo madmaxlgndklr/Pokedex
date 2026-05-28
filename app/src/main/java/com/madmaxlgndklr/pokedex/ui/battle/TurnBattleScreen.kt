@@ -16,12 +16,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +31,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.madmaxlgndklr.pokedex.data.local.HeldItem
 import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
 import com.madmaxlgndklr.pokedex.ui.common.CryPlayer
 import com.madmaxlgndklr.pokedex.ui.theme.CaughtGold
@@ -101,6 +105,7 @@ fun TurnBattleScreen(
                 BattleSetupView(
                     setup = s,
                     moves = learnableMoves(s.playerDetail, s.level),
+                    viewModel = viewModel,
                     onLevelChange = { viewModel.setSetupLevel(it) },
                     onToggleMove = { viewModel.toggleSetupMove(it) },
                     onFight = { viewModel.startBattleFromSetup() }
@@ -122,12 +127,20 @@ fun TurnBattleScreen(
 private fun BattleSetupView(
     setup: BattleSetup,
     moves: List<LearnableMove>,
+    viewModel: TurnBattleViewModel,
     onLevelChange: (Int) -> Unit,
     onToggleMove: (String) -> Unit,
     onFight: () -> Unit
 ) {
     val selectedSet = setup.selectedMoveNames.toSet()
-    val canFight = selectedSet.isNotEmpty()
+
+    val gen by viewModel.selectedGen.collectAsState()
+    val heldItems by viewModel.heldItems.collectAsState()
+    val syncError by viewModel.heldItemSyncError.collectAsState()
+    val canStart by viewModel.canStartBattle.collectAsState()
+
+    var showStatConfig by remember { mutableStateOf(false) }
+    var showNaturePicker by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(10.dp),
@@ -156,6 +169,105 @@ private fun BattleSetupView(
             LevelPicker(level = setup.level, onLevelChange = onLevelChange)
         }
 
+        // Gen toggle
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            val isGen12 = gen <= 2
+            listOf("GEN I–II" to true, "GEN III+" to false).forEach { (label, isGen12Option) ->
+                val selected = isGen12 == isGen12Option
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .background(
+                            if (selected) CaughtGold else PokedexDark.copy(alpha = 0.5f),
+                            RoundedCornerShape(4.dp)
+                        )
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            val newGen = if (isGen12Option) 1 else 5
+                            viewModel.setGen(newGen)
+                            val defaultConfig = if (isGen12Option)
+                                StatConfig.Gen12Config(IntArray(5) { 15 }, IntArray(5) { 0 })
+                            else
+                                StatConfig.Gen3PlusConfig(IntArray(6) { 31 }, IntArray(6) { 0 })
+                            viewModel.setStatConfig(defaultConfig)
+                            viewModel.setNature(Natures.HARDY)
+                        }
+                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(label, fontFamily = PressStart2P, fontSize = 6.sp,
+                        color = if (selected) PokedexDark else PokedexCream)
+                }
+            }
+        }
+
+        // Stat config toggle + section
+        Text(
+            text = if (showStatConfig) "STATS ▲" else "STATS ▼",
+            fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue,
+            modifier = Modifier.clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { showStatConfig = !showStatConfig }
+        )
+        if (showStatConfig) {
+            val isEvSumValid = setup.let { s ->
+                val cfg = s.statConfig
+                if (cfg is StatConfig.Gen3PlusConfig) StatFormulas.isEvSumValid(cfg.evs) else true
+            }
+            StatConfigSection(
+                gen = gen,
+                statConfig = setup.statConfig,
+                label = if (gen <= 2) "DVs / Stat Exp" else "IVs / EVs",
+                onConfigChange = { viewModel.setStatConfig(it) },
+                isEvSumValid = isEvSumValid,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        // Nature picker (Gen 3+)
+        if (gen >= 3) {
+            Text(
+                text = if (showNaturePicker) "NATURE ▲" else "NATURE: ${setup.nature.name.uppercase()}",
+                fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue,
+                modifier = Modifier.clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) { showNaturePicker = !showNaturePicker }
+            )
+            if (showNaturePicker) {
+                NaturePicker(
+                    selectedNature = setup.nature,
+                    onNatureSelected = { viewModel.setNature(it); showNaturePicker = false }
+                )
+            }
+        }
+
+        // Held item picker
+        if (syncError) {
+            Text(
+                "ITEMS UNAVAILABLE — SYNC IN SETTINGS",
+                fontFamily = PressStart2P, fontSize = 5.sp,
+                color = PokedexCream.copy(alpha = 0.5f)
+            )
+        } else {
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                item {
+                    val noneSelected = setup.heldItem == null
+                    ItemCard("NONE", "No item", noneSelected) { viewModel.setHeldItem(null) }
+                }
+                items(heldItems) { item ->
+                    val selected = setup.heldItem?.id == item.id
+                    ItemCard(item.displayName, item.effectSummary, selected) { viewModel.setHeldItem(item) }
+                }
+            }
+        }
+
         // Move count header
         Text(
             "MOVES  ${selectedSet.size}/4",
@@ -177,22 +289,186 @@ private fun BattleSetupView(
             }
         }
 
-        // Fight button
-        Button(
-            onClick = onFight,
-            enabled = canFight,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = PokedexRed,
-                disabledContainerColor = PokedexDark.copy(alpha = 0.4f)
-            ),
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        // Fight / Start Battle button
+        Text(
+            text = "START BATTLE",
+            fontFamily = PressStart2P,
+            fontSize = 7.sp,
+            color = if (canStart && selectedSet.isNotEmpty()) CaughtGold else PokedexCream.copy(alpha = 0.3f),
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    if (canStart && selectedSet.isNotEmpty()) PokedexRed else PokedexDark.copy(alpha = 0.4f),
+                    RoundedCornerShape(4.dp)
+                )
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    enabled = canStart && selectedSet.isNotEmpty()
+                ) {
+                    if (canStart && selectedSet.isNotEmpty()) onFight()
+                }
+                .padding(horizontal = 12.dp, vertical = 10.dp)
+        )
+    }
+}
+
+@Composable
+private fun StatConfigSection(
+    gen: Int,
+    statConfig: StatConfig,
+    label: String,
+    onConfigChange: (StatConfig) -> Unit,
+    isEvSumValid: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val statNames12 = listOf("HP", "ATK", "DEF", "SPE", "SPC")
+    val statNames3  = listOf("HP", "ATK", "DEF", "SPATK", "SPDEF", "SPE")
+
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(label, fontFamily = PressStart2P, fontSize = 6.sp, color = CaughtGold)
+
+        if (gen <= 2) {
+            val cfg = statConfig as? StatConfig.Gen12Config
+                ?: StatConfig.Gen12Config(IntArray(5) { 15 }, IntArray(5) { 0 })
+            statNames12.forEachIndexed { i, name ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(name, fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream, modifier = Modifier.width(36.dp))
+                    Text("DV", fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream.copy(alpha = 0.6f))
+                    Slider(
+                        value = cfg.dvs.getOrElse(i) { 15 }.toFloat(),
+                        onValueChange = { v ->
+                            val newDvs = cfg.dvs.copyOf().also { it[i] = v.toInt() }
+                            onConfigChange(cfg.copy(dvs = newDvs))
+                        },
+                        valueRange = 0f..15f,
+                        steps = 14,
+                        modifier = Modifier.weight(1f),
+                        colors = sliderColors()
+                    )
+                    Text("${cfg.dvs.getOrElse(i){15}}", fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream, modifier = Modifier.width(20.dp))
+                }
+            }
+        } else {
+            val cfg = statConfig as? StatConfig.Gen3PlusConfig
+                ?: StatConfig.Gen3PlusConfig(IntArray(6) { 31 }, IntArray(6) { 0 })
+            val evSum = cfg.evs.sum()
+            statNames3.forEachIndexed { i, name ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(name, fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream, modifier = Modifier.width(40.dp))
+                    Slider(
+                        value = cfg.ivs.getOrElse(i) { 31 }.toFloat(),
+                        onValueChange = { v ->
+                            val newIvs = cfg.ivs.copyOf().also { it[i] = v.toInt() }
+                            onConfigChange(cfg.copy(ivs = newIvs))
+                        },
+                        valueRange = 0f..31f,
+                        steps = 30,
+                        modifier = Modifier.weight(1f),
+                        colors = sliderColors()
+                    )
+                    Slider(
+                        value = cfg.evs.getOrElse(i) { 0 }.toFloat(),
+                        onValueChange = { v ->
+                            val newEvs = cfg.evs.copyOf().also { it[i] = v.toInt() }
+                            val newCfg = cfg.copy(evs = newEvs)
+                            if (StatFormulas.isEvSumValid(newEvs)) onConfigChange(newCfg)
+                        },
+                        valueRange = 0f..252f,
+                        steps = 62,
+                        modifier = Modifier.weight(1f),
+                        colors = sliderColors()
+                    )
+                }
+            }
             Text(
-                "FIGHT!",
-                fontFamily = PressStart2P, fontSize = 9.sp,
-                color = if (canFight) PokedexCream else PokedexCream.copy(alpha = 0.3f)
+                text = "$evSum/510 EVs",
+                fontFamily = PressStart2P,
+                fontSize = 5.sp,
+                color = if (isEvSumValid) PokedexCream.copy(alpha = 0.6f) else Color.Red
             )
         }
+    }
+}
+
+@Composable
+private fun NaturePicker(
+    selectedNature: Nature,
+    onNatureSelected: (Nature) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val grouped = Natures.ALL.chunked(5)
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        grouped.forEach { row ->
+            Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                row.forEach { nature ->
+                    val selected = nature == selectedNature
+                    Text(
+                        text = nature.name.uppercase().take(4),
+                        fontFamily = PressStart2P,
+                        fontSize = 4.sp,
+                        color = if (selected) CaughtGold else PokedexCream.copy(alpha = 0.7f),
+                        modifier = Modifier
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) { onNatureSelected(nature) }
+                            .padding(4.dp)
+                    )
+                }
+            }
+        }
+        if (selectedNature.boostedStat != null) {
+            val statNames = listOf("HP", "Atk", "Def", "SpAtk", "SpDef", "Spe")
+            val b = statNames.getOrElse(selectedNature.boostedStat) { "?" }
+            val d = statNames.getOrElse(selectedNature.droppedStat ?: 0) { "?" }
+            Text("↑ $b  ↓ $d", fontFamily = PressStart2P, fontSize = 5.sp, color = CaughtGold)
+        } else {
+            Text("—", fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream.copy(alpha = 0.5f))
+        }
+    }
+}
+
+@Composable
+private fun sliderColors() = androidx.compose.material3.SliderDefaults.colors(
+    thumbColor = CaughtGold,
+    activeTrackColor = CaughtGold,
+    inactiveTrackColor = PokedexCream.copy(alpha = 0.2f)
+)
+
+@Composable
+private fun ItemCard(name: String, summary: String, selected: Boolean, onClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .width(80.dp)
+            .background(
+                if (selected) CaughtGold.copy(alpha = 0.2f) else PokedexDark.copy(alpha = 0.4f),
+                RoundedCornerShape(6.dp)
+            )
+            .border(
+                width = if (selected) 1.dp else 0.dp,
+                color = if (selected) CaughtGold else Color.Transparent,
+                shape = RoundedCornerShape(6.dp)
+            )
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { onClick() }
+            .padding(6.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Text(name, fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream, maxLines = 1)
+        Text(summary, fontFamily = PressStart2P, fontSize = 4.sp,
+            color = PokedexCream.copy(alpha = 0.6f), maxLines = 2, lineHeight = 6.sp)
     }
 }
 
