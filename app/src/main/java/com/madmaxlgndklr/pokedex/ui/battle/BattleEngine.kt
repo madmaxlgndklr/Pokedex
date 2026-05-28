@@ -168,7 +168,5 @@ object BattleEngine {
     private fun statValue(pokemon: BattlePokemon, statName: String): Int =
         pokemon.detail.stats.firstOrNull { it.name == statName }?.value ?: 50
 
-    fun computeHp(base: Int, level: Int): Int =
-        ((2.0 * base + 31) * level / 100 + level + 10).toInt()
 
 }
