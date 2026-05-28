@@ -10,6 +10,7 @@ import com.madmaxlgndklr.pokedex.repository.FakePokeApiService
 import com.madmaxlgndklr.pokedex.repository.FakePokemonDetailCacheDao
 import com.madmaxlgndklr.pokedex.repository.FakePokemonListCacheDao
 import com.madmaxlgndklr.pokedex.repository.fakeSettingsRepo
+import com.madmaxlgndklr.pokedex.ui.battle.BattleState
 import com.madmaxlgndklr.pokedex.ui.battle.TurnBattleViewModel
 import com.madmaxlgndklr.pokedex.ui.battle.learnableMoves
 import kotlinx.coroutines.Dispatchers
@@ -341,7 +342,7 @@ class TurnBattleViewModelSetupTest {
         // Deselect everything
         vm.setup.value!!.selectedMoveNames.toList().forEach { vm.toggleSetupMove(it) }
         assertEquals(0, vm.setup.value!!.selectedMoveNames.size)
-        vm.startBattleFromSetup()
+        vm.startBattleFromSetup(listOf(6))
         advanceUntilIdle()
         assertNull("battle must not start with 0 moves", vm.battleState.value)
     }
@@ -397,5 +398,63 @@ class RepositoryTmMovesTest {
         // scratch and ember are level-up only — should NOT appear in tmMoves
         assertFalse("scratch is level-up only", "scratch" in tm)
         assertFalse("ember is level-up only",   "ember"   in tm)
+    }
+}
+
+// ---------------------------------------------------------------------------
+// TurnBattleViewModel — team switching actions
+// ---------------------------------------------------------------------------
+
+@OptIn(ExperimentalCoroutinesApi::class)
+class TurnBattleViewModelSwitchTest {
+    private val dispatcher = StandardTestDispatcher()
+    private lateinit var vm: TurnBattleViewModel
+
+    @Before
+    fun setup() {
+        Dispatchers.setMain(dispatcher)
+        vm = TurnBattleViewModel(charizardRepo(), fakeSettingsRepo())
+    }
+
+    @After
+    fun teardown() = Dispatchers.resetMain()
+
+    @Test
+    fun `submitSwitch does nothing when battle is not Ongoing`() = runTest {
+        assertNull(vm.battleState.value)
+        vm.submitSwitch(1)
+        advanceUntilIdle()
+        assertNull(vm.battleState.value)
+    }
+
+    @Test
+    fun `confirmSwitch does nothing when battle is not PendingSwitch`() = runTest {
+        assertNull(vm.battleState.value)
+        vm.confirmSwitch(0)
+        advanceUntilIdle()
+        assertNull(vm.battleState.value)
+    }
+
+    @Test
+    fun `submitMove wraps player move in TurnAction UseMove`() = runTest {
+        vm.loadSetup(listOf(6))
+        advanceUntilIdle()
+        vm.startBattleFromSetup(listOf(6))
+        advanceUntilIdle()
+        val before = vm.battleState.value
+        assertTrue("battle must be Ongoing to test submitMove", before is BattleState.Ongoing)
+        vm.submitMove(0)
+        advanceUntilIdle()
+        val after = vm.battleState.value
+        assertNotNull(after)
+        val beforeLog = (before as BattleState.Ongoing).log
+        val afterLog = when (after) {
+            is BattleState.Ongoing -> after.log
+            is BattleState.Won -> after.log
+            is BattleState.Lost -> after.log
+            is BattleState.PendingSwitch -> after.log
+            else -> emptyList()
+        }
+        assertTrue("log must grow after move", afterLog.size > beforeLog.size)
     }
 }

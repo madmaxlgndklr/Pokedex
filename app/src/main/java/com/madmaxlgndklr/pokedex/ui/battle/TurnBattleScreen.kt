@@ -108,7 +108,7 @@ fun TurnBattleScreen(
                     viewModel = viewModel,
                     onLevelChange = { viewModel.setSetupLevel(it) },
                     onToggleMove = { viewModel.toggleSetupMove(it) },
-                    onFight = { viewModel.startBattleFromSetup() }
+                    onFight = { viewModel.startBattleFromSetup(teamIds) }
                 )
             }
             else -> {
