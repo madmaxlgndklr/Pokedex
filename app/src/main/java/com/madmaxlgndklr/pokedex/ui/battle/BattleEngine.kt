@@ -192,15 +192,17 @@ object BattleEngine {
             }
         }
 
-        // First move
+        // First move — track who is actually attacking (may differ from speed priority when opp switched)
         val firstIsPlayer = playerGoesFirst
-        val (firstAttacker, firstMove, firstDefender) =
-            if (firstIsPlayer) Triple(player(), playerMove, opponent())
-            else if (opponentMove != null) Triple(opponent(), opponentMove, player())
-            else Triple(player(), playerMove, opponent())
+        val firstAttackerIsPlayer: Boolean
+        val (firstAttacker, firstMove, firstDefender) = when {
+            firstIsPlayer -> { firstAttackerIsPlayer = true; Triple(player(), playerMove, opponent()) }
+            opponentMove != null -> { firstAttackerIsPlayer = false; Triple(opponent(), opponentMove, player()) }
+            else -> { firstAttackerIsPlayer = true; Triple(player(), playerMove, opponent()) }  // opp switched, player always attacks
+        }
 
         val (fa, fd) = applyMove(firstAttacker, firstMove, firstDefender)
-        commitMove(fa, fd, firstIsPlayer)
+        commitMove(fa, fd, firstAttackerIsPlayer)
 
         // Check faint after first move
         if (!firstIsPlayer && playerTeam[playerIdx].currentHp <= 0) {
@@ -233,7 +235,7 @@ object BattleEngine {
 
             if (secondAttacker.currentHp > 0) {
                 val (sa, sd) = applyMove(secondAttacker, secondMove, secondDefender)
-                commitMove(sa, sd, secondIsPlayer)
+                commitMove(sa, sd, !firstAttackerIsPlayer)
 
                 if (!secondIsPlayer && playerTeam[playerIdx].currentHp <= 0) {
                     log.add("${player().detail.name.uppercase()} fainted!")
@@ -324,7 +326,7 @@ object BattleEngine {
             .filter { it.power != null && it.power > 0 }
             .maxByOrNull { it.power ?: 0 }?.type ?: "normal"
         val typeAdvantage = DamageEngine.computeEffectiveness(gen, opponentBestType, candidate.detail.types)
-        val defenseScore = if (typeAdvantage > 0f) 1f / typeAdvantage else 0f
+        val defenseScore = if (typeAdvantage == 0f) 10f else 1f / typeAdvantage
         val hpFraction = candidate.currentHp.toFloat() / candidate.maxHp
         return defenseScore * hpFraction
     }
