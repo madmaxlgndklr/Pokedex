@@ -79,6 +79,7 @@ object CryPlayer {
         if (!::appContext.isInitialized) return false
         val file = cryFile(name)
         if (file.exists() && file.length() > 0) return true
+        val tmp = File(criesDir(), "$name.ogg.tmp")
         return try {
             val request = Request.Builder().url("$CDN/$name.ogg").build()
             val response = withContext(Dispatchers.IO) {
@@ -88,12 +89,14 @@ object CryPlayer {
                 if (!resp.isSuccessful) return@use false
                 val bytes = resp.body?.bytes() ?: return@use false
                 if (bytes.isEmpty()) return@use false
-                val tmp = File(criesDir(), "$name.ogg.tmp")
                 tmp.writeBytes(bytes)
                 tmp.renameTo(file)
                 true
             }
-        } catch (_: Exception) { false }
+        } catch (_: Exception) {
+            tmp.delete()
+            false
+        }
     }
 
     suspend fun syncCries(names: List<String>, onProgress: (Int, Int) -> Unit) {

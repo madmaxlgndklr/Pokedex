@@ -26,6 +26,7 @@ class PokedexApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        filesDir.listFiles { _, n -> n.endsWith(".tmp") }?.forEach { it.delete() }
         CryPlayer.init(this, networkObserver)
     }
 }
