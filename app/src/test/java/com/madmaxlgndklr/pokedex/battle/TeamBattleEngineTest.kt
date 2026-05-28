@@ -125,10 +125,8 @@ class ResolveTurnSwitchTest {
             state,
             gen = 5
         )
-        assertTrue(result is BattleState.Ongoing || result is BattleState.PendingSwitch)
-        if (result is BattleState.Ongoing) {
-            assertEquals(2, result.playerActiveIndex)
-        }
+        assertTrue("voluntary switch must produce Ongoing state", result is BattleState.Ongoing)
+        assertEquals(2, (result as BattleState.Ongoing).playerActiveIndex)
     }
 
     @Test
@@ -153,7 +151,7 @@ class ResolveTurnSwitchTest {
             is BattleState.PendingSwitch -> {
                 assertEquals(200, result.playerTeam[0].currentHp)
             }
-            is BattleState.Lost -> { /* incoming fainted and was the only viable member — acceptable */ }
+            is BattleState.Lost -> fail("outgoing has 200 HP — Lost should be unreachable with two team members")
             else -> fail("Unexpected state: $result")
         }
     }
