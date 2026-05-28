@@ -67,33 +67,60 @@ fun SettingsScreen(
 ) {
     val musicOnLaunch by viewModel.musicOnLaunch.collectAsState()
     val syncState by viewModel.syncState.collectAsState()
-    var showSyncWarning by remember { mutableStateOf(false) }
+    var showSyncDialog by remember { mutableStateOf(false) }
+    var syncOptions by remember { mutableStateOf(SyncOptions()) }
     val context = LocalContext.current
 
-    if (showSyncWarning) {
+    if (showSyncDialog) {
+        val allChecked = syncOptions.syncData && syncOptions.syncMoves && syncOptions.syncCries
         AlertDialog(
-            onDismissRequest = { showSyncWarning = false },
+            onDismissRequest = { showSyncDialog = false },
             containerColor = PokedexDark,
             title = {
                 Text(
-                    text = "DATA WARNING",
+                    text = "SYNC OPTIONS",
                     fontFamily = PressStart2P,
                     fontSize = 8.sp,
                     color = CaughtGold
                 )
             },
             text = {
-                Text(
-                    text = "Downloading this data (~80 MB) may result in additional charges from your mobile carrier depending on your data plan.\n\nDo you wish to continue?",
-                    fontFamily = PressStart2P,
-                    fontSize = 7.sp,
-                    color = PokedexCream,
-                    lineHeight = 14.sp
-                )
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Text(
+                        text = "Downloading may use mobile data. Select what to sync.",
+                        fontFamily = PressStart2P,
+                        fontSize = 6.sp,
+                        color = PokedexCream.copy(alpha = 0.7f),
+                        lineHeight = 11.sp
+                    )
+                    SyncOptionRow(
+                        label = "SELECT ALL",
+                        checked = allChecked,
+                        onCheckedChange = { checked ->
+                            syncOptions = SyncOptions(checked, checked, checked)
+                        }
+                    )
+                    HorizontalDivider(color = PokedexCream.copy(alpha = 0.2f))
+                    SyncOptionRow(
+                        label = "POKEMON DATA  ~25 MB",
+                        checked = syncOptions.syncData,
+                        onCheckedChange = { syncOptions = syncOptions.copy(syncData = it) }
+                    )
+                    SyncOptionRow(
+                        label = "TEAM MOVES",
+                        checked = syncOptions.syncMoves,
+                        onCheckedChange = { syncOptions = syncOptions.copy(syncMoves = it) }
+                    )
+                    SyncOptionRow(
+                        label = "BATTLE CRIES  ~30 MB",
+                        checked = syncOptions.syncCries,
+                        onCheckedChange = { syncOptions = syncOptions.copy(syncCries = it) }
+                    )
+                }
             },
             confirmButton = {
                 Text(
-                    text = "YES",
+                    text = "START SYNC",
                     fontFamily = PressStart2P,
                     fontSize = 7.sp,
                     color = GlowBlue,
@@ -102,15 +129,15 @@ fun SettingsScreen(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null
                         ) {
-                            showSyncWarning = false
-                            viewModel.syncAll()
+                            showSyncDialog = false
+                            viewModel.syncWithOptions(syncOptions)
                         }
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 )
             },
             dismissButton = {
                 Text(
-                    text = "NO",
+                    text = "CANCEL",
                     fontFamily = PressStart2P,
                     fontSize = 7.sp,
                     color = PokedexCream.copy(alpha = 0.6f),
@@ -118,7 +145,7 @@ fun SettingsScreen(
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null
-                        ) { showSyncWarning = false }
+                        ) { showSyncDialog = false }
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 )
             }
@@ -239,7 +266,10 @@ fun SettingsScreen(
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null
-                            ) { showSyncWarning = true },
+                            ) {
+                                syncOptions = SyncOptions()   // reset to all-checked
+                                showSyncDialog = true
+                            },
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -264,7 +294,7 @@ fun SettingsScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = "SYNCING...",
+                                text = "SYNCING ${state.phase}...",
                                 fontFamily = PressStart2P,
                                 fontSize = 7.sp,
                                 color = GlowBlue
@@ -316,7 +346,11 @@ fun SettingsScreen(
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null
-                            ) { viewModel.resetSyncState(); showSyncWarning = true },
+                            ) {
+                                viewModel.resetSyncState()
+                                syncOptions = SyncOptions()
+                                showSyncDialog = true
+                            },
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -376,6 +410,33 @@ fun SettingsScreen(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 20.dp)
+        )
+    }
+}
+
+@Composable
+private fun SyncOptionRow(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            fontFamily = PressStart2P,
+            fontSize = 6.sp,
+            color = PokedexCream,
+            modifier = Modifier.weight(1f)
+        )
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = PokedexDark,
+                checkedTrackColor = PokedexGreen,
+                uncheckedThumbColor = PokedexCream.copy(alpha = 0.6f),
+                uncheckedTrackColor = PokedexDark.copy(alpha = 0.6f)
+            )
         )
     }
 }
