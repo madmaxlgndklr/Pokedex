@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
+import com.madmaxlgndklr.pokedex.ui.common.CryPlayer
 import com.madmaxlgndklr.pokedex.ui.theme.CaughtGold
 import com.madmaxlgndklr.pokedex.ui.theme.GlowBlue
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexCream
@@ -66,9 +68,20 @@ fun TurnBattleScreen(
                 CircularProgressIndicator(color = GlowBlue, modifier = Modifier.align(Alignment.Center))
             }
             battleState is BattleState.Ongoing -> {
+                val ongoing = battleState as BattleState.Ongoing
+                val started = remember { mutableStateOf(false) }
+                LaunchedEffect(Unit) {
+                    if (!started.value) {
+                        started.value = true
+                        CryPlayer.play(ongoing.opponent.detail.name)
+                    }
+                }
                 OngoingBattleView(
-                    state = battleState as BattleState.Ongoing,
-                    onMove = { viewModel.submitMove(it) },
+                    state = ongoing,
+                    onMove = { idx ->
+                        CryPlayer.play(ongoing.player.detail.name)
+                        viewModel.submitMove(idx)
+                    },
                     onForfeit = { viewModel.forfeit() }
                 )
             }
