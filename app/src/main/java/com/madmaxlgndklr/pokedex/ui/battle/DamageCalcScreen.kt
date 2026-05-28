@@ -25,9 +25,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -55,12 +53,6 @@ import com.madmaxlgndklr.pokedex.ui.theme.PokedexCream
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexDark
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexRed
 import com.madmaxlgndklr.pokedex.ui.theme.PressStart2P
-
-private val NATURES = listOf(
-    "Neutral" to 1.0f,
-    "+Atk" to 1.1f, "−Atk" to 0.9f,
-    "+SpA" to 1.1f, "−SpA" to 0.9f
-)
 
 private val GENS = (1..9).map { it }
 
@@ -108,10 +100,12 @@ fun DamageCalcScreen(viewModel: DamageCalcViewModel) {
         // Attacker
         SlotPanel(
             label = "ATTACKER",
+            gen = state.gen,
             slot = state.attacker,
             isLoading = state.isLoadingAttacker,
             onLoadId = { viewModel.loadAttacker(it) },
             onUpdate = { viewModel.updateAttacker(it) },
+            isEvSumValid = viewModel.isEvSumValid(state.attacker),
             keyboard = keyboard
         )
 
@@ -126,10 +120,12 @@ fun DamageCalcScreen(viewModel: DamageCalcViewModel) {
         // Defender
         SlotPanel(
             label = "DEFENDER",
+            gen = state.gen,
             slot = state.defender,
             isLoading = state.isLoadingDefender,
             onLoadId = { viewModel.loadDefender(it) },
             onUpdate = { viewModel.updateDefender(it) },
+            isEvSumValid = viewModel.isEvSumValid(state.defender),
             keyboard = keyboard
         )
 
@@ -165,14 +161,16 @@ fun DamageCalcScreen(viewModel: DamageCalcViewModel) {
 @Composable
 private fun SlotPanel(
     label: String,
+    gen: Int,
     slot: CalcSlot,
     isLoading: Boolean,
     onLoadId: (Int) -> Unit,
     onUpdate: (CalcSlot) -> Unit,
+    isEvSumValid: Boolean,
     keyboard: androidx.compose.ui.platform.SoftwareKeyboardController?
 ) {
-    var showNatureDropdown by remember { mutableStateOf(false) }
-    var showEvRow by remember { mutableStateOf(false) }
+    var showStatConfig by remember { mutableStateOf(false) }
+    var showNaturePicker by remember { mutableStateOf(false) }
     var idQuery by remember { mutableStateOf("") }
 
     Column(
@@ -241,75 +239,44 @@ private fun SlotPanel(
                 )
             }
 
-            // Nature
-            Box {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null)
-                        { showNatureDropdown = true }
-                ) {
-                    Text("NATURE: ", fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream.copy(alpha = 0.6f))
-                    Text(
-                        text = NATURES.firstOrNull { it.second == slot.natureMultiplier }?.first ?: "Neutral",
-                        fontFamily = PressStart2P, fontSize = 5.sp, color = CaughtGold
-                    )
-                }
-                DropdownMenu(
-                    expanded = showNatureDropdown,
-                    onDismissRequest = { showNatureDropdown = false },
-                    modifier = Modifier.background(PokedexDark)
-                ) {
-                    NATURES.forEach { (label, mult) ->
-                        DropdownMenuItem(
-                            text = { Text(label, fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream) },
-                            onClick = { onUpdate(slot.copy(natureMultiplier = mult)); showNatureDropdown = false },
-                            colors = MenuDefaults.itemColors(textColor = PokedexCream)
-                        )
-                    }
-                }
+            // Stat config toggle
+            Text(
+                text = if (showStatConfig) "STATS ▲" else "STATS ▼",
+                fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue,
+                modifier = Modifier.clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) { showStatConfig = !showStatConfig }
+            )
+            if (showStatConfig) {
+                StatConfigSection(
+                    gen = gen,
+                    slot = slot,
+                    label = if (gen <= 2) "DVs / Stat Exp" else "IVs / EVs",
+                    onSlotChange = onUpdate,
+                    isEvSumValid = isEvSumValid,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
 
-            // EV row toggle
-            Text(
-                text = if (showEvRow) "EVs ▲" else "EVs ▼",
-                fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue,
-                modifier = Modifier.clickable(interactionSource = remember { MutableInteractionSource() }, indication = null)
-                { showEvRow = !showEvRow }
-            )
-            if (showEvRow) {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    EvField("ATK", slot.attackEvs) { onUpdate(slot.copy(attackEvs = it)) }
-                    EvField("SpA", slot.spAttackEvs) { onUpdate(slot.copy(spAttackEvs = it)) }
-                    EvField("DEF", slot.defenseEvs) { onUpdate(slot.copy(defenseEvs = it)) }
-                    EvField("SpD", slot.spDefenseEvs) { onUpdate(slot.copy(spDefenseEvs = it)) }
+            // Nature picker (Gen 3+)
+            if (gen >= 3) {
+                Text(
+                    text = if (showNaturePicker) "NATURE ▲" else "NATURE: ${slot.nature.name.uppercase()}",
+                    fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue,
+                    modifier = Modifier.clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { showNaturePicker = !showNaturePicker }
+                )
+                if (showNaturePicker) {
+                    NaturePicker(
+                        selectedNature = slot.nature,
+                        onNatureSelected = { onUpdate(slot.copy(nature = it)); showNaturePicker = false }
+                    )
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun EvField(label: String, value: Int, onValue: (Int) -> Unit) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(label, fontFamily = PressStart2P, fontSize = 4.sp, color = PokedexCream.copy(alpha = 0.5f))
-        var text by remember(value) { mutableStateOf(value.toString()) }
-        BasicTextField(
-            value = text,
-            onValueChange = { s ->
-                text = s
-                s.toIntOrNull()?.coerceIn(0, 252)?.let { onValue(it) }
-            },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            textStyle = TextStyle(fontFamily = PressStart2P, fontSize = 6.sp, color = Color.White, textAlign = TextAlign.Center),
-            cursorBrush = SolidColor(GlowBlue),
-            modifier = Modifier
-                .width(36.dp)
-                .background(PokedexDark.copy(alpha = 0.6f), RoundedCornerShape(3.dp))
-                .border(1.dp, GlowBlue.copy(alpha = 0.3f), RoundedCornerShape(3.dp))
-                .padding(horizontal = 4.dp, vertical = 3.dp)
-        )
     }
 }
 
@@ -396,3 +363,134 @@ private fun ResultStat(label: String, value: String) {
         Text(value, fontFamily = PressStart2P, fontSize = 8.sp, color = PokedexCream)
     }
 }
+
+@Composable
+private fun StatConfigSection(
+    gen: Int,
+    slot: CalcSlot,
+    label: String,
+    onSlotChange: (CalcSlot) -> Unit,
+    isEvSumValid: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val statNames12 = listOf("HP", "ATK", "DEF", "SPE", "SPC")
+    val statNames3  = listOf("HP", "ATK", "DEF", "SPATK", "SPDEF", "SPE")
+
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(label, fontFamily = PressStart2P, fontSize = 6.sp, color = CaughtGold)
+
+        if (gen <= 2) {
+            val cfg = slot.statConfig as? StatConfig.Gen12Config
+                ?: StatConfig.Gen12Config(IntArray(5) { 15 }, IntArray(5) { 0 })
+            statNames12.forEachIndexed { i, name ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(name, fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream, modifier = Modifier.width(36.dp))
+                    Text("DV", fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream.copy(alpha = 0.6f))
+                    Slider(
+                        value = cfg.dvs.getOrElse(i) { 15 }.toFloat(),
+                        onValueChange = { v ->
+                            val newDvs = cfg.dvs.copyOf().also { it[i] = v.toInt() }
+                            onSlotChange(slot.copy(statConfig = cfg.copy(dvs = newDvs)))
+                        },
+                        valueRange = 0f..15f,
+                        steps = 14,
+                        modifier = Modifier.weight(1f),
+                        colors = sliderColors()
+                    )
+                    Text("${cfg.dvs.getOrElse(i){15}}", fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream, modifier = Modifier.width(20.dp))
+                }
+            }
+        } else {
+            val cfg = slot.statConfig as? StatConfig.Gen3PlusConfig
+                ?: StatConfig.Gen3PlusConfig(IntArray(6) { 31 }, IntArray(6) { 0 })
+            val evSum = cfg.evs.sum()
+            statNames3.forEachIndexed { i, name ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(name, fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream, modifier = Modifier.width(40.dp))
+                    Slider(
+                        value = cfg.ivs.getOrElse(i) { 31 }.toFloat(),
+                        onValueChange = { v ->
+                            val newIvs = cfg.ivs.copyOf().also { it[i] = v.toInt() }
+                            onSlotChange(slot.copy(statConfig = cfg.copy(ivs = newIvs)))
+                        },
+                        valueRange = 0f..31f,
+                        steps = 30,
+                        modifier = Modifier.weight(1f),
+                        colors = sliderColors()
+                    )
+                    Slider(
+                        value = cfg.evs.getOrElse(i) { 0 }.toFloat(),
+                        onValueChange = { v ->
+                            val newEvs = cfg.evs.copyOf().also { it[i] = v.toInt() }
+                            val newSlot = slot.copy(statConfig = cfg.copy(evs = newEvs))
+                            if (StatFormulas.isEvSumValid(newEvs)) onSlotChange(newSlot)
+                        },
+                        valueRange = 0f..252f,
+                        steps = 62,
+                        modifier = Modifier.weight(1f),
+                        colors = sliderColors()
+                    )
+                }
+            }
+            Text(
+                text = "$evSum/510 EVs",
+                fontFamily = PressStart2P,
+                fontSize = 5.sp,
+                color = if (isEvSumValid) PokedexCream.copy(alpha = 0.6f) else Color.Red
+            )
+        }
+    }
+}
+
+@Composable
+private fun NaturePicker(
+    selectedNature: Nature,
+    onNatureSelected: (Nature) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val grouped = Natures.ALL.chunked(5)
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        grouped.forEach { row ->
+            Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                row.forEach { nature ->
+                    val selected = nature == selectedNature
+                    Text(
+                        text = nature.name.uppercase().take(4),
+                        fontFamily = PressStart2P,
+                        fontSize = 4.sp,
+                        color = if (selected) CaughtGold else PokedexCream.copy(alpha = 0.7f),
+                        modifier = Modifier
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) { onNatureSelected(nature) }
+                            .padding(4.dp)
+                    )
+                }
+            }
+        }
+        if (selectedNature.boostedStat != null) {
+            val statNames = listOf("HP", "Atk", "Def", "SpAtk", "SpDef", "Spe")
+            val b = statNames.getOrElse(selectedNature.boostedStat) { "?" }
+            val d = statNames.getOrElse(selectedNature.droppedStat ?: 0) { "?" }
+            Text("↑ $b  ↓ $d", fontFamily = PressStart2P, fontSize = 5.sp, color = CaughtGold)
+        } else {
+            Text("—", fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream.copy(alpha = 0.5f))
+        }
+    }
+}
+
+@Composable
+private fun sliderColors() = androidx.compose.material3.SliderDefaults.colors(
+    thumbColor = CaughtGold,
+    activeTrackColor = CaughtGold,
+    inactiveTrackColor = PokedexCream.copy(alpha = 0.2f)
+)

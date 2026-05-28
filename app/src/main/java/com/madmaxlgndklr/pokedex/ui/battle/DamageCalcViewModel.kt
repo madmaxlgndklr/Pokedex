@@ -5,9 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.madmaxlgndklr.pokedex.data.local.HeldItem
 import com.madmaxlgndklr.pokedex.data.local.SettingsRepository
-import com.madmaxlgndklr.pokedex.ui.battle.Natures
-import com.madmaxlgndklr.pokedex.ui.battle.StatConfig
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.model.Move
 import com.madmaxlgndklr.pokedex.model.PokemonDetail
@@ -20,11 +19,9 @@ import kotlinx.coroutines.launch
 data class CalcSlot(
     val detail: PokemonDetail? = null,
     val level: Int = 50,
-    val attackEvs: Int = 0,
-    val spAttackEvs: Int = 0,
-    val defenseEvs: Int = 0,
-    val spDefenseEvs: Int = 0,
-    val natureMultiplier: Float = 1f  // 0.9 / 1.0 / 1.1
+    val statConfig: StatConfig = StatConfig.Gen3PlusConfig(IntArray(6) { 31 }, IntArray(6) { 0 }),
+    val nature: Nature = Natures.HARDY,
+    val heldItem: HeldItem? = null
 )
 
 data class CalcUiState(
@@ -59,7 +56,17 @@ class DamageCalcViewModel(
     }
 
     fun setGen(gen: Int) {
-        viewModelScope.launch { settingsRepo.setGen(gen) }
+        viewModelScope.launch {
+            settingsRepo.setGen(gen)
+            val defaultConfig = if (gen <= 2)
+                StatConfig.Gen12Config(IntArray(5) { 15 }, IntArray(5) { 0 })
+            else
+                StatConfig.Gen3PlusConfig(IntArray(6) { 31 }, IntArray(6) { 0 })
+            _state.value = _state.value.copy(
+                attacker = _state.value.attacker.copy(statConfig = defaultConfig, nature = Natures.HARDY),
+                defender = _state.value.defender.copy(statConfig = defaultConfig, nature = Natures.HARDY)
+            )
+        }
     }
 
     fun loadAttacker(id: Int) = viewModelScope.launch {
@@ -119,20 +126,21 @@ class DamageCalcViewModel(
         val defStatName = if (isPhysical) "defense" else "special-defense"
         val atkBase = attackerDetail.stats.firstOrNull { it.name == atkStatName }?.value ?: 50
         val defBase = defenderDetail.stats.firstOrNull { it.name == defStatName }?.value ?: 50
-        val atkEvs = if (isPhysical) s.attacker.attackEvs else s.attacker.spAttackEvs
-        val defEvs = if (isPhysical) s.defender.defenseEvs else s.defender.spDefenseEvs
+        val attackStatIndex = if (isPhysical) 1 else 3
+        val defenseStatIndex = if (isPhysical) 2 else 4
 
         val params = DamageParams(
             gen = s.gen,
             level = s.attacker.level,
             attackBaseStat = atkBase,
             defenseBaseStat = defBase,
-            attackStatIndex = if (isPhysical) 1 else 3,
-            defenseStatIndex = if (isPhysical) 2 else 4,
-            attackerStatConfig = StatConfig.Gen3PlusConfig(IntArray(6) { 31 }, intArrayOf(atkEvs, atkEvs, atkEvs, atkEvs, atkEvs, atkEvs)),
-            attackerNature = Natures.HARDY,
-            defenderStatConfig = StatConfig.Gen3PlusConfig(IntArray(6) { 31 }, intArrayOf(defEvs, defEvs, defEvs, defEvs, defEvs, defEvs)),
-            defenderNature = Natures.HARDY,
+            attackStatIndex = attackStatIndex,
+            defenseStatIndex = defenseStatIndex,
+            attackerStatConfig = s.attacker.statConfig,
+            attackerNature = s.attacker.nature,
+            defenderStatConfig = s.defender.statConfig,
+            defenderNature = s.defender.nature,
+            heldItem = s.attacker.heldItem,
             basePower = move.power,
             moveType = move.type,
             moveCategory = move.category,
@@ -140,6 +148,11 @@ class DamageCalcViewModel(
             defenderTypes = defenderDetail.types
         )
         _state.value = s.copy(result = DamageEngine.calculate(params))
+    }
+
+    fun isEvSumValid(slot: CalcSlot): Boolean {
+        val cfg = slot.statConfig
+        return if (cfg is StatConfig.Gen3PlusConfig) StatFormulas.isEvSumValid(cfg.evs) else true
     }
 
     companion object {
