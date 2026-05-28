@@ -1,5 +1,6 @@
 package com.madmaxlgndklr.pokedex.ui.battle
 
+import com.madmaxlgndklr.pokedex.data.local.HeldItem
 import com.madmaxlgndklr.pokedex.model.PokemonDetail
 import kotlin.random.Random
 
@@ -8,7 +9,10 @@ data class BattlePokemon(
     val level: Int = 50,
     val maxHp: Int,
     val currentHp: Int,
-    val moves: List<BattleMove>
+    val moves: List<BattleMove>,
+    val statConfig: StatConfig = StatConfig.Gen3PlusConfig(IntArray(6) { 31 }, IntArray(6) { 0 }),
+    val nature: Nature = Natures.HARDY,
+    val heldItem: HeldItem? = null
 )
 
 data class BattleMove(
@@ -47,10 +51,17 @@ object BattleEngine {
         )
     }
 
-    fun buildBattlePokemon(detail: PokemonDetail, level: Int, moves: List<BattleMove>): BattlePokemon {
+    fun buildBattlePokemon(
+        detail: PokemonDetail,
+        level: Int,
+        moves: List<BattleMove>,
+        statConfig: StatConfig = StatConfig.Gen3PlusConfig(IntArray(6) { 31 }, IntArray(6) { 0 }),
+        nature: Nature = Natures.HARDY,
+        heldItem: HeldItem? = null
+    ): BattlePokemon {
         val hpBase = detail.stats.firstOrNull { it.name == "hp" }?.value ?: 45
-        val maxHp = computeHp(hpBase, level)
-        return BattlePokemon(detail, level, maxHp, maxHp, moves)
+        val maxHp = StatFormulas.computeHp(hpBase, statConfig, level)
+        return BattlePokemon(detail, level, maxHp, maxHp, moves, statConfig, nature, heldItem)
     }
 
     fun resolveTurn(
@@ -88,6 +99,13 @@ object BattleEngine {
                 level = attacker.level,
                 attackBaseStat = statValue(attacker, atkStat),
                 defenseBaseStat = statValue(defender, defStat),
+                attackStatIndex = if (isPhysical) 1 else 3,
+                defenseStatIndex = if (isPhysical) 2 else 4,
+                attackerStatConfig = attacker.statConfig,
+                attackerNature = attacker.nature,
+                defenderStatConfig = defender.statConfig,
+                defenderNature = defender.nature,
+                heldItem = attacker.heldItem,
                 basePower = move.power,
                 moveType = move.type,
                 moveCategory = move.category,
