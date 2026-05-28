@@ -14,6 +14,8 @@ import androidx.datastore.preferences.core.emptyPreferences
 import com.madmaxlgndklr.pokedex.data.local.SettingsRepository
 import com.madmaxlgndklr.pokedex.data.remote.PokeApiService
 import com.madmaxlgndklr.pokedex.data.remote.dto.*
+import com.madmaxlgndklr.pokedex.data.remote.dto.ItemAttributeResponse
+import com.madmaxlgndklr.pokedex.data.remote.dto.ItemDetailResponse
 import com.madmaxlgndklr.pokedex.data.remote.dto.MoveEffectEntryDto
 import com.madmaxlgndklr.pokedex.data.remote.dto.MoveResponse
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
@@ -201,6 +203,12 @@ open class FakePokeApiService : PokeApiService {
             NamedDto("charmeleon",  "http://10.0.2.2:89/api/v2/pokemon/5/")
         )
     )
+
+    override suspend fun getItemAttribute(name: String): ItemAttributeResponse =
+        ItemAttributeResponse(emptyList())
+
+    override suspend fun getItem(name: String): ItemDetailResponse =
+        ItemDetailResponse(id = 0, name = name, names = emptyList())
 }
 
 class FakeCaughtPokemonDao : CaughtPokemonDao {
