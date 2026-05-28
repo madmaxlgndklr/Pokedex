@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.retrofit.gson)
     implementation(libs.okhttp)
     implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.datastore.preferences)
     implementation(libs.media3.exoplayer)
