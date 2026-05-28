@@ -73,16 +73,10 @@ fun TurnBattleScreen(
             }
             battleState is BattleState.PendingSwitch -> {
                 val pending = battleState as BattleState.PendingSwitch
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(
-                        "CHOOSE YOUR NEXT POKÉMON",
-                        fontFamily = PressStart2P,
-                        fontSize = 7.sp,
-                        color = CaughtGold,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
+                PendingSwitchView(
+                    state = pending,
+                    onSwitch = { idx -> viewModel.confirmSwitch(idx) }
+                )
             }
             battleState is BattleState.Ongoing -> {
                 val ongoing = battleState as BattleState.Ongoing
@@ -99,6 +93,7 @@ fun TurnBattleScreen(
                         CryPlayer.play(ongoing.player.detail.name)
                         viewModel.submitMove(idx)
                     },
+                    onSwitch = { idx -> viewModel.submitSwitch(idx) },
                     onForfeit = { viewModel.forfeit() }
                 )
             }
@@ -117,6 +112,7 @@ fun TurnBattleScreen(
                 val s = setup!!
                 BattleSetupView(
                     setup = s,
+                    teamIds = teamIds,
                     moves = learnableMoves(s.playerDetail, s.level),
                     viewModel = viewModel,
                     onLevelChange = { viewModel.setSetupLevel(it) },
@@ -125,7 +121,6 @@ fun TurnBattleScreen(
                 )
             }
             else -> {
-                // No team loaded — shouldn't normally reach here
                 Text(
                     "NO TEAM",
                     fontFamily = PressStart2P, fontSize = 8.sp, color = PokedexCream.copy(alpha = 0.4f),
@@ -137,8 +132,88 @@ fun TurnBattleScreen(
 }
 
 @Composable
+private fun PendingSwitchView(
+    state: BattleState.PendingSwitch,
+    onSwitch: (Int) -> Unit
+) {
+    Column(
+        Modifier.fillMaxSize().padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            "CHOOSE YOUR NEXT POKÉMON",
+            fontFamily = PressStart2P, fontSize = 7.sp, color = CaughtGold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+        state.log.takeLast(4).forEach { line ->
+            Text(line, fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream, lineHeight = 9.sp)
+        }
+        Spacer(Modifier.height(8.dp))
+        state.playerTeam.forEachIndexed { idx, poke ->
+            val isCurrent = idx == state.playerActiveIndex
+            val isFainted = poke.currentHp <= 0
+            val isAvailable = !isCurrent && !isFainted
+            val hpFraction = (poke.currentHp.toFloat() / poke.maxHp).coerceIn(0f, 1f)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        PokedexDark.copy(alpha = if (isAvailable) 0.6f else 0.2f),
+                        RoundedCornerShape(6.dp)
+                    )
+                    .then(
+                        if (isAvailable) Modifier.clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) { onSwitch(idx) } else Modifier
+                    )
+                    .padding(8.dp)
+            ) {
+                AsyncImage(
+                    model = RetrofitClient.spriteUrl(poke.detail.id),
+                    contentDescription = poke.detail.name,
+                    modifier = Modifier.size(40.dp)
+                )
+                Spacer(Modifier.width(8.dp))
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        poke.detail.name.uppercase(),
+                        fontFamily = PressStart2P, fontSize = 6.sp,
+                        color = if (isAvailable) PokedexCream else PokedexCream.copy(alpha = 0.3f)
+                    )
+                    Box(
+                        Modifier.fillMaxWidth().height(4.dp)
+                            .background(PokedexDark.copy(alpha = 0.5f), RoundedCornerShape(2.dp))
+                    ) {
+                        val barColor = when {
+                            isFainted -> PokedexRed.copy(alpha = 0.3f)
+                            hpFraction > 0.5f -> Color(0xFF44DD44)
+                            hpFraction > 0.2f -> CaughtGold
+                            else -> PokedexRed
+                        }
+                        Box(
+                            Modifier.fillMaxWidth(hpFraction).height(4.dp)
+                                .background(barColor, RoundedCornerShape(2.dp))
+                        )
+                    }
+                }
+                if (isFainted) {
+                    Text("FAINT", fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexRed.copy(alpha = 0.6f))
+                }
+                if (isCurrent) {
+                    Text("OUT", fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue.copy(alpha = 0.6f))
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun BattleSetupView(
     setup: BattleSetup,
+    teamIds: List<Int>,
     moves: List<LearnableMove>,
     viewModel: TurnBattleViewModel,
     onLevelChange: (Int) -> Unit,
@@ -599,6 +674,7 @@ private fun MoveRow(
 private fun OngoingBattleView(
     state: BattleState.Ongoing,
     onMove: (Int) -> Unit,
+    onSwitch: (Int) -> Unit,
     onForfeit: () -> Unit
 ) {
     val logState = rememberLazyListState()
@@ -674,6 +750,49 @@ private fun OngoingBattleView(
                             }
                         }
                     }
+                }
+            }
+        }
+
+        // Team strip — tap a slot to switch voluntarily
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            state.playerTeam.forEachIndexed { idx, poke ->
+                val isActive = idx == state.playerActiveIndex
+                val isFainted = poke.currentHp <= 0
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .background(
+                            when {
+                                isActive -> GlowBlue.copy(alpha = 0.3f)
+                                isFainted -> PokedexDark.copy(alpha = 0.2f)
+                                else -> PokedexDark.copy(alpha = 0.5f)
+                            },
+                            RoundedCornerShape(4.dp)
+                        )
+                        .border(
+                            1.dp,
+                            if (isActive) GlowBlue else Color.Transparent,
+                            RoundedCornerShape(4.dp)
+                        )
+                        .then(
+                            if (!isActive && !isFainted)
+                                Modifier.clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) { onSwitch(idx) }
+                            else Modifier
+                        )
+                ) {
+                    AsyncImage(
+                        model = RetrofitClient.spriteUrl(poke.detail.id),
+                        contentDescription = poke.detail.name,
+                        modifier = Modifier.size(28.dp)
+                    )
                 }
             }
         }
