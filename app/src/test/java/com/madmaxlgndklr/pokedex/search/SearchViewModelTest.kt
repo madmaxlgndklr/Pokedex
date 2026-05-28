@@ -2,6 +2,8 @@ package com.madmaxlgndklr.pokedex.search
 
 import com.madmaxlgndklr.pokedex.data.remote.PokeApiService
 import com.madmaxlgndklr.pokedex.data.remote.dto.EvolutionChainResponse
+import com.madmaxlgndklr.pokedex.data.remote.dto.ItemAttributeResponse
+import com.madmaxlgndklr.pokedex.data.remote.dto.ItemDetailResponse
 import com.madmaxlgndklr.pokedex.data.remote.dto.MoveResponse
 import com.madmaxlgndklr.pokedex.data.remote.dto.PokedexInfoResponse
 import com.madmaxlgndklr.pokedex.data.remote.dto.PokemonDetailResponse
@@ -79,6 +81,8 @@ class SearchViewModelTest {
             override suspend fun getEvolutionChain(id: Int): EvolutionChainResponse = throw UnsupportedOperationException()
             override suspend fun getPokedexInfo(name: String): PokedexInfoResponse = throw UnsupportedOperationException()
             override suspend fun getMove(name: String): MoveResponse = throw UnsupportedOperationException()
+            override suspend fun getItemAttribute(name: String): ItemAttributeResponse = throw UnsupportedOperationException("not used in search tests")
+            override suspend fun getItem(name: String): ItemDetailResponse = throw UnsupportedOperationException("not used in search tests")
         }
         return PokemonRepository(throwingApi, FakeCaughtPokemonDao(), FakePokemonListCacheDao(), FakePokemonDetailCacheDao(), FakeMoveDao())
     }
