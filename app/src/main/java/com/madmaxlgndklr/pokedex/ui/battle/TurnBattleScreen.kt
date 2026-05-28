@@ -263,6 +263,111 @@ private fun BattleSetupView(
             LevelPicker(level = setup.level, onLevelChange = onLevelChange)
         }
 
+        // Team slot strip — tap a slot to expand its overrides
+        var expandedSlot by remember { mutableStateOf<Int?>(null) }
+
+        if (teamIds.size > 1) {
+            Text(
+                "TEAM  (TAP TO CUSTOMIZE)",
+                fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream.copy(alpha = 0.5f)
+            )
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                itemsIndexed(teamIds) { idx, _ ->
+                    val hasOverride = setup.teamOverrides.containsKey(idx)
+                    val isExpanded = expandedSlot == idx
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .size(44.dp)
+                            .background(
+                                when {
+                                    isExpanded -> GlowBlue.copy(alpha = 0.3f)
+                                    hasOverride -> CaughtGold.copy(alpha = 0.2f)
+                                    else -> PokedexDark.copy(alpha = 0.4f)
+                                },
+                                RoundedCornerShape(4.dp)
+                            )
+                            .border(
+                                1.dp,
+                                when {
+                                    isExpanded -> GlowBlue
+                                    hasOverride -> CaughtGold
+                                    else -> Color.Transparent
+                                },
+                                RoundedCornerShape(4.dp)
+                            )
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) { expandedSlot = if (isExpanded) null else idx }
+                            .padding(4.dp)
+                    ) {
+                        Text(
+                            "${idx + 1}",
+                            fontFamily = PressStart2P, fontSize = 7.sp,
+                            color = if (isExpanded) GlowBlue else PokedexCream.copy(alpha = 0.7f)
+                        )
+                    }
+                }
+            }
+
+            val slot = expandedSlot
+            if (slot != null && slot < teamIds.size) {
+                val ov = setup.teamOverrides[slot]
+                val slotLevel = ov?.level ?: setup.level
+                val slotNature = ov?.nature ?: setup.nature
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(PokedexDark.copy(alpha = 0.4f), RoundedCornerShape(6.dp))
+                        .padding(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            "SLOT ${slot + 1}",
+                            fontFamily = PressStart2P, fontSize = 6.sp, color = GlowBlue
+                        )
+                        if (ov != null) {
+                            Text(
+                                "RESET",
+                                fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexRed,
+                                modifier = Modifier.clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) { viewModel.setSlotOverride(slot, null) }
+                            )
+                        }
+                    }
+                    LevelPicker(
+                        level = slotLevel,
+                        onLevelChange = { newLevel ->
+                            val newOv = (ov ?: SlotOverride()).copy(level = newLevel.coerceIn(1, 100))
+                            viewModel.setSlotOverride(slot, newOv)
+                        }
+                    )
+                    if (gen >= 3) {
+                        Text(
+                            "NATURE: ${slotNature.name.uppercase()}",
+                            fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue
+                        )
+                        NaturePicker(
+                            selectedNature = slotNature,
+                            onNatureSelected = { nature ->
+                                val newOv = (ov ?: SlotOverride()).copy(nature = nature)
+                                viewModel.setSlotOverride(slot, newOv)
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
         // Gen toggle
         Row(
             modifier = Modifier.fillMaxWidth(),
