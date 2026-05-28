@@ -12,9 +12,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         CaughtPokemonEntity::class,
         PokemonListCacheEntity::class,
         PokemonDetailCacheEntity::class,
-        MoveEntity::class
+        MoveEntity::class,
+        HeldItem::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -22,6 +23,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun pokemonListCacheDao(): PokemonListCacheDao
     abstract fun pokemonDetailCacheDao(): PokemonDetailCacheDao
     abstract fun moveDao(): MoveDao
+    abstract fun heldItemDao(): HeldItemDao
 
     companion object {
         private val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -52,6 +54,18 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS held_items " +
+                    "(id INTEGER PRIMARY KEY NOT NULL, " +
+                    "name TEXT NOT NULL, " +
+                    "displayName TEXT NOT NULL, " +
+                    "effectSummary TEXT NOT NULL)"
+                )
+            }
+        }
+
         @Volatile private var INSTANCE: AppDatabase? = null
 
         fun getInstance(context: Context): AppDatabase =
@@ -60,7 +74,8 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "pokedex.db"
-                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4).build().also { INSTANCE = it }
+                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5).build()
+                    .also { INSTANCE = it }
             }
     }
 }
