@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.madmaxlgndklr.pokedex.data.local.SettingsRepository
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
+import com.madmaxlgndklr.pokedex.ui.common.CryPlayer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -14,9 +15,15 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+data class SyncOptions(
+    val syncData: Boolean = true,
+    val syncMoves: Boolean = true,
+    val syncCries: Boolean = true
+)
+
 sealed class SyncState {
     object Idle : SyncState()
-    data class Syncing(val completed: Int, val total: Int) : SyncState()
+    data class Syncing(val phase: String, val completed: Int, val total: Int) : SyncState()
     data class Done(val cached: Int, val total: Int) : SyncState()
     data class Error(val message: String) : SyncState()
 }
@@ -36,15 +43,28 @@ class SettingsViewModel(
         viewModelScope.launch { settingsRepo.setMusicOnLaunch(enabled) }
     }
 
-    fun syncAll() {
+    fun syncWithOptions(options: SyncOptions) {
         if (_syncState.value is SyncState.Syncing) return
         viewModelScope.launch {
             try {
-                pokemonRepo.syncAll { completed, total ->
-                    _syncState.value = SyncState.Syncing(completed, total)
+                if (options.syncData) {
+                    pokemonRepo.syncAll { completed, total ->
+                        _syncState.value = SyncState.Syncing("DATA", completed, total)
+                    }
                 }
-                val teamIds = settingsRepo.team.first()
-                if (teamIds.isNotEmpty()) pokemonRepo.syncTeamMoves(teamIds)
+                if (options.syncMoves) {
+                    val teamIds = settingsRepo.team.first()
+                    if (teamIds.isNotEmpty()) {
+                        _syncState.value = SyncState.Syncing("MOVES", 0, teamIds.size)
+                        pokemonRepo.syncTeamMoves(teamIds)
+                    }
+                }
+                if (options.syncCries) {
+                    val names = pokemonRepo.getPokemonList().map { it.name }
+                    CryPlayer.syncCries(names) { completed, total ->
+                        _syncState.value = SyncState.Syncing("CRIES", completed, total)
+                    }
+                }
                 val (cached, listSize) = pokemonRepo.getCachedCount()
                 _syncState.value = SyncState.Done(cached, listSize)
             } catch (e: Exception) {
@@ -53,9 +73,7 @@ class SettingsViewModel(
         }
     }
 
-    fun resetSyncState() {
-        _syncState.value = SyncState.Idle
-    }
+    fun resetSyncState() { _syncState.value = SyncState.Idle }
 
     companion object {
         fun factory(
