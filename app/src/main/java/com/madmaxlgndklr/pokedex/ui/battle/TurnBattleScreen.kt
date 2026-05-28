@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -33,6 +34,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -136,74 +138,78 @@ private fun PendingSwitchView(
     state: BattleState.PendingSwitch,
     onSwitch: (Int) -> Unit
 ) {
-    Column(
-        Modifier.fillMaxSize().padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
+    Column(Modifier.fillMaxSize().padding(12.dp)) {
         Text(
             "CHOOSE YOUR NEXT POKÉMON",
             fontFamily = PressStart2P, fontSize = 7.sp, color = CaughtGold,
             textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
         )
         state.log.takeLast(4).forEach { line ->
             Text(line, fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream, lineHeight = 9.sp)
         }
         Spacer(Modifier.height(8.dp))
-        state.playerTeam.forEachIndexed { idx, poke ->
-            val isCurrent = idx == state.playerActiveIndex
-            val isFainted = poke.currentHp <= 0
-            val isAvailable = !isCurrent && !isFainted
-            val hpFraction = (poke.currentHp.toFloat() / poke.maxHp).coerceIn(0f, 1f)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        PokedexDark.copy(alpha = if (isAvailable) 0.6f else 0.2f),
-                        RoundedCornerShape(6.dp)
-                    )
-                    .then(
-                        if (isAvailable) Modifier.clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) { onSwitch(idx) } else Modifier
-                    )
-                    .padding(8.dp)
-            ) {
-                AsyncImage(
-                    model = RetrofitClient.spriteUrl(poke.detail.id),
-                    contentDescription = poke.detail.name,
-                    modifier = Modifier.size(40.dp)
-                )
-                Spacer(Modifier.width(8.dp))
-                Column(Modifier.weight(1f)) {
-                    Text(
-                        poke.detail.name.uppercase(),
-                        fontFamily = PressStart2P, fontSize = 6.sp,
-                        color = if (isAvailable) PokedexCream else PokedexCream.copy(alpha = 0.3f)
-                    )
-                    Box(
-                        Modifier.fillMaxWidth().height(4.dp)
-                            .background(PokedexDark.copy(alpha = 0.5f), RoundedCornerShape(2.dp))
-                    ) {
-                        val barColor = when {
-                            isFainted -> PokedexRed.copy(alpha = 0.3f)
-                            hpFraction > 0.5f -> Color(0xFF44DD44)
-                            hpFraction > 0.2f -> CaughtGold
-                            else -> PokedexRed
-                        }
-                        Box(
-                            Modifier.fillMaxWidth(hpFraction).height(4.dp)
-                                .background(barColor, RoundedCornerShape(2.dp))
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            itemsIndexed(state.playerTeam) { idx, poke ->
+                val isCurrent = idx == state.playerActiveIndex
+                val isFainted = poke.currentHp <= 0
+                val isAvailable = !isCurrent && !isFainted
+                val hpFraction = (poke.currentHp.toFloat() / poke.maxHp).coerceIn(0f, 1f)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            PokedexDark.copy(alpha = if (isAvailable) 0.6f else 0.2f),
+                            RoundedCornerShape(6.dp)
                         )
+                        .then(
+                            if (isAvailable) Modifier.clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) { onSwitch(idx) } else Modifier
+                        )
+                        .padding(8.dp)
+                ) {
+                    AsyncImage(
+                        model = RetrofitClient.spriteUrl(poke.detail.id),
+                        contentDescription = poke.detail.name,
+                        modifier = Modifier.size(40.dp).then(
+                            if (isFainted) Modifier.alpha(0.4f) else Modifier
+                        )
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text(
+                            poke.detail.name.uppercase(),
+                            fontFamily = PressStart2P, fontSize = 6.sp,
+                            color = if (isAvailable) PokedexCream else PokedexCream.copy(alpha = 0.3f)
+                        )
+                        Box(
+                            Modifier.fillMaxWidth().height(4.dp)
+                                .background(PokedexDark.copy(alpha = 0.5f), RoundedCornerShape(2.dp))
+                        ) {
+                            val barColor = when {
+                                isFainted -> PokedexRed.copy(alpha = 0.3f)
+                                hpFraction > 0.5f -> Color(0xFF44DD44)
+                                hpFraction > 0.2f -> CaughtGold
+                                else -> PokedexRed
+                            }
+                            Box(
+                                Modifier.fillMaxWidth(hpFraction).height(4.dp)
+                                    .background(barColor, RoundedCornerShape(2.dp))
+                            )
+                        }
                     }
-                }
-                if (isFainted) {
-                    Text("FAINT", fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexRed.copy(alpha = 0.6f))
-                }
-                if (isCurrent) {
-                    Text("OUT", fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue.copy(alpha = 0.6f))
+                    if (isFainted) {
+                        Text("FAINT", fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexRed.copy(alpha = 0.6f))
+                    }
+                    if (isCurrent) {
+                        Text("OUT", fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue.copy(alpha = 0.6f))
+                    }
                 }
             }
         }
@@ -213,7 +219,7 @@ private fun PendingSwitchView(
 @Composable
 private fun BattleSetupView(
     setup: BattleSetup,
-    teamIds: List<Int>,
+    teamIds: List<Int>,   // used in Task 5 slot override strip
     moves: List<LearnableMove>,
     viewModel: TurnBattleViewModel,
     onLevelChange: (Int) -> Unit,
@@ -791,7 +797,9 @@ private fun OngoingBattleView(
                     AsyncImage(
                         model = RetrofitClient.spriteUrl(poke.detail.id),
                         contentDescription = poke.detail.name,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(28.dp).then(
+                            if (isFainted) Modifier.alpha(0.3f) else Modifier
+                        )
                     )
                 }
             }
