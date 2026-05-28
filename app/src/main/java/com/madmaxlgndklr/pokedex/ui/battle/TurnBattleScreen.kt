@@ -71,6 +71,19 @@ fun TurnBattleScreen(
             isLoading -> {
                 CircularProgressIndicator(color = GlowBlue, modifier = Modifier.align(Alignment.Center))
             }
+            battleState is BattleState.PendingSwitch -> {
+                val pending = battleState as BattleState.PendingSwitch
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        "CHOOSE YOUR NEXT POKÉMON",
+                        fontFamily = PressStart2P,
+                        fontSize = 7.sp,
+                        color = CaughtGold,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
             battleState is BattleState.Ongoing -> {
                 val ongoing = battleState as BattleState.Ongoing
                 val started = remember { mutableStateOf(false) }

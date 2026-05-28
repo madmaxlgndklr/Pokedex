@@ -167,6 +167,7 @@ class TurnBattleViewModel(
     fun startBattleFromSetup(teamIds: List<Int>) {
         val s = _setup.value ?: return
         if (s.selectedMoveNames.isEmpty()) return
+        if (teamIds.isEmpty()) return
         viewModelScope.launch {
             _isLoading.value = true
             try {
