@@ -235,6 +235,7 @@ private fun BattleSetupView(
 
     var showStatConfig by remember { mutableStateOf(false) }
     var showNaturePicker by remember { mutableStateOf(false) }
+    var expandedSlot by remember { mutableStateOf<Int?>(null) }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(10.dp),
@@ -264,8 +265,6 @@ private fun BattleSetupView(
         }
 
         // Team slot strip — tap a slot to expand its overrides
-        var expandedSlot by remember { mutableStateOf<Int?>(null) }
-
         if (teamIds.size > 1) {
             Text(
                 "TEAM  (TAP TO CUSTOMIZE)",
