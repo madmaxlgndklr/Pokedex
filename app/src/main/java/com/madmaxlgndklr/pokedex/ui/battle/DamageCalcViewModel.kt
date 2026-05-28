@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.madmaxlgndklr.pokedex.data.local.SettingsRepository
+import com.madmaxlgndklr.pokedex.ui.battle.Natures
+import com.madmaxlgndklr.pokedex.ui.battle.StatConfig
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.model.Move
 import com.madmaxlgndklr.pokedex.model.PokemonDetail
@@ -125,9 +127,12 @@ class DamageCalcViewModel(
             level = s.attacker.level,
             attackBaseStat = atkBase,
             defenseBaseStat = defBase,
-            attackEVs = atkEvs,
-            defenseEVs = defEvs,
-            natureMultiplier = s.attacker.natureMultiplier,
+            attackStatIndex = if (isPhysical) 1 else 3,
+            defenseStatIndex = if (isPhysical) 2 else 4,
+            attackerStatConfig = StatConfig.Gen3PlusConfig(IntArray(6) { 31 }, intArrayOf(atkEvs, atkEvs, atkEvs, atkEvs, atkEvs, atkEvs)),
+            attackerNature = Natures.HARDY,
+            defenderStatConfig = StatConfig.Gen3PlusConfig(IntArray(6) { 31 }, intArrayOf(defEvs, defEvs, defEvs, defEvs, defEvs, defEvs)),
+            defenderNature = Natures.HARDY,
             basePower = move.power,
             moveType = move.type,
             moveCategory = move.category,

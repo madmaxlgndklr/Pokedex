@@ -1,5 +1,6 @@
 package com.madmaxlgndklr.pokedex.ui.battle
 
+import com.madmaxlgndklr.pokedex.data.local.HeldItem
 import com.madmaxlgndklr.pokedex.ui.common.typeWeaknesses
 import kotlin.math.floor
 import kotlin.math.roundToInt
@@ -9,12 +10,16 @@ data class DamageParams(
     val level: Int,
     val attackBaseStat: Int,
     val defenseBaseStat: Int,
-    val attackEVs: Int = 0,           // 0–252
-    val defenseEVs: Int = 0,
-    val natureMultiplier: Float = 1f, // 0.9, 1.0, or 1.1
+    val attackStatIndex: Int = 1,
+    val defenseStatIndex: Int = 2,
+    val attackerStatConfig: StatConfig = StatConfig.Gen3PlusConfig(IntArray(6) { 31 }, IntArray(6) { 0 }),
+    val attackerNature: Nature = Natures.HARDY,
+    val defenderStatConfig: StatConfig = StatConfig.Gen3PlusConfig(IntArray(6) { 31 }, IntArray(6) { 0 }),
+    val defenderNature: Nature = Natures.HARDY,
+    val heldItem: HeldItem? = null,
     val basePower: Int,
     val moveType: String,
-    val moveCategory: String,         // "physical" | "special" | "status"
+    val moveCategory: String,
     val attackerTypes: List<String>,
     val defenderTypes: List<String>,
     val criticalHit: Boolean = false
@@ -29,7 +34,6 @@ data class DamageResult(
 
 object DamageEngine {
 
-    // Gen 2-3 physical types — everything else is special
     private val GEN23_PHYSICAL = setOf(
         "normal", "fighting", "flying", "poison", "ground",
         "rock", "bug", "ghost", "steel"
@@ -43,18 +47,19 @@ object DamageEngine {
         val effectiveness = computeEffectiveness(params.gen, params.moveType, params.defenderTypes)
         val stab = if (params.moveType in params.attackerTypes) 1.5f else 1f
 
-        val atk = computeStat(
-            base = params.attackBaseStat,
-            evs = params.attackEVs,
-            level = params.level,
-            nature = params.natureMultiplier
+        var atk = StatFormulas.computeStat(
+            params.attackBaseStat, params.attackerStatConfig,
+            params.attackerNature, params.attackStatIndex, params.level
         )
-        val def = computeStat(
-            base = params.defenseBaseStat,
-            evs = params.defenseEVs,
-            level = params.level,
-            nature = 1f
+        val def = StatFormulas.computeStat(
+            params.defenseBaseStat, params.defenderStatConfig,
+            params.defenderNature, params.defenseStatIndex, params.level
         )
+
+        val itemEffect = params.heldItem?.let { HeldItemEffect.from(it.name) } ?: HeldItemEffect.None
+        if (itemEffect is HeldItemEffect.StatMultiplier && itemEffect.statIndex == params.attackStatIndex) {
+            atk = floor(atk * itemEffect.factor).toInt()
+        }
 
         val base = floor(
             (floor(2.0 * params.level / 5 + 2) * params.basePower * atk / def) / 50 + 2
@@ -68,20 +73,25 @@ object DamageEngine {
 
         val (randMin, randMax) = if (params.gen == 1) 217f / 255f to 1f else 0.85f to 1f
 
-        fun finalDamage(rand: Float) =
-            (base * stab * effectiveness * critMult * rand).roundToInt().coerceAtLeast(1)
+        fun finalDamage(rand: Float): Int {
+            var dmg = (base * stab * effectiveness * critMult * rand).roundToInt().coerceAtLeast(1)
+            when (itemEffect) {
+                is HeldItemEffect.DamageMultiplier -> dmg = floor(dmg * itemEffect.factor).toInt()
+                is HeldItemEffect.SuperEffectiveBoost -> if (effectiveness > 1f) dmg = floor(dmg * itemEffect.factor).toInt()
+                is HeldItemEffect.TypeMultiplier -> {
+                    val itemType = HeldItemEffect.typeFor(params.heldItem?.name ?: "")
+                    if (itemType != null && itemType == params.moveType) dmg = floor(dmg * itemEffect.factor).toInt()
+                }
+                else -> Unit
+            }
+            return dmg
+        }
 
         val min = finalDamage(randMin)
         val max = finalDamage(randMax)
         val avg = finalDamage((randMin + randMax) / 2f)
 
         return DamageResult(min, max, avg, effectivenessLabel(effectiveness))
-    }
-
-    // Returns the stat value at a given level with 31 IVs assumed
-    private fun computeStat(base: Int, evs: Int, level: Int, nature: Float): Int {
-        val inner = floor((2.0 * base + 31 + floor(evs / 4.0)) * level / 100).toInt() + 5
-        return floor(inner * nature).toInt()
     }
 
     fun computeEffectiveness(gen: Int, moveType: String, defenderTypes: List<String>): Float {
@@ -91,10 +101,7 @@ object DamageEngine {
             else -> defenderTypes
         }
         return filtered.fold(1f) { acc, defType ->
-            acc * (typeWeaknesses(listOf(defType))[moveType] ?: 1f).let {
-                // typeWeaknesses returns only non-1 values; re-check if absent → 1f
-                if (typeWeaknesses(listOf(defType)).containsKey(moveType)) it else 1f
-            }
+            acc * (typeWeaknesses(listOf(defType))[moveType] ?: 1f)
         }
     }
 
@@ -105,6 +112,5 @@ object DamageEngine {
         else    -> "1×"
     }
 
-    // Whether a move type is physical in Gen 2-3
     fun isPhysicalGen23(moveType: String) = moveType in GEN23_PHYSICAL
 }
