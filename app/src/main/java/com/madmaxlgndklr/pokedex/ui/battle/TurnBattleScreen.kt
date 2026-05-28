@@ -761,11 +761,11 @@ private fun OngoingBattleView(
         }
 
         // Team strip — tap a slot to switch voluntarily
-        Row(
+        LazyRow(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            state.playerTeam.forEachIndexed { idx, poke ->
+            itemsIndexed(state.playerTeam) { idx, poke ->
                 val isActive = idx == state.playerActiveIndex
                 val isFainted = poke.currentHp <= 0
                 Box(
