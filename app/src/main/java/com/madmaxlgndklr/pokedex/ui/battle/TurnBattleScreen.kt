@@ -271,7 +271,7 @@ private fun BattleSetupView(
                 fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream.copy(alpha = 0.5f)
             )
             LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                itemsIndexed(teamIds) { idx, _ ->
+                itemsIndexed(teamIds, key = { _, id -> id }) { idx, _ ->
                     val hasOverride = setup.teamOverrides.containsKey(idx)
                     val isExpanded = expandedSlot == idx
                     Box(
@@ -346,8 +346,10 @@ private fun BattleSetupView(
                     LevelPicker(
                         level = slotLevel,
                         onLevelChange = { newLevel ->
-                            val newOv = (ov ?: SlotOverride()).copy(level = newLevel.coerceIn(1, 100))
-                            viewModel.setSlotOverride(slot, newOv)
+                            val clamped = newLevel.coerceIn(1, 100)
+                            val newOv = (ov ?: SlotOverride()).copy(level = clamped)
+                            val effective = if (newOv.level == setup.level && newOv.nature == null) null else newOv
+                            viewModel.setSlotOverride(slot, effective)
                         }
                     )
                     if (gen >= 3) {
@@ -359,7 +361,8 @@ private fun BattleSetupView(
                             selectedNature = slotNature,
                             onNatureSelected = { nature ->
                                 val newOv = (ov ?: SlotOverride()).copy(nature = nature)
-                                viewModel.setSlotOverride(slot, newOv)
+                                val effective = if (newOv.level == null && newOv.nature == setup.nature) null else newOv
+                                viewModel.setSlotOverride(slot, effective)
                             }
                         )
                     }
