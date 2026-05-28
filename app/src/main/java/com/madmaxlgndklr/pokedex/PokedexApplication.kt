@@ -5,6 +5,7 @@ import com.madmaxlgndklr.pokedex.data.local.AppDatabase
 import com.madmaxlgndklr.pokedex.data.local.SettingsRepository
 import com.madmaxlgndklr.pokedex.data.local.settingsDataStore
 import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
+import com.madmaxlgndklr.pokedex.data.repository.HeldItemRepository
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.ui.common.CryPlayer
 import com.madmaxlgndklr.pokedex.ui.common.NetworkObserver
@@ -19,6 +20,12 @@ class PokedexApplication : Application() {
             database.pokemonListCacheDao(),
             database.pokemonDetailCacheDao(),
             database.moveDao()
+        )
+    }
+    val heldItemRepository by lazy {
+        HeldItemRepository(
+            RetrofitClient.api,
+            database.heldItemDao()
         )
     }
     val settingsRepository by lazy { SettingsRepository(settingsDataStore) }

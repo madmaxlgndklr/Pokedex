@@ -228,7 +228,8 @@ fun AppNavigation() {
                 )
             }
             composable(Routes.SETTINGS) {
-                val vm: SettingsViewModel = viewModel(factory = SettingsViewModel.factory(settingsRepo, repo))
+                val app = context.applicationContext as PokedexApplication
+                val vm: SettingsViewModel = viewModel(factory = SettingsViewModel.factory(settingsRepo, repo, app.heldItemRepository))
                 SettingsScreen(
                     viewModel = vm,
                     isMuted = isMuted,
@@ -317,6 +318,10 @@ fun AppNavigation() {
                 val matchupVm: MatchupViewModel = viewModel(
                     factory = MatchupViewModel.factory(repo)
                 )
+                val battleApp = context.applicationContext as PokedexApplication
+                LaunchedEffect(Unit) {
+                    battleVm.loadHeldItems(battleApp.heldItemRepository)
+                }
                 BattleHubScreen(
                     calcVm = calcVm,
                     battleVm = battleVm,

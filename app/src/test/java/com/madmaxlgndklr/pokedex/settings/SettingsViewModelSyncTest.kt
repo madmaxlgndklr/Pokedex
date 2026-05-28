@@ -1,5 +1,8 @@
 package com.madmaxlgndklr.pokedex.settings
 
+import com.madmaxlgndklr.pokedex.battle.FakeHeldItemApiService
+import com.madmaxlgndklr.pokedex.battle.FakeHeldItemDao
+import com.madmaxlgndklr.pokedex.data.repository.HeldItemRepository
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.repository.FakeCaughtPokemonDao
 import com.madmaxlgndklr.pokedex.repository.FakeMoveDao
@@ -36,21 +39,23 @@ class SettingsViewModelSyncTest {
         FakeMoveDao()
     )
 
+    private fun makeHeldItemRepo() = HeldItemRepository(FakeHeldItemApiService(), FakeHeldItemDao())
+
     @Before fun setUp() { Dispatchers.setMain(dispatcher) }
     @After  fun tearDown() { Dispatchers.resetMain() }
 
     @Test fun `syncWithOptions data-only ends in Done`() = runTest {
-        val vm = SettingsViewModel(fakeSettingsRepo(), makeRepo())
-        vm.syncWithOptions(SyncOptions(syncData = true, syncMoves = false, syncCries = false))
+        val vm = SettingsViewModel(fakeSettingsRepo(), makeRepo(), makeHeldItemRepo())
+        vm.syncWithOptions(SyncOptions(syncData = true, syncMoves = false, syncCries = false, syncItems = false))
         advanceUntilIdle()
         assertTrue(vm.syncState.value is SyncState.Done)
     }
 
     @Test fun `syncWithOptions cries-false never emits CRIES phase`() = runTest {
-        val vm = SettingsViewModel(fakeSettingsRepo(), makeRepo())
+        val vm = SettingsViewModel(fakeSettingsRepo(), makeRepo(), makeHeldItemRepo())
         val emittedStates = mutableListOf<SyncState>()
         val job = launch { vm.syncState.collect { emittedStates.add(it) } }
-        vm.syncWithOptions(SyncOptions(syncData = true, syncMoves = false, syncCries = false))
+        vm.syncWithOptions(SyncOptions(syncData = true, syncMoves = false, syncCries = false, syncItems = false))
         advanceUntilIdle()
         job.cancel()
         val phases = emittedStates.filterIsInstance<SyncState.Syncing>().map { it.phase }
@@ -59,14 +64,14 @@ class SettingsViewModelSyncTest {
     }
 
     @Test fun `syncWithOptions all-false goes directly to Done`() = runTest {
-        val vm = SettingsViewModel(fakeSettingsRepo(), makeRepo())
-        vm.syncWithOptions(SyncOptions(syncData = false, syncMoves = false, syncCries = false))
+        val vm = SettingsViewModel(fakeSettingsRepo(), makeRepo(), makeHeldItemRepo())
+        vm.syncWithOptions(SyncOptions(syncData = false, syncMoves = false, syncCries = false, syncItems = false))
         advanceUntilIdle()
         assertTrue(vm.syncState.value is SyncState.Done)
     }
 
     @Test fun `second syncWithOptions call ignored while syncing`() = runTest {
-        val vm = SettingsViewModel(fakeSettingsRepo(), makeRepo())
+        val vm = SettingsViewModel(fakeSettingsRepo(), makeRepo(), makeHeldItemRepo())
         vm.syncWithOptions(SyncOptions())
         vm.syncWithOptions(SyncOptions())
         advanceUntilIdle()
@@ -74,8 +79,8 @@ class SettingsViewModelSyncTest {
     }
 
     @Test fun `resetSyncState returns to Idle`() = runTest {
-        val vm = SettingsViewModel(fakeSettingsRepo(), makeRepo())
-        vm.syncWithOptions(SyncOptions(syncData = false, syncMoves = false, syncCries = false))
+        val vm = SettingsViewModel(fakeSettingsRepo(), makeRepo(), makeHeldItemRepo())
+        vm.syncWithOptions(SyncOptions(syncData = false, syncMoves = false, syncCries = false, syncItems = false))
         advanceUntilIdle()
         assertTrue(vm.syncState.value is SyncState.Done)
         vm.resetSyncState()

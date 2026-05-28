@@ -72,7 +72,7 @@ fun SettingsScreen(
     val context = LocalContext.current
 
     if (showSyncDialog) {
-        val allChecked = syncOptions.syncData && syncOptions.syncMoves && syncOptions.syncCries
+        val allChecked = syncOptions.syncData && syncOptions.syncMoves && syncOptions.syncCries && syncOptions.syncItems
         AlertDialog(
             onDismissRequest = { showSyncDialog = false },
             containerColor = PokedexDark,
@@ -97,7 +97,7 @@ fun SettingsScreen(
                         label = "SELECT ALL",
                         checked = allChecked,
                         onCheckedChange = { checked ->
-                            syncOptions = SyncOptions(checked, checked, checked)
+                            syncOptions = SyncOptions(checked, checked, checked, checked)
                         }
                     )
                     HorizontalDivider(color = PokedexCream.copy(alpha = 0.2f))
@@ -115,6 +115,11 @@ fun SettingsScreen(
                         label = "BATTLE CRIES  ~30 MB",
                         checked = syncOptions.syncCries,
                         onCheckedChange = { syncOptions = syncOptions.copy(syncCries = it) }
+                    )
+                    SyncOptionRow(
+                        label = "HELD ITEMS",
+                        checked = syncOptions.syncItems,
+                        onCheckedChange = { syncOptions = syncOptions.copy(syncItems = it) }
                     )
                 }
             },

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.madmaxlgndklr.pokedex.data.local.SettingsRepository
+import com.madmaxlgndklr.pokedex.data.repository.HeldItemRepository
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.ui.common.CryPlayer
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,8 @@ import kotlinx.coroutines.launch
 data class SyncOptions(
     val syncData: Boolean = true,
     val syncMoves: Boolean = true,
-    val syncCries: Boolean = true
+    val syncCries: Boolean = true,
+    val syncItems: Boolean = true
 )
 
 sealed class SyncState {
@@ -30,7 +32,8 @@ sealed class SyncState {
 
 class SettingsViewModel(
     private val settingsRepo: SettingsRepository,
-    private val pokemonRepo: PokemonRepository
+    private val pokemonRepo: PokemonRepository,
+    private val heldItemRepo: HeldItemRepository
 ) : ViewModel() {
 
     val musicOnLaunch: StateFlow<Boolean> = settingsRepo.musicOnLaunch
@@ -65,6 +68,11 @@ class SettingsViewModel(
                         _syncState.value = SyncState.Syncing("CRIES", completed, total)
                     }
                 }
+                if (options.syncItems) {
+                    _syncState.value = SyncState.Syncing("ITEMS", 0, 1)
+                    heldItemRepo.syncAll()
+                    _syncState.value = SyncState.Syncing("ITEMS", 1, 1)
+                }
                 val (cached, listSize) = pokemonRepo.getCachedCount()
                 _syncState.value = SyncState.Done(cached, listSize)
             } catch (e: Exception) {
@@ -78,9 +86,10 @@ class SettingsViewModel(
     companion object {
         fun factory(
             settingsRepo: SettingsRepository,
-            pokemonRepo: PokemonRepository
+            pokemonRepo: PokemonRepository,
+            heldItemRepo: HeldItemRepository
         ): ViewModelProvider.Factory = viewModelFactory {
-            initializer { SettingsViewModel(settingsRepo, pokemonRepo) }
+            initializer { SettingsViewModel(settingsRepo, pokemonRepo, heldItemRepo) }
         }
     }
 }
