@@ -8849,6 +8849,1047 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Paldea",
+      "trainers": [
+        {
+          "id": "paldea-katy",
+          "name": "Katy",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Bug",
+          "rosters": [
+            {
+              "label": "SV",
+              "team": [
+                {
+                  "pokemonId": 919,
+                  "level": 14,
+                  "moves": [
+                    "bug-bite",
+                    "lunge",
+                    "quick-attack",
+                    "agility"
+                  ]
+                },
+                {
+                  "pokemonId": 588,
+                  "level": 14,
+                  "moves": [
+                    "vice-grip",
+                    "bug-bite",
+                    "bide",
+                    "string-shot"
+                  ]
+                },
+                {
+                  "pokemonId": 165,
+                  "level": 14,
+                  "moves": [
+                    "string-shot",
+                    "bug-bite",
+                    "comet-punch",
+                    "swift"
+                  ]
+                },
+                {
+                  "pokemonId": 290,
+                  "level": 14,
+                  "moves": [
+                    "scratch",
+                    "harden",
+                    "leech-life",
+                    "string-shot"
+                  ]
+                },
+                {
+                  "pokemonId": 291,
+                  "level": 14,
+                  "moves": [
+                    "leech-life",
+                    "fury-swipes",
+                    "mind-reader",
+                    "aerial-ace"
+                  ]
+                },
+                {
+                  "pokemonId": 216,
+                  "level": 15,
+                  "moves": [
+                    "scratch",
+                    "lick",
+                    "fake-tears",
+                    "bug-bite"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "paldea-brassius",
+          "name": "Brassius",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Grass",
+          "rosters": [
+            {
+              "label": "SV",
+              "team": [
+                {
+                  "pokemonId": 928,
+                  "level": 16,
+                  "moves": [
+                    "absorb",
+                    "growl",
+                    "leafage",
+                    "round"
+                  ]
+                },
+                {
+                  "pokemonId": 191,
+                  "level": 16,
+                  "moves": [
+                    "absorb",
+                    "growth",
+                    "ingrain",
+                    "mega-drain"
+                  ]
+                },
+                {
+                  "pokemonId": 43,
+                  "level": 16,
+                  "moves": [
+                    "absorb",
+                    "poisonpowder",
+                    "sleep-powder",
+                    "mega-drain"
+                  ]
+                },
+                {
+                  "pokemonId": 273,
+                  "level": 16,
+                  "moves": [
+                    "absorb",
+                    "growl",
+                    "nature-power",
+                    "mega-drain"
+                  ]
+                },
+                {
+                  "pokemonId": 546,
+                  "level": 17,
+                  "moves": [
+                    "fairy-wind",
+                    "leech-seed",
+                    "mega-drain",
+                    "stun-spore"
+                  ]
+                },
+                {
+                  "pokemonId": 185,
+                  "level": 18,
+                  "moves": [
+                    "slam",
+                    "wood-hammer",
+                    "sucker-punch",
+                    "counter"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "paldea-iono",
+          "name": "Iono",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Electric",
+          "rosters": [
+            {
+              "label": "SV",
+              "team": [
+                {
+                  "pokemonId": 404,
+                  "level": 23,
+                  "moves": [
+                    "spark",
+                    "bite",
+                    "leer",
+                    "charge"
+                  ]
+                },
+                {
+                  "pokemonId": 587,
+                  "level": 23,
+                  "moves": [
+                    "volt-switch",
+                    "aerial-ace",
+                    "quick-attack",
+                    "spark"
+                  ]
+                },
+                {
+                  "pokemonId": 170,
+                  "level": 23,
+                  "moves": [
+                    "thundershock",
+                    "water-gun",
+                    "supersonic",
+                    "bubble-beam"
+                  ]
+                },
+                {
+                  "pokemonId": 171,
+                  "level": 24,
+                  "moves": [
+                    "thunderbolt",
+                    "surf",
+                    "confuse-ray",
+                    "bubble-beam"
+                  ]
+                },
+                {
+                  "pokemonId": 429,
+                  "level": 24,
+                  "moves": [
+                    "thunderbolt",
+                    "shadow-ball",
+                    "will-o-wisp",
+                    "calm-mind"
+                  ]
+                },
+                {
+                  "pokemonId": 939,
+                  "level": 26,
+                  "moves": [
+                    "thunderbolt",
+                    "chilling-water",
+                    "belch",
+                    "electric-terrain"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "paldea-kofu",
+          "name": "Kofu",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Water",
+          "rosters": [
+            {
+              "label": "SV",
+              "team": [
+                {
+                  "pokemonId": 320,
+                  "level": 29,
+                  "moves": [
+                    "surf",
+                    "amnesia",
+                    "rollout",
+                    "water-pulse"
+                  ]
+                },
+                {
+                  "pokemonId": 119,
+                  "level": 29,
+                  "moves": [
+                    "surf",
+                    "horn-attack",
+                    "agility",
+                    "aqua-tail"
+                  ]
+                },
+                {
+                  "pokemonId": 320,
+                  "level": 29,
+                  "moves": [
+                    "surf",
+                    "amnesia",
+                    "body-slam",
+                    "water-pulse"
+                  ]
+                },
+                {
+                  "pokemonId": 739,
+                  "level": 30,
+                  "moves": [
+                    "crabhammer",
+                    "aqua-jet",
+                    "leer",
+                    "bubble-beam"
+                  ]
+                },
+                {
+                  "pokemonId": 976,
+                  "level": 30,
+                  "moves": [
+                    "aqua-cutter",
+                    "slash",
+                    "aqua-jet",
+                    "agility"
+                  ]
+                },
+                {
+                  "pokemonId": 740,
+                  "level": 32,
+                  "moves": [
+                    "liquidation",
+                    "crabhammer",
+                    "rock-blast",
+                    "swords-dance"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "paldea-larry",
+          "name": "Larry",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Normal",
+          "rosters": [
+            {
+              "label": "SV",
+              "team": [
+                {
+                  "pokemonId": 775,
+                  "level": 35,
+                  "moves": [
+                    "snore",
+                    "yawn",
+                    "sucker-punch",
+                    "wood-hammer"
+                  ]
+                },
+                {
+                  "pokemonId": 108,
+                  "level": 35,
+                  "moves": [
+                    "hyper-voice",
+                    "slam",
+                    "stomp",
+                    "disable"
+                  ]
+                },
+                {
+                  "pokemonId": 234,
+                  "level": 35,
+                  "moves": [
+                    "psybeam",
+                    "tackle",
+                    "confuse-ray",
+                    "take-down"
+                  ]
+                },
+                {
+                  "pokemonId": 241,
+                  "level": 35,
+                  "moves": [
+                    "stomp",
+                    "milk-drink",
+                    "rollout",
+                    "body-slam"
+                  ]
+                },
+                {
+                  "pokemonId": 128,
+                  "level": 36,
+                  "moves": [
+                    "earthquake",
+                    "horn-attack",
+                    "thrash",
+                    "stomp"
+                  ]
+                },
+                {
+                  "pokemonId": 982,
+                  "level": 36,
+                  "moves": [
+                    "hyper-drill",
+                    "sucker-punch",
+                    "glare",
+                    "coil"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "paldea-ryme",
+          "name": "Ryme",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Ghost",
+          "rosters": [
+            {
+              "label": "SV",
+              "team": [
+                {
+                  "pokemonId": 354,
+                  "level": 41,
+                  "moves": [
+                    "shadow-ball",
+                    "will-o-wisp",
+                    "shadow-sneak",
+                    "calm-mind"
+                  ]
+                },
+                {
+                  "pokemonId": 778,
+                  "level": 41,
+                  "moves": [
+                    "shadow-claw",
+                    "play-rough",
+                    "shadow-sneak",
+                    "swords-dance"
+                  ]
+                },
+                {
+                  "pokemonId": 592,
+                  "level": 42,
+                  "moves": [
+                    "shadow-ball",
+                    "surf",
+                    "will-o-wisp",
+                    "hex"
+                  ]
+                },
+                {
+                  "pokemonId": 849,
+                  "level": 42,
+                  "moves": [
+                    "shadow-ball",
+                    "overdrive",
+                    "discharge",
+                    "shift-gear"
+                  ]
+                },
+                {
+                  "pokemonId": 593,
+                  "level": 42,
+                  "moves": [
+                    "shadow-ball",
+                    "surf",
+                    "night-shade",
+                    "will-o-wisp"
+                  ]
+                },
+                {
+                  "pokemonId": 971,
+                  "level": 44,
+                  "moves": [
+                    "phantom-force",
+                    "crunch",
+                    "shadow-ball",
+                    "will-o-wisp"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "paldea-tulip",
+          "name": "Tulip",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Psychic",
+          "rosters": [
+            {
+              "label": "SV",
+              "team": [
+                {
+                  "pokemonId": 561,
+                  "level": 44,
+                  "moves": [
+                    "psychic",
+                    "air-slash",
+                    "cosmic-power",
+                    "ice-beam"
+                  ]
+                },
+                {
+                  "pokemonId": 281,
+                  "level": 44,
+                  "moves": [
+                    "psychic",
+                    "moonblast",
+                    "calm-mind",
+                    "dazzling-gleam"
+                  ]
+                },
+                {
+                  "pokemonId": 54,
+                  "level": 44,
+                  "moves": [
+                    "psychic",
+                    "water-pulse",
+                    "confusion",
+                    "zen-headbutt"
+                  ]
+                },
+                {
+                  "pokemonId": 576,
+                  "level": 45,
+                  "moves": [
+                    "psychic",
+                    "calm-mind",
+                    "thunderbolt",
+                    "shadow-ball"
+                  ]
+                },
+                {
+                  "pokemonId": 671,
+                  "level": 45,
+                  "moves": [
+                    "moonblast",
+                    "psychic",
+                    "aromatherapy",
+                    "petal-blizzard"
+                  ]
+                },
+                {
+                  "pokemonId": 956,
+                  "level": 46,
+                  "moves": [
+                    "lumina-crash",
+                    "psychic",
+                    "calm-mind",
+                    "dazzling-gleam"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "paldea-grusha",
+          "name": "Grusha",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Ice",
+          "rosters": [
+            {
+              "label": "SV",
+              "team": [
+                {
+                  "pokemonId": 582,
+                  "level": 47,
+                  "moves": [
+                    "icicle-spear",
+                    "iron-defense",
+                    "ice-shard",
+                    "astonish"
+                  ]
+                },
+                {
+                  "pokemonId": 91,
+                  "level": 47,
+                  "moves": [
+                    "icicle-spear",
+                    "spikes",
+                    "ice-shard",
+                    "explosion"
+                  ]
+                },
+                {
+                  "pokemonId": 460,
+                  "level": 48,
+                  "moves": [
+                    "blizzard",
+                    "wood-hammer",
+                    "ice-punch",
+                    "leech-seed"
+                  ]
+                },
+                {
+                  "pokemonId": 614,
+                  "level": 48,
+                  "moves": [
+                    "blizzard",
+                    "bulk-up",
+                    "slash",
+                    "ice-shard"
+                  ]
+                },
+                {
+                  "pokemonId": 334,
+                  "level": 48,
+                  "moves": [
+                    "dragon-pulse",
+                    "icy-wind",
+                    "dragon-dance",
+                    "aerial-ace"
+                  ]
+                },
+                {
+                  "pokemonId": 974,
+                  "level": 50,
+                  "moves": [
+                    "blizzard",
+                    "body-press",
+                    "ice-spinner",
+                    "headlong-rush"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "paldea-rika",
+          "name": "Rika",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Ground",
+          "rosters": [
+            {
+              "label": "SV",
+              "team": [
+                {
+                  "pokemonId": 51,
+                  "level": 57,
+                  "moves": [
+                    "earthquake",
+                    "rock-blast",
+                    "sand-attack",
+                    "stone-edge"
+                  ]
+                },
+                {
+                  "pokemonId": 232,
+                  "level": 57,
+                  "moves": [
+                    "earthquake",
+                    "hyper-voice",
+                    "rapid-spin",
+                    "thunder-fang"
+                  ]
+                },
+                {
+                  "pokemonId": 450,
+                  "level": 58,
+                  "moves": [
+                    "earthquake",
+                    "crunch",
+                    "stone-edge",
+                    "slack-off"
+                  ]
+                },
+                {
+                  "pokemonId": 323,
+                  "level": 58,
+                  "moves": [
+                    "earthquake",
+                    "overheat",
+                    "rock-slide",
+                    "fire-blast"
+                  ]
+                },
+                {
+                  "pokemonId": 445,
+                  "level": 58,
+                  "moves": [
+                    "outrage",
+                    "earthquake",
+                    "crunch",
+                    "swords-dance"
+                  ]
+                },
+                {
+                  "pokemonId": 980,
+                  "level": 61,
+                  "moves": [
+                    "earthquake",
+                    "water-pulse",
+                    "recover",
+                    "toxic"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "paldea-poppy",
+          "name": "Poppy",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Steel",
+          "rosters": [
+            {
+              "label": "SV",
+              "team": [
+                {
+                  "pokemonId": 437,
+                  "level": 58,
+                  "moves": [
+                    "flash-cannon",
+                    "psychic",
+                    "iron-defense",
+                    "calm-mind"
+                  ]
+                },
+                {
+                  "pokemonId": 462,
+                  "level": 58,
+                  "moves": [
+                    "flash-cannon",
+                    "thunderbolt",
+                    "volt-switch",
+                    "tri-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 476,
+                  "level": 58,
+                  "moves": [
+                    "flash-cannon",
+                    "discharge",
+                    "earth-power",
+                    "stealth-rock"
+                  ]
+                },
+                {
+                  "pokemonId": 823,
+                  "level": 59,
+                  "moves": [
+                    "iron-head",
+                    "brave-bird",
+                    "bulk-up",
+                    "steel-wing"
+                  ]
+                },
+                {
+                  "pokemonId": 879,
+                  "level": 59,
+                  "moves": [
+                    "heavy-slam",
+                    "earthquake",
+                    "ice-punch",
+                    "play-rough"
+                  ]
+                },
+                {
+                  "pokemonId": 959,
+                  "level": 61,
+                  "moves": [
+                    "gigaton-hammer",
+                    "play-rough",
+                    "thunder-clap",
+                    "fairy-wind"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "paldea-larry-e4",
+          "name": "Larry",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Flying",
+          "rosters": [
+            {
+              "label": "SV Elite Four",
+              "team": [
+                {
+                  "pokemonId": 398,
+                  "level": 59,
+                  "moves": [
+                    "close-combat",
+                    "fly",
+                    "final-gambit",
+                    "u-turn"
+                  ]
+                },
+                {
+                  "pokemonId": 430,
+                  "level": 59,
+                  "moves": [
+                    "foul-play",
+                    "aerial-ace",
+                    "sucker-punch",
+                    "nasty-plot"
+                  ]
+                },
+                {
+                  "pokemonId": 357,
+                  "level": 59,
+                  "moves": [
+                    "fly",
+                    "dragon-claw",
+                    "leaf-blade",
+                    "earthquake"
+                  ]
+                },
+                {
+                  "pokemonId": 334,
+                  "level": 60,
+                  "moves": [
+                    "dragon-pulse",
+                    "aerial-ace",
+                    "dragon-dance",
+                    "roost"
+                  ]
+                },
+                {
+                  "pokemonId": 741,
+                  "level": 60,
+                  "moves": [
+                    "revelation-dance",
+                    "air-slash",
+                    "roost",
+                    "calm-mind"
+                  ]
+                },
+                {
+                  "pokemonId": 973,
+                  "level": 62,
+                  "moves": [
+                    "wing-attack",
+                    "close-combat",
+                    "aerial-ace",
+                    "baton-pass"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "paldea-hassel",
+          "name": "Hassel",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Dragon",
+          "rosters": [
+            {
+              "label": "SV",
+              "team": [
+                {
+                  "pokemonId": 330,
+                  "level": 60,
+                  "moves": [
+                    "dragon-claw",
+                    "earthquake",
+                    "crunch",
+                    "fly"
+                  ]
+                },
+                {
+                  "pokemonId": 334,
+                  "level": 60,
+                  "moves": [
+                    "dragon-pulse",
+                    "aerial-ace",
+                    "dragon-dance",
+                    "roost"
+                  ]
+                },
+                {
+                  "pokemonId": 715,
+                  "level": 61,
+                  "moves": [
+                    "dragon-pulse",
+                    "air-slash",
+                    "roost",
+                    "boomburst"
+                  ]
+                },
+                {
+                  "pokemonId": 691,
+                  "level": 61,
+                  "moves": [
+                    "dragon-pulse",
+                    "sludge-bomb",
+                    "surf",
+                    "shadow-ball"
+                  ]
+                },
+                {
+                  "pokemonId": 841,
+                  "level": 61,
+                  "moves": [
+                    "dragon-pulse",
+                    "draco-meteor",
+                    "recover",
+                    "apple-acid"
+                  ]
+                },
+                {
+                  "pokemonId": 998,
+                  "level": 62,
+                  "moves": [
+                    "glaive-rush",
+                    "ice-shard",
+                    "crunch",
+                    "outrage"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "paldea-geeta",
+          "name": "Geeta",
+          "title": "Champion",
+          "trainerClass": "CHAMPION",
+          "typeSpecialty": "Mixed",
+          "rosters": [
+            {
+              "label": "SV",
+              "team": [
+                {
+                  "pokemonId": 956,
+                  "level": 61,
+                  "moves": [
+                    "lumina-crash",
+                    "calm-mind",
+                    "dazzling-gleam",
+                    "psyshield-bash"
+                  ]
+                },
+                {
+                  "pokemonId": 673,
+                  "level": 61,
+                  "moves": [
+                    "grass-knot",
+                    "zen-headbutt",
+                    "earthquake",
+                    "synthesis"
+                  ]
+                },
+                {
+                  "pokemonId": 976,
+                  "level": 62,
+                  "moves": [
+                    "aqua-cutter",
+                    "slash",
+                    "aqua-jet",
+                    "agility"
+                  ]
+                },
+                {
+                  "pokemonId": 713,
+                  "level": 63,
+                  "moves": [
+                    "avalanche",
+                    "earthquake",
+                    "recover",
+                    "iron-defense"
+                  ]
+                },
+                {
+                  "pokemonId": 983,
+                  "level": 63,
+                  "moves": [
+                    "kowtow-cleave",
+                    "iron-head",
+                    "swords-dance",
+                    "sucker-punch"
+                  ]
+                },
+                {
+                  "pokemonId": 970,
+                  "level": 65,
+                  "moves": [
+                    "power-gem",
+                    "sludge-wave",
+                    "earth-power",
+                    "acid-armor"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "paldea-nemona",
+          "name": "Nemona",
+          "title": "Rival",
+          "trainerClass": "RIVAL",
+          "typeSpecialty": "Mixed",
+          "rosters": [
+            {
+              "label": "Final Battle (SV)",
+              "team": [
+                {
+                  "pokemonId": 936,
+                  "level": 62,
+                  "moves": [
+                    "close-combat",
+                    "flare-blitz",
+                    "giga-impact",
+                    "high-horsepower"
+                  ]
+                },
+                {
+                  "pokemonId": 164,
+                  "level": 62,
+                  "moves": [
+                    "air-slash",
+                    "hyper-voice",
+                    "extrasensory",
+                    "roost"
+                  ]
+                },
+                {
+                  "pokemonId": 663,
+                  "level": 63,
+                  "moves": [
+                    "flare-blitz",
+                    "brave-bird",
+                    "swords-dance",
+                    "roost"
+                  ]
+                },
+                {
+                  "pokemonId": 700,
+                  "level": 63,
+                  "moves": [
+                    "moonblast",
+                    "calm-mind",
+                    "psychic",
+                    "wish"
+                  ]
+                },
+                {
+                  "pokemonId": 977,
+                  "level": 63,
+                  "moves": [
+                    "order-up",
+                    "aqua-tail",
+                    "dragon-dance",
+                    "crunch"
+                  ]
+                },
+                {
+                  "pokemonId": 908,
+                  "level": 65,
+                  "moves": [
+                    "torch-song",
+                    "shadow-ball",
+                    "overheat",
+                    "will-o-wisp"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
