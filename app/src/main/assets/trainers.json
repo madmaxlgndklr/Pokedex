@@ -7359,6 +7359,751 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Alola",
+      "trainers": [
+        {
+          "id": "alola-hala",
+          "name": "Hala",
+          "title": "Kahuna",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Fighting",
+          "rosters": [
+            {
+              "label": "SM",
+              "team": [
+                {
+                  "pokemonId": 296,
+                  "level": 26,
+                  "moves": [
+                    "arm-thrust",
+                    "fake-out",
+                    "bullet-punch",
+                    "knock-off"
+                  ]
+                },
+                {
+                  "pokemonId": 56,
+                  "level": 26,
+                  "moves": [
+                    "karate-chop",
+                    "leer",
+                    "focus-energy",
+                    "seismic-toss"
+                  ]
+                },
+                {
+                  "pokemonId": 62,
+                  "level": 27,
+                  "moves": [
+                    "dynamic-punch",
+                    "hypnosis",
+                    "waterfall",
+                    "body-slam"
+                  ]
+                },
+                {
+                  "pokemonId": 107,
+                  "level": 27,
+                  "moves": [
+                    "fire-punch",
+                    "ice-punch",
+                    "thunder-punch",
+                    "mach-punch"
+                  ]
+                },
+                {
+                  "pokemonId": 739,
+                  "level": 27,
+                  "moves": [
+                    "crabhammer",
+                    "bubble-beam",
+                    "leer",
+                    "harden"
+                  ]
+                },
+                {
+                  "pokemonId": 297,
+                  "level": 28,
+                  "moves": [
+                    "close-combat",
+                    "bullet-punch",
+                    "knock-off",
+                    "fake-out"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "alola-olivia",
+          "name": "Olivia",
+          "title": "Kahuna",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Rock",
+          "rosters": [
+            {
+              "label": "SM",
+              "team": [
+                {
+                  "pokemonId": 369,
+                  "level": 33,
+                  "moves": [
+                    "ancient-power",
+                    "surf",
+                    "dive",
+                    "rest"
+                  ]
+                },
+                {
+                  "pokemonId": 299,
+                  "level": 33,
+                  "moves": [
+                    "rock-throw",
+                    "harden",
+                    "block",
+                    "stealth-rock"
+                  ]
+                },
+                {
+                  "pokemonId": 703,
+                  "level": 34,
+                  "moves": [
+                    "rock-slide",
+                    "moonblast",
+                    "ancient-power",
+                    "harden"
+                  ]
+                },
+                {
+                  "pokemonId": 476,
+                  "level": 34,
+                  "moves": [
+                    "rock-slide",
+                    "discharge",
+                    "earth-power",
+                    "stealth-rock"
+                  ]
+                },
+                {
+                  "pokemonId": 525,
+                  "level": 35,
+                  "moves": [
+                    "rock-slide",
+                    "earthquake",
+                    "stealth-rock",
+                    "smack-down"
+                  ]
+                },
+                {
+                  "pokemonId": 745,
+                  "level": 35,
+                  "moves": [
+                    "rock-throw",
+                    "howl",
+                    "bite",
+                    "accelerock"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "alola-nanu",
+          "name": "Nanu",
+          "title": "Kahuna",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Dark",
+          "rosters": [
+            {
+              "label": "SM",
+              "team": [
+                {
+                  "pokemonId": 510,
+                  "level": 43,
+                  "moves": [
+                    "night-slash",
+                    "fake-out",
+                    "attract",
+                    "thunder-wave"
+                  ]
+                },
+                {
+                  "pokemonId": 510,
+                  "level": 43,
+                  "moves": [
+                    "night-slash",
+                    "fake-out",
+                    "attract",
+                    "u-turn"
+                  ]
+                },
+                {
+                  "pokemonId": 510,
+                  "level": 43,
+                  "moves": [
+                    "night-slash",
+                    "fake-out",
+                    "torment",
+                    "thunder-wave"
+                  ]
+                },
+                {
+                  "pokemonId": 197,
+                  "level": 44,
+                  "moves": [
+                    "foul-play",
+                    "moonlight",
+                    "dark-pulse",
+                    "confuse-ray"
+                  ]
+                },
+                {
+                  "pokemonId": 229,
+                  "level": 44,
+                  "moves": [
+                    "crunch",
+                    "flamethrower",
+                    "nasty-plot",
+                    "foul-play"
+                  ]
+                },
+                {
+                  "pokemonId": 720,
+                  "level": 45,
+                  "moves": [
+                    "hyperspace-fury",
+                    "foul-play",
+                    "throat-chop",
+                    "darkest-lariat"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "alola-hapu",
+          "name": "Hapu",
+          "title": "Kahuna",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Ground",
+          "rosters": [
+            {
+              "label": "SM",
+              "team": [
+                {
+                  "pokemonId": 618,
+                  "level": 51,
+                  "moves": [
+                    "earthquake",
+                    "muddy-water",
+                    "sludge-bomb",
+                    "discharge"
+                  ]
+                },
+                {
+                  "pokemonId": 449,
+                  "level": 51,
+                  "moves": [
+                    "earthquake",
+                    "rock-slide",
+                    "bite",
+                    "bulk-up"
+                  ]
+                },
+                {
+                  "pokemonId": 51,
+                  "level": 51,
+                  "moves": [
+                    "earthquake",
+                    "rock-blast",
+                    "stone-edge",
+                    "sand-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 232,
+                  "level": 52,
+                  "moves": [
+                    "earthquake",
+                    "hyper-voice",
+                    "rapid-spin",
+                    "thunder-fang"
+                  ]
+                },
+                {
+                  "pokemonId": 450,
+                  "level": 52,
+                  "moves": [
+                    "earthquake",
+                    "crunch",
+                    "stone-edge",
+                    "slack-off"
+                  ]
+                },
+                {
+                  "pokemonId": 750,
+                  "level": 53,
+                  "moves": [
+                    "earthquake",
+                    "high-horsepower",
+                    "heavy-slam",
+                    "close-combat"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "alola-hala-e4",
+          "name": "Hala",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Fighting",
+          "rosters": [
+            {
+              "label": "SM Elite Four",
+              "team": [
+                {
+                  "pokemonId": 297,
+                  "level": 54,
+                  "moves": [
+                    "close-combat",
+                    "bullet-punch",
+                    "fake-out",
+                    "knock-off"
+                  ]
+                },
+                {
+                  "pokemonId": 740,
+                  "level": 54,
+                  "moves": [
+                    "close-combat",
+                    "ice-hammer",
+                    "rock-blast",
+                    "harden"
+                  ]
+                },
+                {
+                  "pokemonId": 62,
+                  "level": 55,
+                  "moves": [
+                    "dynamic-punch",
+                    "waterfall",
+                    "earthquake",
+                    "hypnosis"
+                  ]
+                },
+                {
+                  "pokemonId": 448,
+                  "level": 56,
+                  "moves": [
+                    "aura-sphere",
+                    "close-combat",
+                    "dragon-pulse",
+                    "calm-mind"
+                  ]
+                },
+                {
+                  "pokemonId": 760,
+                  "level": 56,
+                  "moves": [
+                    "hammer-arm",
+                    "shadow-ball",
+                    "bulk-up",
+                    "payback"
+                  ]
+                },
+                {
+                  "pokemonId": 57,
+                  "level": 57,
+                  "moves": [
+                    "close-combat",
+                    "thunder-punch",
+                    "ice-punch",
+                    "u-turn"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "alola-olivia-e4",
+          "name": "Olivia",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Rock",
+          "rosters": [
+            {
+              "label": "SM Elite Four",
+              "team": [
+                {
+                  "pokemonId": 369,
+                  "level": 54,
+                  "moves": [
+                    "ancient-power",
+                    "surf",
+                    "rest",
+                    "earthquake"
+                  ]
+                },
+                {
+                  "pokemonId": 703,
+                  "level": 54,
+                  "moves": [
+                    "rock-slide",
+                    "moonblast",
+                    "ancient-power",
+                    "earth-power"
+                  ]
+                },
+                {
+                  "pokemonId": 524,
+                  "level": 55,
+                  "moves": [
+                    "stealth-rock",
+                    "earthquake",
+                    "rock-blast",
+                    "smack-down"
+                  ]
+                },
+                {
+                  "pokemonId": 476,
+                  "level": 55,
+                  "moves": [
+                    "discharge",
+                    "rock-slide",
+                    "earth-power",
+                    "stealth-rock"
+                  ]
+                },
+                {
+                  "pokemonId": 76,
+                  "level": 56,
+                  "moves": [
+                    "earthquake",
+                    "rock-blast",
+                    "explosion",
+                    "stone-edge"
+                  ]
+                },
+                {
+                  "pokemonId": 526,
+                  "level": 57,
+                  "moves": [
+                    "earthquake",
+                    "rock-slide",
+                    "stealth-rock",
+                    "stone-edge"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "alola-acerola",
+          "name": "Acerola",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Ghost",
+          "rosters": [
+            {
+              "label": "SM Elite Four",
+              "team": [
+                {
+                  "pokemonId": 354,
+                  "level": 54,
+                  "moves": [
+                    "shadow-ball",
+                    "will-o-wisp",
+                    "calm-mind",
+                    "shadow-sneak"
+                  ]
+                },
+                {
+                  "pokemonId": 302,
+                  "level": 54,
+                  "moves": [
+                    "shadow-ball",
+                    "foul-play",
+                    "recover",
+                    "will-o-wisp"
+                  ]
+                },
+                {
+                  "pokemonId": 425,
+                  "level": 55,
+                  "moves": [
+                    "shadow-ball",
+                    "ominous-wind",
+                    "minimize",
+                    "gust"
+                  ]
+                },
+                {
+                  "pokemonId": 781,
+                  "level": 56,
+                  "moves": [
+                    "anchor-shot",
+                    "shadow-ball",
+                    "phantom-force",
+                    "tackle"
+                  ]
+                },
+                {
+                  "pokemonId": 770,
+                  "level": 56,
+                  "moves": [
+                    "shore-up",
+                    "earth-power",
+                    "shadow-ball",
+                    "bulldoze"
+                  ]
+                },
+                {
+                  "pokemonId": 778,
+                  "level": 57,
+                  "moves": [
+                    "play-rough",
+                    "shadow-sneak",
+                    "shadow-claw",
+                    "swords-dance"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "alola-kahili",
+          "name": "Kahili",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Flying",
+          "rosters": [
+            {
+              "label": "SM Elite Four",
+              "team": [
+                {
+                  "pokemonId": 169,
+                  "level": 54,
+                  "moves": [
+                    "cross-poison",
+                    "air-slash",
+                    "confuse-ray",
+                    "nasty-plot"
+                  ]
+                },
+                {
+                  "pokemonId": 227,
+                  "level": 54,
+                  "moves": [
+                    "iron-head",
+                    "aerial-ace",
+                    "spikes",
+                    "fly"
+                  ]
+                },
+                {
+                  "pokemonId": 630,
+                  "level": 55,
+                  "moves": [
+                    "foul-play",
+                    "air-slash",
+                    "nasty-plot",
+                    "roost"
+                  ]
+                },
+                {
+                  "pokemonId": 741,
+                  "level": 56,
+                  "moves": [
+                    "revelation-dance",
+                    "air-slash",
+                    "roost",
+                    "calm-mind"
+                  ]
+                },
+                {
+                  "pokemonId": 628,
+                  "level": 56,
+                  "moves": [
+                    "brave-bird",
+                    "superpower",
+                    "rock-slide",
+                    "roost"
+                  ]
+                },
+                {
+                  "pokemonId": 733,
+                  "level": 57,
+                  "moves": [
+                    "beak-blast",
+                    "bullet-seed",
+                    "roost",
+                    "boomburst"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "alola-kukui",
+          "name": "Professor Kukui",
+          "title": "Champion",
+          "trainerClass": "CHAMPION",
+          "typeSpecialty": "Mixed",
+          "rosters": [
+            {
+              "label": "SM",
+              "team": [
+                {
+                  "pokemonId": 745,
+                  "level": 57,
+                  "moves": [
+                    "stone-edge",
+                    "accelerock",
+                    "crunch",
+                    "swords-dance"
+                  ]
+                },
+                {
+                  "pokemonId": 38,
+                  "level": 58,
+                  "moves": [
+                    "blizzard",
+                    "moonblast",
+                    "will-o-wisp",
+                    "nasty-plot"
+                  ]
+                },
+                {
+                  "pokemonId": 628,
+                  "level": 58,
+                  "moves": [
+                    "brave-bird",
+                    "superpower",
+                    "rock-slide",
+                    "roost"
+                  ]
+                },
+                {
+                  "pokemonId": 462,
+                  "level": 58,
+                  "moves": [
+                    "thunderbolt",
+                    "flash-cannon",
+                    "volt-switch",
+                    "tri-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 143,
+                  "level": 59,
+                  "moves": [
+                    "body-slam",
+                    "heavy-slam",
+                    "crunch",
+                    "curse"
+                  ]
+                },
+                {
+                  "pokemonId": 727,
+                  "level": 60,
+                  "moves": [
+                    "darkest-lariat",
+                    "flare-blitz",
+                    "close-combat",
+                    "cross-chop"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "alola-hau",
+          "name": "Hau",
+          "title": "Rival",
+          "trainerClass": "RIVAL",
+          "typeSpecialty": "Mixed",
+          "rosters": [
+            {
+              "label": "Final Battle (SM)",
+              "team": [
+                {
+                  "pokemonId": 738,
+                  "level": 55,
+                  "moves": [
+                    "thunderbolt",
+                    "bug-buzz",
+                    "volt-switch",
+                    "wild-charge"
+                  ]
+                },
+                {
+                  "pokemonId": 740,
+                  "level": 55,
+                  "moves": [
+                    "close-combat",
+                    "ice-hammer",
+                    "rock-blast",
+                    "harden"
+                  ]
+                },
+                {
+                  "pokemonId": 407,
+                  "level": 56,
+                  "moves": [
+                    "petal-blizzard",
+                    "magical-leaf",
+                    "stun-spore",
+                    "aromatherapy"
+                  ]
+                },
+                {
+                  "pokemonId": 663,
+                  "level": 56,
+                  "moves": [
+                    "flare-blitz",
+                    "brave-bird",
+                    "roost",
+                    "swords-dance"
+                  ]
+                },
+                {
+                  "pokemonId": 184,
+                  "level": 56,
+                  "moves": [
+                    "surf",
+                    "ice-beam",
+                    "aqua-ring",
+                    "double-slap"
+                  ]
+                },
+                {
+                  "pokemonId": 730,
+                  "level": 58,
+                  "moves": [
+                    "sparkling-aria",
+                    "ice-beam",
+                    "aqua-jet",
+                    "perish-song"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
