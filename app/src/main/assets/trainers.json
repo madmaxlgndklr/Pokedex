@@ -3047,6 +3047,1047 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Hoenn",
+      "trainers": [
+        {
+          "id": "hoenn-roxanne",
+          "name": "Roxanne",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Rock",
+          "rosters": [
+            {
+              "label": "RSE",
+              "team": [
+                {
+                  "pokemonId": 74,
+                  "level": 14,
+                  "moves": [
+                    "tackle",
+                    "defense-curl",
+                    "mud-slap",
+                    "rock-throw"
+                  ]
+                },
+                {
+                  "pokemonId": 74,
+                  "level": 14,
+                  "moves": [
+                    "tackle",
+                    "defense-curl",
+                    "mud-slap",
+                    "rock-throw"
+                  ]
+                },
+                {
+                  "pokemonId": 299,
+                  "level": 15,
+                  "moves": [
+                    "tackle",
+                    "harden",
+                    "rock-throw",
+                    "block"
+                  ]
+                },
+                {
+                  "pokemonId": 185,
+                  "level": 14,
+                  "moves": [
+                    "tackle",
+                    "harden",
+                    "rock-throw",
+                    "block"
+                  ]
+                },
+                {
+                  "pokemonId": 111,
+                  "level": 14,
+                  "moves": [
+                    "tackle",
+                    "tail-whip",
+                    "stomp",
+                    "horn-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 299,
+                  "level": 16,
+                  "moves": [
+                    "tackle",
+                    "harden",
+                    "rock-blast",
+                    "stealth-rock"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hoenn-brawly",
+          "name": "Brawly",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Fighting",
+          "rosters": [
+            {
+              "label": "RSE",
+              "team": [
+                {
+                  "pokemonId": 296,
+                  "level": 17,
+                  "moves": [
+                    "tackle",
+                    "focus-energy",
+                    "karate-chop",
+                    "bulk-up"
+                  ]
+                },
+                {
+                  "pokemonId": 66,
+                  "level": 16,
+                  "moves": [
+                    "tackle",
+                    "focus-energy",
+                    "karate-chop",
+                    "leer"
+                  ]
+                },
+                {
+                  "pokemonId": 67,
+                  "level": 17,
+                  "moves": [
+                    "tackle",
+                    "focus-energy",
+                    "karate-chop",
+                    "leer"
+                  ]
+                },
+                {
+                  "pokemonId": 56,
+                  "level": 16,
+                  "moves": [
+                    "karate-chop",
+                    "leer",
+                    "focus-energy",
+                    "seismic-toss"
+                  ]
+                },
+                {
+                  "pokemonId": 307,
+                  "level": 17,
+                  "moves": [
+                    "bide",
+                    "meditate",
+                    "confusion",
+                    "detect"
+                  ]
+                },
+                {
+                  "pokemonId": 297,
+                  "level": 18,
+                  "moves": [
+                    "tackle",
+                    "focus-energy",
+                    "karate-chop",
+                    "bulk-up"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hoenn-wattson",
+          "name": "Wattson",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Electric",
+          "rosters": [
+            {
+              "label": "RSE",
+              "team": [
+                {
+                  "pokemonId": 81,
+                  "level": 22,
+                  "moves": [
+                    "thundershock",
+                    "thunder-wave",
+                    "sonicboom",
+                    "screech"
+                  ]
+                },
+                {
+                  "pokemonId": 82,
+                  "level": 22,
+                  "moves": [
+                    "thunderbolt",
+                    "thunder-wave",
+                    "screech",
+                    "sonicboom"
+                  ]
+                },
+                {
+                  "pokemonId": 100,
+                  "level": 23,
+                  "moves": [
+                    "spark",
+                    "screech",
+                    "sonicboom",
+                    "thunder-wave"
+                  ]
+                },
+                {
+                  "pokemonId": 101,
+                  "level": 23,
+                  "moves": [
+                    "thunderbolt",
+                    "thunder-wave",
+                    "screech",
+                    "explosion"
+                  ]
+                },
+                {
+                  "pokemonId": 309,
+                  "level": 22,
+                  "moves": [
+                    "spark",
+                    "thunder-wave",
+                    "howl",
+                    "bite"
+                  ]
+                },
+                {
+                  "pokemonId": 310,
+                  "level": 24,
+                  "moves": [
+                    "thunderbolt",
+                    "charge-beam",
+                    "quick-attack",
+                    "roar"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hoenn-flannery",
+          "name": "Flannery",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Fire",
+          "rosters": [
+            {
+              "label": "RSE",
+              "team": [
+                {
+                  "pokemonId": 218,
+                  "level": 26,
+                  "moves": [
+                    "smog",
+                    "ember",
+                    "rock-throw",
+                    "harden"
+                  ]
+                },
+                {
+                  "pokemonId": 218,
+                  "level": 26,
+                  "moves": [
+                    "smog",
+                    "ember",
+                    "rock-throw",
+                    "harden"
+                  ]
+                },
+                {
+                  "pokemonId": 219,
+                  "level": 28,
+                  "moves": [
+                    "ember",
+                    "rock-throw",
+                    "smog",
+                    "harden"
+                  ]
+                },
+                {
+                  "pokemonId": 322,
+                  "level": 27,
+                  "moves": [
+                    "ember",
+                    "growl",
+                    "magnitude",
+                    "take-down"
+                  ]
+                },
+                {
+                  "pokemonId": 323,
+                  "level": 28,
+                  "moves": [
+                    "ember",
+                    "magnitude",
+                    "rock-slide",
+                    "overheat"
+                  ]
+                },
+                {
+                  "pokemonId": 324,
+                  "level": 29,
+                  "moves": [
+                    "overheat",
+                    "fire-spin",
+                    "body-slam",
+                    "smog"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hoenn-norman",
+          "name": "Norman",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Normal",
+          "rosters": [
+            {
+              "label": "RSE",
+              "team": [
+                {
+                  "pokemonId": 288,
+                  "level": 28,
+                  "moves": [
+                    "tackle",
+                    "yawn",
+                    "encore",
+                    "slack-off"
+                  ]
+                },
+                {
+                  "pokemonId": 288,
+                  "level": 28,
+                  "moves": [
+                    "tackle",
+                    "yawn",
+                    "encore",
+                    "slack-off"
+                  ]
+                },
+                {
+                  "pokemonId": 263,
+                  "level": 29,
+                  "moves": [
+                    "tackle",
+                    "growl",
+                    "tail-whip",
+                    "hyper-voice"
+                  ]
+                },
+                {
+                  "pokemonId": 264,
+                  "level": 30,
+                  "moves": [
+                    "tackle",
+                    "growl",
+                    "tail-whip",
+                    "hyper-voice"
+                  ]
+                },
+                {
+                  "pokemonId": 287,
+                  "level": 30,
+                  "moves": [
+                    "yawn",
+                    "encore",
+                    "slack-off",
+                    "body-slam"
+                  ]
+                },
+                {
+                  "pokemonId": 289,
+                  "level": 31,
+                  "moves": [
+                    "body-slam",
+                    "yawn",
+                    "bulk-up",
+                    "slack-off"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hoenn-winona",
+          "name": "Winona",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Flying",
+          "rosters": [
+            {
+              "label": "RSE",
+              "team": [
+                {
+                  "pokemonId": 278,
+                  "level": 31,
+                  "moves": [
+                    "water-gun",
+                    "supersonic",
+                    "wingattack",
+                    "mist"
+                  ]
+                },
+                {
+                  "pokemonId": 279,
+                  "level": 32,
+                  "moves": [
+                    "surf",
+                    "supersonic",
+                    "wingattack",
+                    "protect"
+                  ]
+                },
+                {
+                  "pokemonId": 333,
+                  "level": 33,
+                  "moves": [
+                    "peck",
+                    "growl",
+                    "astonish",
+                    "sing"
+                  ]
+                },
+                {
+                  "pokemonId": 334,
+                  "level": 33,
+                  "moves": [
+                    "dragon-breath",
+                    "aerial-ace",
+                    "mist",
+                    "dragon-dance"
+                  ]
+                },
+                {
+                  "pokemonId": 277,
+                  "level": 33,
+                  "moves": [
+                    "wing-attack",
+                    "quick-attack",
+                    "endeavor",
+                    "aerial-ace"
+                  ]
+                },
+                {
+                  "pokemonId": 227,
+                  "level": 35,
+                  "moves": [
+                    "steel-wing",
+                    "aerial-ace",
+                    "spikes",
+                    "fly"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hoenn-tate-liza",
+          "name": "Tate & Liza",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Psychic",
+          "rosters": [
+            {
+              "label": "RSE",
+              "team": [
+                {
+                  "pokemonId": 343,
+                  "level": 41,
+                  "moves": [
+                    "confusion",
+                    "harden",
+                    "cosmic-power",
+                    "ancient-power"
+                  ]
+                },
+                {
+                  "pokemonId": 344,
+                  "level": 42,
+                  "moves": [
+                    "psychic",
+                    "harden",
+                    "cosmic-power",
+                    "ancient-power"
+                  ]
+                },
+                {
+                  "pokemonId": 337,
+                  "level": 41,
+                  "moves": [
+                    "calm-mind",
+                    "cosmic-power",
+                    "psychic",
+                    "ancient-power"
+                  ]
+                },
+                {
+                  "pokemonId": 338,
+                  "level": 41,
+                  "moves": [
+                    "calm-mind",
+                    "cosmic-power",
+                    "psychic",
+                    "ancient-power"
+                  ]
+                },
+                {
+                  "pokemonId": 64,
+                  "level": 41,
+                  "moves": [
+                    "psychic",
+                    "recover",
+                    "calm-mind",
+                    "shadow-ball"
+                  ]
+                },
+                {
+                  "pokemonId": 65,
+                  "level": 42,
+                  "moves": [
+                    "psychic",
+                    "recover",
+                    "calm-mind",
+                    "shadow-ball"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hoenn-juan",
+          "name": "Juan",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Water",
+          "rosters": [
+            {
+              "label": "E (Sootopolis)",
+              "team": [
+                {
+                  "pokemonId": 72,
+                  "level": 41,
+                  "moves": [
+                    "wrap",
+                    "constrict",
+                    "poison-sting",
+                    "bubblebeam"
+                  ]
+                },
+                {
+                  "pokemonId": 73,
+                  "level": 42,
+                  "moves": [
+                    "surf",
+                    "poison-sting",
+                    "barrier",
+                    "acid"
+                  ]
+                },
+                {
+                  "pokemonId": 340,
+                  "level": 43,
+                  "moves": [
+                    "surf",
+                    "earthquake",
+                    "amnesia",
+                    "tickle"
+                  ]
+                },
+                {
+                  "pokemonId": 119,
+                  "level": 43,
+                  "moves": [
+                    "surf",
+                    "horn-attack",
+                    "agility",
+                    "horn-drill"
+                  ]
+                },
+                {
+                  "pokemonId": 117,
+                  "level": 43,
+                  "moves": [
+                    "surf",
+                    "smokescreen",
+                    "dragon-breath",
+                    "agility"
+                  ]
+                },
+                {
+                  "pokemonId": 350,
+                  "level": 46,
+                  "moves": [
+                    "surf",
+                    "ice-beam",
+                    "recover",
+                    "mirror-coat"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hoenn-sidney",
+          "name": "Sidney",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Dark",
+          "rosters": [
+            {
+              "label": "RSE",
+              "team": [
+                {
+                  "pokemonId": 262,
+                  "level": 46,
+                  "moves": [
+                    "crunch",
+                    "howl",
+                    "sand-attack",
+                    "shadow-ball"
+                  ]
+                },
+                {
+                  "pokemonId": 275,
+                  "level": 48,
+                  "moves": [
+                    "crunch",
+                    "fake-out",
+                    "swords-dance",
+                    "extrasensory"
+                  ]
+                },
+                {
+                  "pokemonId": 332,
+                  "level": 46,
+                  "moves": [
+                    "needle-arm",
+                    "faint-attack",
+                    "sand-storm",
+                    "destiny-bond"
+                  ]
+                },
+                {
+                  "pokemonId": 342,
+                  "level": 48,
+                  "moves": [
+                    "crunch",
+                    "surf",
+                    "guillotine",
+                    "swords-dance"
+                  ]
+                },
+                {
+                  "pokemonId": 319,
+                  "level": 47,
+                  "moves": [
+                    "crunch",
+                    "surf",
+                    "ice-beam",
+                    "agility"
+                  ]
+                },
+                {
+                  "pokemonId": 359,
+                  "level": 49,
+                  "moves": [
+                    "crunch",
+                    "shadow-ball",
+                    "swords-dance",
+                    "double-team"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hoenn-phoebe",
+          "name": "Phoebe",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Ghost",
+          "rosters": [
+            {
+              "label": "RSE",
+              "team": [
+                {
+                  "pokemonId": 356,
+                  "level": 48,
+                  "moves": [
+                    "shadow-ball",
+                    "will-o-wisp",
+                    "calm-mind",
+                    "confuse-ray"
+                  ]
+                },
+                {
+                  "pokemonId": 354,
+                  "level": 49,
+                  "moves": [
+                    "shadow-ball",
+                    "will-o-wisp",
+                    "calm-mind",
+                    "grudge"
+                  ]
+                },
+                {
+                  "pokemonId": 302,
+                  "level": 50,
+                  "moves": [
+                    "shadow-ball",
+                    "faint-attack",
+                    "calm-mind",
+                    "attract"
+                  ]
+                },
+                {
+                  "pokemonId": 354,
+                  "level": 49,
+                  "moves": [
+                    "shadow-ball",
+                    "will-o-wisp",
+                    "grudge",
+                    "spite"
+                  ]
+                },
+                {
+                  "pokemonId": 353,
+                  "level": 49,
+                  "moves": [
+                    "shadow-ball",
+                    "will-o-wisp",
+                    "confuse-ray",
+                    "spite"
+                  ]
+                },
+                {
+                  "pokemonId": 356,
+                  "level": 51,
+                  "moves": [
+                    "shadow-ball",
+                    "will-o-wisp",
+                    "calm-mind",
+                    "destiny-bond"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hoenn-glacia",
+          "name": "Glacia",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Ice",
+          "rosters": [
+            {
+              "label": "RSE",
+              "team": [
+                {
+                  "pokemonId": 363,
+                  "level": 50,
+                  "moves": [
+                    "surf",
+                    "ice-ball",
+                    "encore",
+                    "body-slam"
+                  ]
+                },
+                {
+                  "pokemonId": 363,
+                  "level": 50,
+                  "moves": [
+                    "surf",
+                    "ice-ball",
+                    "encore",
+                    "hail"
+                  ]
+                },
+                {
+                  "pokemonId": 221,
+                  "level": 52,
+                  "moves": [
+                    "blizzard",
+                    "earthquake",
+                    "ice-shard",
+                    "amnesia"
+                  ]
+                },
+                {
+                  "pokemonId": 362,
+                  "level": 53,
+                  "moves": [
+                    "blizzard",
+                    "body-slam",
+                    "hail",
+                    "light-screen"
+                  ]
+                },
+                {
+                  "pokemonId": 87,
+                  "level": 50,
+                  "moves": [
+                    "surf",
+                    "ice-beam",
+                    "aurora-beam",
+                    "rest"
+                  ]
+                },
+                {
+                  "pokemonId": 365,
+                  "level": 52,
+                  "moves": [
+                    "blizzard",
+                    "surf",
+                    "ice-ball",
+                    "body-slam"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hoenn-drake",
+          "name": "Drake",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Dragon",
+          "rosters": [
+            {
+              "label": "RSE",
+              "team": [
+                {
+                  "pokemonId": 148,
+                  "level": 52,
+                  "moves": [
+                    "dragon-rage",
+                    "thunder-wave",
+                    "slam",
+                    "hyper-beam"
+                  ]
+                },
+                {
+                  "pokemonId": 372,
+                  "level": 52,
+                  "moves": [
+                    "dragon-breath",
+                    "protect",
+                    "ember",
+                    "scary-face"
+                  ]
+                },
+                {
+                  "pokemonId": 334,
+                  "level": 54,
+                  "moves": [
+                    "dragon-pulse",
+                    "sky-attack",
+                    "dragon-dance",
+                    "roost"
+                  ]
+                },
+                {
+                  "pokemonId": 330,
+                  "level": 53,
+                  "moves": [
+                    "dragon-claw",
+                    "earthquake",
+                    "crunch",
+                    "flamethrower"
+                  ]
+                },
+                {
+                  "pokemonId": 330,
+                  "level": 53,
+                  "moves": [
+                    "dragon-claw",
+                    "earthquake",
+                    "crunch",
+                    "fly"
+                  ]
+                },
+                {
+                  "pokemonId": 373,
+                  "level": 55,
+                  "moves": [
+                    "outrage",
+                    "earthquake",
+                    "crunch",
+                    "dragon-dance"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hoenn-steven",
+          "name": "Steven",
+          "title": "Champion",
+          "trainerClass": "CHAMPION",
+          "typeSpecialty": "Mixed",
+          "rosters": [
+            {
+              "label": "RS",
+              "team": [
+                {
+                  "pokemonId": 227,
+                  "level": 57,
+                  "moves": [
+                    "steel-wing",
+                    "drill-peck",
+                    "spikes",
+                    "fly"
+                  ]
+                },
+                {
+                  "pokemonId": 344,
+                  "level": 55,
+                  "moves": [
+                    "psychic",
+                    "ancient-power",
+                    "cosmic-power",
+                    "harden"
+                  ]
+                },
+                {
+                  "pokemonId": 346,
+                  "level": 56,
+                  "moves": [
+                    "giga-drain",
+                    "ancient-power",
+                    "ingrain",
+                    "confuse-ray"
+                  ]
+                },
+                {
+                  "pokemonId": 348,
+                  "level": 56,
+                  "moves": [
+                    "slash",
+                    "ancient-power",
+                    "rock-blast",
+                    "fury-cutter"
+                  ]
+                },
+                {
+                  "pokemonId": 306,
+                  "level": 58,
+                  "moves": [
+                    "earthquake",
+                    "iron-tail",
+                    "rock-slide",
+                    "dragon-claw"
+                  ]
+                },
+                {
+                  "pokemonId": 376,
+                  "level": 58,
+                  "moves": [
+                    "meteor-mash",
+                    "earthquake",
+                    "psychic",
+                    "agility"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hoenn-may",
+          "name": "May",
+          "title": "Rival",
+          "trainerClass": "RIVAL",
+          "typeSpecialty": "Mixed",
+          "rosters": [
+            {
+              "label": "Final Battle (Emerald)",
+              "team": [
+                {
+                  "pokemonId": 279,
+                  "level": 46,
+                  "moves": [
+                    "surf",
+                    "air-slash",
+                    "protect",
+                    "fly"
+                  ]
+                },
+                {
+                  "pokemonId": 310,
+                  "level": 47,
+                  "moves": [
+                    "thunderbolt",
+                    "quick-attack",
+                    "charge-beam",
+                    "roar"
+                  ]
+                },
+                {
+                  "pokemonId": 65,
+                  "level": 47,
+                  "moves": [
+                    "psychic",
+                    "calm-mind",
+                    "recover",
+                    "shadow-ball"
+                  ]
+                },
+                {
+                  "pokemonId": 334,
+                  "level": 48,
+                  "moves": [
+                    "dragon-pulse",
+                    "sky-attack",
+                    "dragon-dance",
+                    "aerial-ace"
+                  ]
+                },
+                {
+                  "pokemonId": 350,
+                  "level": 46,
+                  "moves": [
+                    "surf",
+                    "ice-beam",
+                    "recover",
+                    "mirror-coat"
+                  ]
+                },
+                {
+                  "pokemonId": 254,
+                  "level": 50,
+                  "moves": [
+                    "leaf-blade",
+                    "dragon-claw",
+                    "slash",
+                    "synthesis"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
