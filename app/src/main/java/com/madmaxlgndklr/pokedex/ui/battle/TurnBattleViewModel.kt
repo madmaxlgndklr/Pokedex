@@ -39,6 +39,8 @@ data class LearnableMove(
     val available: Boolean
 )
 
+data class SelectedTrainer(val trainer: Trainer, val rosterIndex: Int)
+
 fun learnableMoves(detail: PokemonDetail, level: Int): List<LearnableMove> {
     val tmSet = (detail.tmMoves ?: emptyList()).toSet()
     val byName = mutableMapOf<String, LearnableMove>()
@@ -83,6 +85,9 @@ class TurnBattleViewModel(
     private val _heldItemSyncError = MutableStateFlow(false)
     val heldItemSyncError: StateFlow<Boolean> = _heldItemSyncError
 
+    private val _battleTrainer = MutableStateFlow<SelectedTrainer?>(null)
+    val battleTrainer: StateFlow<SelectedTrainer?> = _battleTrainer
+
     val canStartBattle: StateFlow<Boolean> = _setup
         .map { setup ->
             val cfg = setup?.statConfig
@@ -120,7 +125,7 @@ class TurnBattleViewModel(
         viewModelScope.launch {
             try {
                 _heldItems.value = heldItemRepo.getAll()
-            } catch (_: Exception) {
+            } catch (e: Exception) {
                 _heldItemSyncError.value = true
             }
         }
@@ -135,7 +140,7 @@ class TurnBattleViewModel(
                 val level = 50
                 val defaults = learnableMoves(detail, level).filter { it.available }.take(4).map { it.name }
                 _setup.value = BattleSetup(detail, level, defaults)
-            } catch (_: Exception) {
+            } catch (e: Exception) {
             } finally {
                 _isLoading.value = false
             }
@@ -172,31 +177,34 @@ class TurnBattleViewModel(
             _isLoading.value = true
             try {
                 val gen = settingsRepo.selectedGen.first()
-                val allPokemon = repo.getPokemonList()
-                val opponentDetail = repo.getPokemonDetail(allPokemon.random().id)
-
                 val playerTeam = teamIds.mapIndexed { idx, pokemonId ->
                     val detail = if (idx == 0) s.playerDetail else {
-                        try { repo.getPokemonDetail(pokemonId) } catch (_: Exception) { s.playerDetail }
+                        try { repo.getPokemonDetail(pokemonId) } catch (e: Exception) { s.playerDetail }
                     }
                     val ov = s.teamOverrides[idx]
                     val level = ov?.level ?: s.level
                     val statConfig = ov?.statConfig ?: s.statConfig
                     val nature = ov?.nature ?: s.nature
                     val heldItem = ov?.heldItem ?: s.heldItem
-                    val moves = if (idx == 0) {
-                        resolveMoves(s.selectedMoveNames)
-                    } else {
-                        resolveMoves(learnableMoves(detail, level).filter { it.available }.take(4).map { it.name })
-                    }
+                    val moves = if (idx == 0) resolveMoves(s.selectedMoveNames)
+                        else resolveMoves(learnableMoves(detail, level).filter { it.available }.take(4).map { it.name })
                     BattleEngine.buildBattlePokemon(detail, level, moves, statConfig, nature, heldItem)
                 }
-
-                val opponentMoves = resolveMoves(opponentDetail.moves.take(4).map { it.name })
-                val opponentBattle = BattleEngine.buildBattlePokemon(opponentDetail, s.level, opponentMoves)
-
-                _battleState.value = BattleEngine.startBattle(playerTeam, listOf(opponentBattle), gen)
-            } catch (_: Exception) {
+                val bt = _battleTrainer.value
+                val opponentTeam = if (bt != null) {
+                    bt.trainer.rosters[bt.rosterIndex].team.mapNotNull { tp ->
+                        try {
+                            val detail = repo.getPokemonDetail(tp.pokemonId)
+                            BattleEngine.buildBattlePokemon(detail, tp.level, resolveMoves(tp.moves))
+                        } catch (e: Exception) { null }
+                    }.ifEmpty { return@launch }
+                } else {
+                    val opponentDetail = repo.getPokemonDetail(repo.getPokemonList().random().id)
+                    val opponentMoves = resolveMoves(opponentDetail.moves.take(4).map { it.name })
+                    listOf(BattleEngine.buildBattlePokemon(opponentDetail, s.level, opponentMoves))
+                }
+                _battleState.value = BattleEngine.startBattle(playerTeam, opponentTeam, gen)
+            } catch (e: Exception) {
             } finally {
                 _isLoading.value = false
             }
@@ -205,6 +213,49 @@ class TurnBattleViewModel(
 
     fun resetToSetup() {
         _battleState.value = null
+        _battleTrainer.value = null
+    }
+
+    fun loadTrainerSetup(trainer: Trainer, rosterIndex: Int, teamIds: List<Int>) {
+        _battleTrainer.value = SelectedTrainer(trainer, rosterIndex)
+        _setup.value = null  // allow loadSetup to re-run
+        loadSetup(teamIds)
+    }
+
+    fun startTrainerBattle(trainer: Trainer, rosterIndex: Int, teamIds: List<Int>) {
+        if (teamIds.isEmpty()) return
+        val s = _setup.value ?: return
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val gen = settingsRepo.selectedGen.first()
+                val playerTeam = teamIds.mapIndexed { idx, pokemonId ->
+                    val detail = if (idx == 0) s.playerDetail else {
+                        try { repo.getPokemonDetail(pokemonId) } catch (e: Exception) { s.playerDetail }
+                    }
+                    val ov = s.teamOverrides[idx]
+                    val level = ov?.level ?: s.level
+                    val statConfig = ov?.statConfig ?: s.statConfig
+                    val nature = ov?.nature ?: s.nature
+                    val heldItem = ov?.heldItem ?: s.heldItem
+                    val moves = if (idx == 0) resolveMoves(s.selectedMoveNames)
+                        else resolveMoves(learnableMoves(detail, level).filter { it.available }.take(4).map { it.name })
+                    BattleEngine.buildBattlePokemon(detail, level, moves, statConfig, nature, heldItem)
+                }
+                val opponentTeam = trainer.rosters[rosterIndex].team.mapNotNull { tp ->
+                    try {
+                        val detail = repo.getPokemonDetail(tp.pokemonId)
+                        val moves = resolveMoves(tp.moves)
+                        BattleEngine.buildBattlePokemon(detail, tp.level, moves)
+                    } catch (e: Exception) { null }
+                }
+                if (opponentTeam.isEmpty()) return@launch
+                _battleState.value = BattleEngine.startBattle(playerTeam, opponentTeam, gen)
+            } catch (e: Exception) {
+            } finally {
+                _isLoading.value = false
+            }
+        }
     }
 
     fun submitMove(moveIndex: Int) {
@@ -244,7 +295,7 @@ class TurnBattleViewModel(
                 val m = repo.getMove(name)
                 BattleMove(name = m.name, type = m.type, category = m.category,
                     power = m.power, maxPp = m.pp, currentPp = m.pp)
-            } catch (_: Exception) {
+            } catch (e: Exception) {
                 BattleMove(name, "normal", "physical", 50, 20, 20)
             }
         }
