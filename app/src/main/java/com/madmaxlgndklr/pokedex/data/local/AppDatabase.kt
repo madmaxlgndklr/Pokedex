@@ -13,9 +13,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         PokemonListCacheEntity::class,
         PokemonDetailCacheEntity::class,
         MoveEntity::class,
-        HeldItem::class
+        HeldItem::class,
+        TrainerRecord::class,
+        WildRecord::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -24,6 +26,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun pokemonDetailCacheDao(): PokemonDetailCacheDao
     abstract fun moveDao(): MoveDao
     abstract fun heldItemDao(): HeldItemDao
+    abstract fun battleRecordDao(): BattleRecordDao
 
     companion object {
         private val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -72,6 +75,32 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS trainer_records (" +
+                    "trainerId TEXT PRIMARY KEY NOT NULL, " +
+                    "name TEXT NOT NULL, " +
+                    "title TEXT NOT NULL, " +
+                    "region TEXT NOT NULL, " +
+                    "trainerClass TEXT NOT NULL, " +
+                    "typeSpecialty TEXT NOT NULL, " +
+                    "wins INTEGER NOT NULL DEFAULT 0, " +
+                    "losses INTEGER NOT NULL DEFAULT 0, " +
+                    "firstDefeatedAt INTEGER, " +
+                    "lastBattledAt INTEGER NOT NULL)"
+                )
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS wild_records (" +
+                    "pokemonId INTEGER PRIMARY KEY NOT NULL, " +
+                    "pokemonName TEXT NOT NULL, " +
+                    "wins INTEGER NOT NULL DEFAULT 0, " +
+                    "losses INTEGER NOT NULL DEFAULT 0, " +
+                    "lastBattledAt INTEGER NOT NULL)"
+                )
+            }
+        }
+
         @Volatile private var INSTANCE: AppDatabase? = null
 
         fun getInstance(context: Context): AppDatabase =
@@ -80,7 +109,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "pokedex.db"
-                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6).build()
+                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7).build()
                     .also { INSTANCE = it }
             }
     }

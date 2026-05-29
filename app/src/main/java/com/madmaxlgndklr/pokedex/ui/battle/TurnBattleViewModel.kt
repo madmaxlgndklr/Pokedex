@@ -6,11 +6,14 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.madmaxlgndklr.pokedex.data.local.HeldItem
 import com.madmaxlgndklr.pokedex.data.local.SettingsRepository
+import com.madmaxlgndklr.pokedex.data.repository.BattleRecordRepository
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.model.PokemonDetail
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -89,11 +92,48 @@ class TurnBattleViewModel(
     private val _battleTrainer = MutableStateFlow<SelectedTrainer?>(null)
     val battleTrainer: StateFlow<SelectedTrainer?> = _battleTrainer
 
+    private var _recordRepo: BattleRecordRepository? = null
+    private var activeWildPokemonId: Int? = null
+    private var activeWildPokemonName: String? = null
+
+    fun setRecordRepository(repo: BattleRecordRepository) {
+        _recordRepo = repo
+    }
+
     private val _selectedSetupSlot = MutableStateFlow(0)
     val selectedSetupSlot: StateFlow<Int> = _selectedSetupSlot
 
     private val _slotDetails = MutableStateFlow<Map<Int, PokemonDetail>>(emptyMap())
     val slotDetails: StateFlow<Map<Int, PokemonDetail>> = _slotDetails
+
+    init {
+        viewModelScope.launch {
+            _setup.filterNotNull().debounce(800L).collect { setup ->
+                settingsRepo.saveBattleConfig(setup.toDto().toJson())
+            }
+        }
+        viewModelScope.launch {
+            _battleState.collect { state ->
+                val repo = _recordRepo ?: return@collect
+                when (state) {
+                    is BattleState.Won  -> viewModelScope.launch { recordResult(repo, won = true) }
+                    is BattleState.Lost -> viewModelScope.launch { recordResult(repo, won = false) }
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    private suspend fun recordResult(repo: BattleRecordRepository, won: Boolean) {
+        val trainer = _battleTrainer.value
+        if (trainer != null) {
+            repo.recordTrainerBattle(trainer.trainer, won)
+        } else {
+            val id = activeWildPokemonId ?: return
+            val name = activeWildPokemonName ?: return
+            repo.recordWildBattle(id, name, won)
+        }
+    }
 
     val canStartBattle: StateFlow<Boolean> = _setup
         .map { setup ->
@@ -202,9 +242,38 @@ class TurnBattleViewModel(
             _isLoading.value = true
             try {
                 val detail = repo.getPokemonDetail(teamIds[pickIndex])
-                val level = 50
-                val defaults = learnableMoves(detail, level).filter { it.available }.take(4).map { it.name }
-                _setup.value = BattleSetup(detail, level, defaults)
+                val savedDto = settingsRepo.loadBattleConfigJson()?.toBattleConfigDto()
+                _setup.value = if (savedDto != null) {
+                    val savedLevel = savedDto.level.coerceIn(1, 100)
+                    val available = learnableMoves(detail, savedLevel).filter { it.available }.map { it.name }.toSet()
+                    val validMoves = savedDto.moves.filter { it in available }
+                        .ifEmpty { learnableMoves(detail, savedLevel).filter { it.available }.take(4).map { it.name } }
+                    val nature = Natures.ALL.find { it.name.equals(savedDto.nature, ignoreCase = true) } ?: Natures.HARDY
+                    val slots = savedDto.slots
+                        .mapKeys { it.key.toIntOrNull() ?: -1 }
+                        .filter { it.key >= 1 }
+                        .mapValues { (_, v) ->
+                            SlotOverride(
+                                level = v.level,
+                                nature = v.nature?.let { n -> Natures.ALL.find { it.name.equals(n, ignoreCase = true) } },
+                                selectedMoveNames = v.moves,
+                                statConfig = v.statConfig?.toStatConfig(),
+                                heldItem = v.heldItem?.toHeldItem()
+                            )
+                        }
+                    BattleSetup(
+                        playerDetail = detail,
+                        level = savedLevel,
+                        selectedMoveNames = validMoves,
+                        statConfig = savedDto.statConfig.toStatConfig(),
+                        nature = nature,
+                        heldItem = savedDto.heldItem?.toHeldItem(),
+                        teamOverrides = slots
+                    )
+                } else {
+                    val defaults = learnableMoves(detail, 50).filter { it.available }.take(4).map { it.name }
+                    BattleSetup(detail, 50, defaults)
+                }
                 _slotDetails.value = mapOf(0 to detail)
                 _selectedSetupSlot.value = 0
             } catch (e: Exception) {
@@ -261,6 +330,8 @@ class TurnBattleViewModel(
                     BattleEngine.buildBattlePokemon(detail, level, moves, statConfig, nature, heldItem)
                 }
                 val bt = _battleTrainer.value
+                activeWildPokemonId = null
+                activeWildPokemonName = null
                 val opponentTeam = if (bt != null) {
                     bt.trainer.rosters[bt.rosterIndex].team.mapNotNull { tp ->
                         try {
@@ -270,6 +341,8 @@ class TurnBattleViewModel(
                     }.ifEmpty { return@launch }
                 } else {
                     val opponentDetail = repo.getPokemonDetail(repo.getPokemonList().random().id)
+                    activeWildPokemonId = opponentDetail.id
+                    activeWildPokemonName = opponentDetail.name
                     val opponentMoves = resolveMoves(opponentDetail.moves.take(4).map { it.name })
                     listOf(BattleEngine.buildBattlePokemon(opponentDetail, s.level, opponentMoves))
                 }
@@ -286,6 +359,8 @@ class TurnBattleViewModel(
         _battleTrainer.value = null
         _selectedSetupSlot.value = 0
         _slotDetails.value = emptyMap()
+        activeWildPokemonId = null
+        activeWildPokemonName = null
     }
 
     fun loadTrainerSetup(trainer: Trainer, rosterIndex: Int, teamIds: List<Int>) {

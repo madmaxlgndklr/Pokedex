@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 val Context.settingsDataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
@@ -64,4 +65,13 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
     suspend fun setGen(gen: Int) {
         dataStore.edit { it[SELECTED_GEN_KEY] = gen }
     }
+
+    private val BATTLE_CONFIG_KEY = stringPreferencesKey("battle_config_v1")
+
+    suspend fun saveBattleConfig(json: String) {
+        dataStore.edit { it[BATTLE_CONFIG_KEY] = json }
+    }
+
+    suspend fun loadBattleConfigJson(): String? =
+        dataStore.data.map { it[BATTLE_CONFIG_KEY] }.first()
 }

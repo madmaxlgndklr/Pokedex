@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,7 +39,7 @@ import com.madmaxlgndklr.pokedex.ui.theme.GlowBlue
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexCream
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexDark
 
-enum class BattleTab { CALC, BATTLE, MATCHUP, TRAINERS }
+enum class BattleTab { CALC, BATTLE, MATCHUP, TRAINERS, RECORD }
 
 @Composable
 fun BattleHubScreen(
@@ -46,11 +47,16 @@ fun BattleHubScreen(
     battleVm: TurnBattleViewModel,
     matchupVm: MatchupViewModel,
     trainerVm: TrainerSelectViewModel,
+    recordVm: RecordViewModel,
     teamIds: List<Int>,
     openOnTab: BattleTab = BattleTab.CALC,
     onBack: () -> Unit
 ) {
     var selectedTab by remember { mutableStateOf(openOnTab) }
+
+    LaunchedEffect(selectedTab) {
+        if (selectedTab == BattleTab.RECORD) recordVm.refresh()
+    }
 
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val sh = maxHeight
@@ -89,7 +95,8 @@ fun BattleHubScreen(
                 BattleTab.CALC     to "CALC",
                 BattleTab.BATTLE   to "WILD",
                 BattleTab.TRAINERS to "TRAIN",
-                BattleTab.MATCHUP  to "MATCHUP"
+                BattleTab.MATCHUP  to "MATCH",
+                BattleTab.RECORD   to "LOG"
             ).forEach { (tab, label) ->
                 val isSelected = selectedTab == tab
                 Box(
@@ -132,6 +139,7 @@ fun BattleHubScreen(
                 BattleTab.CALC     -> DamageCalcScreen(viewModel = calcVm)
                 BattleTab.BATTLE   -> TurnBattleScreen(viewModel = battleVm, teamIds = teamIds, onBack = onBack)
                 BattleTab.MATCHUP  -> MatchupScreen(viewModel = matchupVm, yourTeamIds = teamIds)
+                BattleTab.RECORD   -> RecordScreen(viewModel = recordVm)
                 BattleTab.TRAINERS -> TrainerSelectScreen(
                     viewModel = trainerVm,
                     onQuickBattle = { trainer ->

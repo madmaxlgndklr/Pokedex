@@ -115,14 +115,14 @@ fun TeamScreen(
             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .offset(y = sh * 0.22f)
+                .offset(y = sh * 0.19f)
                 .padding(horizontal = 16.dp)
         )
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .offset(y = sh * 0.22f)
+                .offset(y = sh * 0.245f)
                 .background(GlowBlue.copy(alpha = 0.25f), RoundedCornerShape(4.dp))
                 .border(1.5.dp, GlowBlue, RoundedCornerShape(4.dp))
                 .clickable(

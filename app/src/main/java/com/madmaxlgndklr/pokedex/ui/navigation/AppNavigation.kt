@@ -48,6 +48,7 @@ import com.madmaxlgndklr.pokedex.ui.battle.DamageCalcViewModel
 import com.madmaxlgndklr.pokedex.ui.battle.MatchupViewModel
 import com.madmaxlgndklr.pokedex.ui.battle.TurnBattleViewModel
 import com.madmaxlgndklr.pokedex.data.trainer.TrainerRepository
+import com.madmaxlgndklr.pokedex.ui.battle.RecordViewModel
 import com.madmaxlgndklr.pokedex.ui.battle.TrainerSelectViewModel
 import com.madmaxlgndklr.pokedex.ui.team.TeamScreen
 import com.madmaxlgndklr.pokedex.ui.team.TeamViewModel
@@ -325,14 +326,19 @@ fun AppNavigation() {
                     factory = TrainerSelectViewModel.factory(trainerRepo)
                 )
                 val battleApp = context.applicationContext as PokedexApplication
+                val recordVm: RecordViewModel = viewModel(
+                    factory = RecordViewModel.factory(battleApp.battleRecordRepository, trainerRepo)
+                )
                 LaunchedEffect(Unit) {
                     battleVm.loadHeldItems(battleApp.heldItemRepository)
+                    battleVm.setRecordRepository(battleApp.battleRecordRepository)
                 }
                 BattleHubScreen(
                     calcVm = calcVm,
                     battleVm = battleVm,
                     matchupVm = matchupVm,
                     trainerVm = trainerVm,
+                    recordVm = recordVm,
                     teamIds = teamIds.toList(),
                     onBack = { navController.popBackStack() }
                 )
