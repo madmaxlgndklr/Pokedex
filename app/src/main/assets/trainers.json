@@ -4,240 +4,3047 @@
       "name": "Kanto",
       "trainers": [
         {
-          "id": "kanto-brock", "name": "Brock", "title": "Gym Leader",
-          "trainerClass": "GYM_LEADER", "typeSpecialty": "Rock",
+          "id": "kanto-brock",
+          "name": "Brock",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Rock",
           "rosters": [
-            { "label": "Original (RBY)", "team": [
-              { "pokemonId": 74,  "level": 12, "moves": ["tackle","defense-curl","mud-slap","rock-throw"] },
-              { "pokemonId": 95,  "level": 14, "moves": ["tackle","screech","bind","rock-throw"] },
-              { "pokemonId": 75,  "level": 12, "moves": ["tackle","defense-curl","mud-slap","magnitude"] },
-              { "pokemonId": 246, "level": 10, "moves": ["tackle","leer","bite","sandstorm"] },
-              { "pokemonId": 111, "level": 11, "moves": ["tackle","tail-whip","stomp","horn-attack"] },
-              { "pokemonId": 213, "level": 11, "moves": ["tackle","harden","constrict","rock-throw"] }
-            ]},
-            { "label": "Rematch (FRLG)", "team": [
-              { "pokemonId": 75,  "level": 51, "moves": ["earthquake","rock-slide","explosion","stealth-rock"] },
-              { "pokemonId": 76,  "level": 51, "moves": ["earthquake","rock-blast","explosion","stealth-rock"] },
-              { "pokemonId": 95,  "level": 52, "moves": ["earthquake","rock-slide","screech","iron-tail"] },
-              { "pokemonId": 248, "level": 52, "moves": ["earthquake","crunch","rock-slide","dragon-dance"] },
-              { "pokemonId": 112, "level": 53, "moves": ["earthquake","megahorn","rock-slide","stomp"] },
-              { "pokemonId": 377, "level": 54, "moves": ["earthquake","ancientpower","calm-mind","psychic"] }
-            ]}
+            {
+              "label": "Original (RBY)",
+              "team": [
+                {
+                  "pokemonId": 74,
+                  "level": 12,
+                  "moves": [
+                    "tackle",
+                    "defense-curl",
+                    "mud-slap",
+                    "rock-throw"
+                  ]
+                },
+                {
+                  "pokemonId": 95,
+                  "level": 14,
+                  "moves": [
+                    "tackle",
+                    "screech",
+                    "bind",
+                    "rock-throw"
+                  ]
+                },
+                {
+                  "pokemonId": 75,
+                  "level": 12,
+                  "moves": [
+                    "tackle",
+                    "defense-curl",
+                    "mud-slap",
+                    "magnitude"
+                  ]
+                },
+                {
+                  "pokemonId": 246,
+                  "level": 10,
+                  "moves": [
+                    "tackle",
+                    "leer",
+                    "bite",
+                    "sandstorm"
+                  ]
+                },
+                {
+                  "pokemonId": 111,
+                  "level": 11,
+                  "moves": [
+                    "tackle",
+                    "tail-whip",
+                    "stomp",
+                    "horn-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 213,
+                  "level": 11,
+                  "moves": [
+                    "tackle",
+                    "harden",
+                    "constrict",
+                    "rock-throw"
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "Rematch (FRLG)",
+              "team": [
+                {
+                  "pokemonId": 75,
+                  "level": 51,
+                  "moves": [
+                    "earthquake",
+                    "rock-slide",
+                    "explosion",
+                    "stealth-rock"
+                  ]
+                },
+                {
+                  "pokemonId": 76,
+                  "level": 51,
+                  "moves": [
+                    "earthquake",
+                    "rock-blast",
+                    "explosion",
+                    "stealth-rock"
+                  ]
+                },
+                {
+                  "pokemonId": 95,
+                  "level": 52,
+                  "moves": [
+                    "earthquake",
+                    "rock-slide",
+                    "screech",
+                    "iron-tail"
+                  ]
+                },
+                {
+                  "pokemonId": 248,
+                  "level": 52,
+                  "moves": [
+                    "earthquake",
+                    "crunch",
+                    "rock-slide",
+                    "dragon-dance"
+                  ]
+                },
+                {
+                  "pokemonId": 112,
+                  "level": 53,
+                  "moves": [
+                    "earthquake",
+                    "megahorn",
+                    "rock-slide",
+                    "stomp"
+                  ]
+                },
+                {
+                  "pokemonId": 377,
+                  "level": 54,
+                  "moves": [
+                    "earthquake",
+                    "ancientpower",
+                    "calm-mind",
+                    "psychic"
+                  ]
+                }
+              ]
+            }
           ]
         },
         {
-          "id": "kanto-misty", "name": "Misty", "title": "Gym Leader",
-          "trainerClass": "GYM_LEADER", "typeSpecialty": "Water",
+          "id": "kanto-misty",
+          "name": "Misty",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Water",
           "rosters": [
-            { "label": "Original (RBY)", "team": [
-              { "pokemonId": 116, "level": 16, "moves": ["water-gun","smokescreen","leer","bubble"] },
-              { "pokemonId": 118, "level": 16, "moves": ["peck","water-gun","horn-attack","tail-whip"] },
-              { "pokemonId": 72,  "level": 17, "moves": ["wrap","constrict","poison-sting","supersonic"] },
-              { "pokemonId": 86,  "level": 17, "moves": ["headbutt","growl","water-gun","rest"] },
-              { "pokemonId": 120, "level": 18, "moves": ["water-gun","harden","minimize","swift"] },
-              { "pokemonId": 121, "level": 21, "moves": ["water-gun","harden","psywave","swift"] }
-            ]},
-            { "label": "Rematch (FRLG)", "team": [
-              { "pokemonId": 195, "level": 42, "moves": ["surf","earthquake","ice-beam","yawn"] },
-              { "pokemonId": 131, "level": 44, "moves": ["surf","ice-beam","thunder","confuse-ray"] },
-              { "pokemonId": 55,  "level": 46, "moves": ["surf","ice-beam","psychic","calm-mind"] },
-              { "pokemonId": 87,  "level": 44, "moves": ["surf","ice-beam","aurora-beam","rest"] },
-              { "pokemonId": 370, "level": 47, "moves": ["water-pulse","attract","sweet-kiss","take-down"] },
-              { "pokemonId": 121, "level": 47, "moves": ["surf","ice-beam","thunder","recover"] }
-            ]}
+            {
+              "label": "Original (RBY)",
+              "team": [
+                {
+                  "pokemonId": 116,
+                  "level": 16,
+                  "moves": [
+                    "water-gun",
+                    "smokescreen",
+                    "leer",
+                    "bubble"
+                  ]
+                },
+                {
+                  "pokemonId": 118,
+                  "level": 16,
+                  "moves": [
+                    "peck",
+                    "water-gun",
+                    "horn-attack",
+                    "tail-whip"
+                  ]
+                },
+                {
+                  "pokemonId": 72,
+                  "level": 17,
+                  "moves": [
+                    "wrap",
+                    "constrict",
+                    "poison-sting",
+                    "supersonic"
+                  ]
+                },
+                {
+                  "pokemonId": 86,
+                  "level": 17,
+                  "moves": [
+                    "headbutt",
+                    "growl",
+                    "water-gun",
+                    "rest"
+                  ]
+                },
+                {
+                  "pokemonId": 120,
+                  "level": 18,
+                  "moves": [
+                    "water-gun",
+                    "harden",
+                    "minimize",
+                    "swift"
+                  ]
+                },
+                {
+                  "pokemonId": 121,
+                  "level": 21,
+                  "moves": [
+                    "water-gun",
+                    "harden",
+                    "psywave",
+                    "swift"
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "Rematch (FRLG)",
+              "team": [
+                {
+                  "pokemonId": 195,
+                  "level": 42,
+                  "moves": [
+                    "surf",
+                    "earthquake",
+                    "ice-beam",
+                    "yawn"
+                  ]
+                },
+                {
+                  "pokemonId": 131,
+                  "level": 44,
+                  "moves": [
+                    "surf",
+                    "ice-beam",
+                    "thunder",
+                    "confuse-ray"
+                  ]
+                },
+                {
+                  "pokemonId": 55,
+                  "level": 46,
+                  "moves": [
+                    "surf",
+                    "ice-beam",
+                    "psychic",
+                    "calm-mind"
+                  ]
+                },
+                {
+                  "pokemonId": 87,
+                  "level": 44,
+                  "moves": [
+                    "surf",
+                    "ice-beam",
+                    "aurora-beam",
+                    "rest"
+                  ]
+                },
+                {
+                  "pokemonId": 370,
+                  "level": 47,
+                  "moves": [
+                    "water-pulse",
+                    "attract",
+                    "sweet-kiss",
+                    "take-down"
+                  ]
+                },
+                {
+                  "pokemonId": 121,
+                  "level": 47,
+                  "moves": [
+                    "surf",
+                    "ice-beam",
+                    "thunder",
+                    "recover"
+                  ]
+                }
+              ]
+            }
           ]
         },
         {
-          "id": "kanto-surge", "name": "Lt. Surge", "title": "Gym Leader",
-          "trainerClass": "GYM_LEADER", "typeSpecialty": "Electric",
+          "id": "kanto-surge",
+          "name": "Lt. Surge",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Electric",
           "rosters": [
-            { "label": "Original (RBY)", "team": [
-              { "pokemonId": 81,  "level": 19, "moves": ["thundershock","sonicboom","thunder-wave","screech"] },
-              { "pokemonId": 100, "level": 21, "moves": ["spark","screech","sonicboom","thunder-wave"] },
-              { "pokemonId": 25,  "level": 18, "moves": ["thunderbolt","growl","quick-attack","double-team"] },
-              { "pokemonId": 26,  "level": 24, "moves": ["thunderbolt","slam","quick-attack","thunder-wave"] },
-              { "pokemonId": 82,  "level": 20, "moves": ["thunderbolt","thunder-wave","screech","sonicboom"] },
-              { "pokemonId": 101, "level": 22, "moves": ["thunderbolt","thunder-wave","screech","light-screen"] }
-            ]},
-            { "label": "Rematch (FRLG)", "team": [
-              { "pokemonId": 26,  "level": 44, "moves": ["thunderbolt","slam","quick-attack","thunder-wave"] },
-              { "pokemonId": 101, "level": 40, "moves": ["thunderbolt","thunder-wave","screech","explosion"] },
-              { "pokemonId": 101, "level": 42, "moves": ["thunderbolt","thunder-wave","screech","explosion"] },
-              { "pokemonId": 310, "level": 46, "moves": ["thunderbolt","charge-beam","quick-attack","roar"] },
-              { "pokemonId": 135, "level": 46, "moves": ["thunderbolt","thunder-wave","quick-attack","shadow-ball"] },
-              { "pokemonId": 125, "level": 47, "moves": ["thunderbolt","thunder-punch","quick-attack","screech"] }
-            ]}
+            {
+              "label": "Original (RBY)",
+              "team": [
+                {
+                  "pokemonId": 81,
+                  "level": 19,
+                  "moves": [
+                    "thundershock",
+                    "sonicboom",
+                    "thunder-wave",
+                    "screech"
+                  ]
+                },
+                {
+                  "pokemonId": 100,
+                  "level": 21,
+                  "moves": [
+                    "spark",
+                    "screech",
+                    "sonicboom",
+                    "thunder-wave"
+                  ]
+                },
+                {
+                  "pokemonId": 25,
+                  "level": 18,
+                  "moves": [
+                    "thunderbolt",
+                    "growl",
+                    "quick-attack",
+                    "double-team"
+                  ]
+                },
+                {
+                  "pokemonId": 26,
+                  "level": 24,
+                  "moves": [
+                    "thunderbolt",
+                    "slam",
+                    "quick-attack",
+                    "thunder-wave"
+                  ]
+                },
+                {
+                  "pokemonId": 82,
+                  "level": 20,
+                  "moves": [
+                    "thunderbolt",
+                    "thunder-wave",
+                    "screech",
+                    "sonicboom"
+                  ]
+                },
+                {
+                  "pokemonId": 101,
+                  "level": 22,
+                  "moves": [
+                    "thunderbolt",
+                    "thunder-wave",
+                    "screech",
+                    "light-screen"
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "Rematch (FRLG)",
+              "team": [
+                {
+                  "pokemonId": 26,
+                  "level": 44,
+                  "moves": [
+                    "thunderbolt",
+                    "slam",
+                    "quick-attack",
+                    "thunder-wave"
+                  ]
+                },
+                {
+                  "pokemonId": 101,
+                  "level": 40,
+                  "moves": [
+                    "thunderbolt",
+                    "thunder-wave",
+                    "screech",
+                    "explosion"
+                  ]
+                },
+                {
+                  "pokemonId": 101,
+                  "level": 42,
+                  "moves": [
+                    "thunderbolt",
+                    "thunder-wave",
+                    "screech",
+                    "explosion"
+                  ]
+                },
+                {
+                  "pokemonId": 310,
+                  "level": 46,
+                  "moves": [
+                    "thunderbolt",
+                    "charge-beam",
+                    "quick-attack",
+                    "roar"
+                  ]
+                },
+                {
+                  "pokemonId": 135,
+                  "level": 46,
+                  "moves": [
+                    "thunderbolt",
+                    "thunder-wave",
+                    "quick-attack",
+                    "shadow-ball"
+                  ]
+                },
+                {
+                  "pokemonId": 125,
+                  "level": 47,
+                  "moves": [
+                    "thunderbolt",
+                    "thunder-punch",
+                    "quick-attack",
+                    "screech"
+                  ]
+                }
+              ]
+            }
           ]
         },
         {
-          "id": "kanto-erika", "name": "Erika", "title": "Gym Leader",
-          "trainerClass": "GYM_LEADER", "typeSpecialty": "Grass",
+          "id": "kanto-erika",
+          "name": "Erika",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Grass",
           "rosters": [
-            { "label": "Original (RBY)", "team": [
-              { "pokemonId": 43,  "level": 24, "moves": ["absorb","poisonpowder","sleep-powder","acid"] },
-              { "pokemonId": 114, "level": 24, "moves": ["constrict","sleep-powder","absorb","bind"] },
-              { "pokemonId": 70,  "level": 25, "moves": ["vine-whip","sleep-powder","acid","wrap"] },
-              { "pokemonId": 44,  "level": 26, "moves": ["absorb","poisonpowder","sleep-powder","acid"] },
-              { "pokemonId": 71,  "level": 29, "moves": ["razor-leaf","sleep-powder","acid","wrap"] },
-              { "pokemonId": 45,  "level": 29, "moves": ["petal-dance","sleep-powder","acid","poisonpowder"] }
-            ]},
-            { "label": "Rematch (FRLG)", "team": [
-              { "pokemonId": 114, "level": 46, "moves": ["mega-drain","sleep-powder","bind","ancientpower"] },
-              { "pokemonId": 189, "level": 47, "moves": ["mega-drain","sleep-powder","cotton-spore","leech-seed"] },
-              { "pokemonId": 71,  "level": 46, "moves": ["razor-leaf","sleep-powder","acid","swords-dance"] },
-              { "pokemonId": 182, "level": 46, "moves": ["petal-dance","sleep-powder","acid","sunny-day"] },
-              { "pokemonId": 45,  "level": 46, "moves": ["petal-dance","sleep-powder","acid","moonlight"] },
-              { "pokemonId": 103, "level": 47, "moves": ["psychic","mega-drain","sleep-powder","egg-bomb"] }
-            ]}
+            {
+              "label": "Original (RBY)",
+              "team": [
+                {
+                  "pokemonId": 43,
+                  "level": 24,
+                  "moves": [
+                    "absorb",
+                    "poisonpowder",
+                    "sleep-powder",
+                    "acid"
+                  ]
+                },
+                {
+                  "pokemonId": 114,
+                  "level": 24,
+                  "moves": [
+                    "constrict",
+                    "sleep-powder",
+                    "absorb",
+                    "bind"
+                  ]
+                },
+                {
+                  "pokemonId": 70,
+                  "level": 25,
+                  "moves": [
+                    "vine-whip",
+                    "sleep-powder",
+                    "acid",
+                    "wrap"
+                  ]
+                },
+                {
+                  "pokemonId": 44,
+                  "level": 26,
+                  "moves": [
+                    "absorb",
+                    "poisonpowder",
+                    "sleep-powder",
+                    "acid"
+                  ]
+                },
+                {
+                  "pokemonId": 71,
+                  "level": 29,
+                  "moves": [
+                    "razor-leaf",
+                    "sleep-powder",
+                    "acid",
+                    "wrap"
+                  ]
+                },
+                {
+                  "pokemonId": 45,
+                  "level": 29,
+                  "moves": [
+                    "petal-dance",
+                    "sleep-powder",
+                    "acid",
+                    "poisonpowder"
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "Rematch (FRLG)",
+              "team": [
+                {
+                  "pokemonId": 114,
+                  "level": 46,
+                  "moves": [
+                    "mega-drain",
+                    "sleep-powder",
+                    "bind",
+                    "ancientpower"
+                  ]
+                },
+                {
+                  "pokemonId": 189,
+                  "level": 47,
+                  "moves": [
+                    "mega-drain",
+                    "sleep-powder",
+                    "cotton-spore",
+                    "leech-seed"
+                  ]
+                },
+                {
+                  "pokemonId": 71,
+                  "level": 46,
+                  "moves": [
+                    "razor-leaf",
+                    "sleep-powder",
+                    "acid",
+                    "swords-dance"
+                  ]
+                },
+                {
+                  "pokemonId": 182,
+                  "level": 46,
+                  "moves": [
+                    "petal-dance",
+                    "sleep-powder",
+                    "acid",
+                    "sunny-day"
+                  ]
+                },
+                {
+                  "pokemonId": 45,
+                  "level": 46,
+                  "moves": [
+                    "petal-dance",
+                    "sleep-powder",
+                    "acid",
+                    "moonlight"
+                  ]
+                },
+                {
+                  "pokemonId": 103,
+                  "level": 47,
+                  "moves": [
+                    "psychic",
+                    "mega-drain",
+                    "sleep-powder",
+                    "egg-bomb"
+                  ]
+                }
+              ]
+            }
           ]
         },
         {
-          "id": "kanto-koga", "name": "Koga", "title": "Gym Leader",
-          "trainerClass": "GYM_LEADER", "typeSpecialty": "Poison",
+          "id": "kanto-koga",
+          "name": "Koga",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Poison",
           "rosters": [
-            { "label": "Original (RBY)", "team": [
-              { "pokemonId": 23,  "level": 37, "moves": ["glare","acid","screech","bite"] },
-              { "pokemonId": 24,  "level": 38, "moves": ["glare","acid","screech","bite"] },
-              { "pokemonId": 109, "level": 37, "moves": ["smog","self-destruct","smokescreen","sludge"] },
-              { "pokemonId": 89,  "level": 39, "moves": ["smog","poison-gas","minimize","sludge"] },
-              { "pokemonId": 109, "level": 37, "moves": ["smog","self-destruct","smokescreen","sludge"] },
-              { "pokemonId": 110, "level": 43, "moves": ["smog","self-destruct","smokescreen","explosion"] }
-            ]},
-            { "label": "Rematch (FRLG)", "team": [
-              { "pokemonId": 49,  "level": 48, "moves": ["psychic","sludge-bomb","sleep-powder","leech-life"] },
-              { "pokemonId": 205, "level": 48, "moves": ["explosion","toxic-spikes","rapid-spin","volt-switch"] },
-              { "pokemonId": 89,  "level": 50, "moves": ["shadow-ball","gunk-shot","minimize","memento"] },
-              { "pokemonId": 169, "level": 50, "moves": ["sludge-bomb","cross-poison","air-slash","confuse-ray"] },
-              { "pokemonId": 110, "level": 50, "moves": ["sludge-bomb","explosion","smokescreen","thunderbolt"] },
-              { "pokemonId": 317, "level": 50, "moves": ["sludge-bomb","shadow-ball","toxic","yawn"] }
-            ]}
+            {
+              "label": "Original (RBY)",
+              "team": [
+                {
+                  "pokemonId": 23,
+                  "level": 37,
+                  "moves": [
+                    "glare",
+                    "acid",
+                    "screech",
+                    "bite"
+                  ]
+                },
+                {
+                  "pokemonId": 24,
+                  "level": 38,
+                  "moves": [
+                    "glare",
+                    "acid",
+                    "screech",
+                    "bite"
+                  ]
+                },
+                {
+                  "pokemonId": 109,
+                  "level": 37,
+                  "moves": [
+                    "smog",
+                    "self-destruct",
+                    "smokescreen",
+                    "sludge"
+                  ]
+                },
+                {
+                  "pokemonId": 89,
+                  "level": 39,
+                  "moves": [
+                    "smog",
+                    "poison-gas",
+                    "minimize",
+                    "sludge"
+                  ]
+                },
+                {
+                  "pokemonId": 109,
+                  "level": 37,
+                  "moves": [
+                    "smog",
+                    "self-destruct",
+                    "smokescreen",
+                    "sludge"
+                  ]
+                },
+                {
+                  "pokemonId": 110,
+                  "level": 43,
+                  "moves": [
+                    "smog",
+                    "self-destruct",
+                    "smokescreen",
+                    "explosion"
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "Rematch (FRLG)",
+              "team": [
+                {
+                  "pokemonId": 49,
+                  "level": 48,
+                  "moves": [
+                    "psychic",
+                    "sludge-bomb",
+                    "sleep-powder",
+                    "leech-life"
+                  ]
+                },
+                {
+                  "pokemonId": 205,
+                  "level": 48,
+                  "moves": [
+                    "explosion",
+                    "toxic-spikes",
+                    "rapid-spin",
+                    "volt-switch"
+                  ]
+                },
+                {
+                  "pokemonId": 89,
+                  "level": 50,
+                  "moves": [
+                    "shadow-ball",
+                    "gunk-shot",
+                    "minimize",
+                    "memento"
+                  ]
+                },
+                {
+                  "pokemonId": 169,
+                  "level": 50,
+                  "moves": [
+                    "sludge-bomb",
+                    "cross-poison",
+                    "air-slash",
+                    "confuse-ray"
+                  ]
+                },
+                {
+                  "pokemonId": 110,
+                  "level": 50,
+                  "moves": [
+                    "sludge-bomb",
+                    "explosion",
+                    "smokescreen",
+                    "thunderbolt"
+                  ]
+                },
+                {
+                  "pokemonId": 317,
+                  "level": 50,
+                  "moves": [
+                    "sludge-bomb",
+                    "shadow-ball",
+                    "toxic",
+                    "yawn"
+                  ]
+                }
+              ]
+            }
           ]
         },
         {
-          "id": "kanto-sabrina", "name": "Sabrina", "title": "Gym Leader",
-          "trainerClass": "GYM_LEADER", "typeSpecialty": "Psychic",
+          "id": "kanto-sabrina",
+          "name": "Sabrina",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Psychic",
           "rosters": [
-            { "label": "Original (RBY)", "team": [
-              { "pokemonId": 97,  "level": 37, "moves": ["hypnosis","dream-eater","psychic","headbutt"] },
-              { "pokemonId": 64,  "level": 38, "moves": ["psybeam","confusion","kinesis","recover"] },
-              { "pokemonId": 122, "level": 37, "moves": ["psybeam","confusion","light-screen","barrier"] },
-              { "pokemonId": 49,  "level": 38, "moves": ["psychic","sleep-powder","leech-life","psybeam"] },
-              { "pokemonId": 65,  "level": 43, "moves": ["psychic","recover","calm-mind","psybeam"] },
-              { "pokemonId": 80,  "level": 37, "moves": ["psychic","surf","amnesia","headbutt"] }
-            ]},
-            { "label": "Rematch (FRLG)", "team": [
-              { "pokemonId": 122, "level": 50, "moves": ["psychic","calm-mind","light-screen","reflect"] },
-              { "pokemonId": 202, "level": 50, "moves": ["counter","mirror-coat","destiny-bond","safeguard"] },
-              { "pokemonId": 124, "level": 50, "moves": ["psychic","ice-beam","lovely-kiss","calm-mind"] },
-              { "pokemonId": 196, "level": 50, "moves": ["psychic","calm-mind","shadow-ball","morning-sun"] },
-              { "pokemonId": 97,  "level": 54, "moves": ["psychic","hypnosis","dream-eater","thunder-punch"] },
-              { "pokemonId": 65,  "level": 58, "moves": ["psychic","recover","calm-mind","shadow-ball"] }
-            ]}
+            {
+              "label": "Original (RBY)",
+              "team": [
+                {
+                  "pokemonId": 97,
+                  "level": 37,
+                  "moves": [
+                    "hypnosis",
+                    "dream-eater",
+                    "psychic",
+                    "headbutt"
+                  ]
+                },
+                {
+                  "pokemonId": 64,
+                  "level": 38,
+                  "moves": [
+                    "psybeam",
+                    "confusion",
+                    "kinesis",
+                    "recover"
+                  ]
+                },
+                {
+                  "pokemonId": 122,
+                  "level": 37,
+                  "moves": [
+                    "psybeam",
+                    "confusion",
+                    "light-screen",
+                    "barrier"
+                  ]
+                },
+                {
+                  "pokemonId": 49,
+                  "level": 38,
+                  "moves": [
+                    "psychic",
+                    "sleep-powder",
+                    "leech-life",
+                    "psybeam"
+                  ]
+                },
+                {
+                  "pokemonId": 65,
+                  "level": 43,
+                  "moves": [
+                    "psychic",
+                    "recover",
+                    "calm-mind",
+                    "psybeam"
+                  ]
+                },
+                {
+                  "pokemonId": 80,
+                  "level": 37,
+                  "moves": [
+                    "psychic",
+                    "surf",
+                    "amnesia",
+                    "headbutt"
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "Rematch (FRLG)",
+              "team": [
+                {
+                  "pokemonId": 122,
+                  "level": 50,
+                  "moves": [
+                    "psychic",
+                    "calm-mind",
+                    "light-screen",
+                    "reflect"
+                  ]
+                },
+                {
+                  "pokemonId": 202,
+                  "level": 50,
+                  "moves": [
+                    "counter",
+                    "mirror-coat",
+                    "destiny-bond",
+                    "safeguard"
+                  ]
+                },
+                {
+                  "pokemonId": 124,
+                  "level": 50,
+                  "moves": [
+                    "psychic",
+                    "ice-beam",
+                    "lovely-kiss",
+                    "calm-mind"
+                  ]
+                },
+                {
+                  "pokemonId": 196,
+                  "level": 50,
+                  "moves": [
+                    "psychic",
+                    "calm-mind",
+                    "shadow-ball",
+                    "morning-sun"
+                  ]
+                },
+                {
+                  "pokemonId": 97,
+                  "level": 54,
+                  "moves": [
+                    "psychic",
+                    "hypnosis",
+                    "dream-eater",
+                    "thunder-punch"
+                  ]
+                },
+                {
+                  "pokemonId": 65,
+                  "level": 58,
+                  "moves": [
+                    "psychic",
+                    "recover",
+                    "calm-mind",
+                    "shadow-ball"
+                  ]
+                }
+              ]
+            }
           ]
         },
         {
-          "id": "kanto-blaine", "name": "Blaine", "title": "Gym Leader",
-          "trainerClass": "GYM_LEADER", "typeSpecialty": "Fire",
+          "id": "kanto-blaine",
+          "name": "Blaine",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Fire",
           "rosters": [
-            { "label": "Original (RBY)", "team": [
-              { "pokemonId": 126, "level": 40, "moves": ["flamethrower","smog","fire-spin","confuse-ray"] },
-              { "pokemonId": 58,  "level": 42, "moves": ["flamethrower","ember","bite","leer"] },
-              { "pokemonId": 77,  "level": 40, "moves": ["flamethrower","fire-spin","agility","stomp"] },
-              { "pokemonId": 78,  "level": 42, "moves": ["flamethrower","fire-spin","agility","stomp"] },
-              { "pokemonId": 136, "level": 41, "moves": ["flamethrower","ember","sand-attack","quick-attack"] },
-              { "pokemonId": 59,  "level": 47, "moves": ["flamethrower","fire-blast","agility","extreme-speed"] }
-            ]},
-            { "label": "Rematch (FRLG)", "team": [
-              { "pokemonId": 219, "level": 54, "moves": ["flamethrower","rock-slide","earth-power","overheat"] },
-              { "pokemonId": 126, "level": 54, "moves": ["fire-blast","thunder-punch","cross-chop","smokescreen"] },
-              { "pokemonId": 78,  "level": 54, "moves": ["flamethrower","fire-blast","agility","bounce"] },
-              { "pokemonId": 103, "level": 54, "moves": ["psychic","fire-blast","sleep-powder","sunny-day"] },
-              { "pokemonId": 38,  "level": 54, "moves": ["flamethrower","fire-blast","confuse-ray","quick-attack"] },
-              { "pokemonId": 59,  "level": 58, "moves": ["flamethrower","fire-blast","extreme-speed","roar"] }
-            ]}
+            {
+              "label": "Original (RBY)",
+              "team": [
+                {
+                  "pokemonId": 126,
+                  "level": 40,
+                  "moves": [
+                    "flamethrower",
+                    "smog",
+                    "fire-spin",
+                    "confuse-ray"
+                  ]
+                },
+                {
+                  "pokemonId": 58,
+                  "level": 42,
+                  "moves": [
+                    "flamethrower",
+                    "ember",
+                    "bite",
+                    "leer"
+                  ]
+                },
+                {
+                  "pokemonId": 77,
+                  "level": 40,
+                  "moves": [
+                    "flamethrower",
+                    "fire-spin",
+                    "agility",
+                    "stomp"
+                  ]
+                },
+                {
+                  "pokemonId": 78,
+                  "level": 42,
+                  "moves": [
+                    "flamethrower",
+                    "fire-spin",
+                    "agility",
+                    "stomp"
+                  ]
+                },
+                {
+                  "pokemonId": 136,
+                  "level": 41,
+                  "moves": [
+                    "flamethrower",
+                    "ember",
+                    "sand-attack",
+                    "quick-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 59,
+                  "level": 47,
+                  "moves": [
+                    "flamethrower",
+                    "fire-blast",
+                    "agility",
+                    "extreme-speed"
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "Rematch (FRLG)",
+              "team": [
+                {
+                  "pokemonId": 219,
+                  "level": 54,
+                  "moves": [
+                    "flamethrower",
+                    "rock-slide",
+                    "earth-power",
+                    "overheat"
+                  ]
+                },
+                {
+                  "pokemonId": 126,
+                  "level": 54,
+                  "moves": [
+                    "fire-blast",
+                    "thunder-punch",
+                    "cross-chop",
+                    "smokescreen"
+                  ]
+                },
+                {
+                  "pokemonId": 78,
+                  "level": 54,
+                  "moves": [
+                    "flamethrower",
+                    "fire-blast",
+                    "agility",
+                    "bounce"
+                  ]
+                },
+                {
+                  "pokemonId": 103,
+                  "level": 54,
+                  "moves": [
+                    "psychic",
+                    "fire-blast",
+                    "sleep-powder",
+                    "sunny-day"
+                  ]
+                },
+                {
+                  "pokemonId": 38,
+                  "level": 54,
+                  "moves": [
+                    "flamethrower",
+                    "fire-blast",
+                    "confuse-ray",
+                    "quick-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 59,
+                  "level": 58,
+                  "moves": [
+                    "flamethrower",
+                    "fire-blast",
+                    "extreme-speed",
+                    "roar"
+                  ]
+                }
+              ]
+            }
           ]
         },
         {
-          "id": "kanto-giovanni", "name": "Giovanni", "title": "Gym Leader",
-          "trainerClass": "GYM_LEADER", "typeSpecialty": "Ground",
+          "id": "kanto-giovanni",
+          "name": "Giovanni",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Ground",
           "rosters": [
-            { "label": "Original (RBY)", "team": [
-              { "pokemonId": 53,  "level": 40, "moves": ["slash","bubble-beam","pay-day","screech"] },
-              { "pokemonId": 111, "level": 45, "moves": ["horn-attack","stomp","tail-whip","fury-attack"] },
-              { "pokemonId": 51,  "level": 42, "moves": ["earthquake","slash","dig","sand-attack"] },
-              { "pokemonId": 31,  "level": 44, "moves": ["earthquake","body-slam","toxic","superpower"] },
-              { "pokemonId": 34,  "level": 45, "moves": ["earthquake","megahorn","fire-blast","thunder"] },
-              { "pokemonId": 111, "level": 50, "moves": ["earthquake","horn-drill","horn-attack","stomp"] }
-            ]},
-            { "label": "Rematch (FRLG)", "team": [
-              { "pokemonId": 34,  "level": 50, "moves": ["earthquake","megahorn","fire-blast","ice-punch"] },
-              { "pokemonId": 31,  "level": 50, "moves": ["earthquake","body-slam","crunch","ice-punch"] },
-              { "pokemonId": 111, "level": 50, "moves": ["earthquake","horn-drill","megahorn","rock-blast"] },
-              { "pokemonId": 51,  "level": 50, "moves": ["earthquake","slash","rock-blast","stone-edge"] },
-              { "pokemonId": 112, "level": 55, "moves": ["earthquake","megahorn","rock-blast","hammer-arm"] },
-              { "pokemonId": 115, "level": 53, "moves": ["outrage","earthquake","dizzy-punch","sucker-punch"] }
-            ]}
+            {
+              "label": "Original (RBY)",
+              "team": [
+                {
+                  "pokemonId": 53,
+                  "level": 40,
+                  "moves": [
+                    "slash",
+                    "bubble-beam",
+                    "pay-day",
+                    "screech"
+                  ]
+                },
+                {
+                  "pokemonId": 111,
+                  "level": 45,
+                  "moves": [
+                    "horn-attack",
+                    "stomp",
+                    "tail-whip",
+                    "fury-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 51,
+                  "level": 42,
+                  "moves": [
+                    "earthquake",
+                    "slash",
+                    "dig",
+                    "sand-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 31,
+                  "level": 44,
+                  "moves": [
+                    "earthquake",
+                    "body-slam",
+                    "toxic",
+                    "superpower"
+                  ]
+                },
+                {
+                  "pokemonId": 34,
+                  "level": 45,
+                  "moves": [
+                    "earthquake",
+                    "megahorn",
+                    "fire-blast",
+                    "thunder"
+                  ]
+                },
+                {
+                  "pokemonId": 111,
+                  "level": 50,
+                  "moves": [
+                    "earthquake",
+                    "horn-drill",
+                    "horn-attack",
+                    "stomp"
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "Rematch (FRLG)",
+              "team": [
+                {
+                  "pokemonId": 34,
+                  "level": 50,
+                  "moves": [
+                    "earthquake",
+                    "megahorn",
+                    "fire-blast",
+                    "ice-punch"
+                  ]
+                },
+                {
+                  "pokemonId": 31,
+                  "level": 50,
+                  "moves": [
+                    "earthquake",
+                    "body-slam",
+                    "crunch",
+                    "ice-punch"
+                  ]
+                },
+                {
+                  "pokemonId": 111,
+                  "level": 50,
+                  "moves": [
+                    "earthquake",
+                    "horn-drill",
+                    "megahorn",
+                    "rock-blast"
+                  ]
+                },
+                {
+                  "pokemonId": 51,
+                  "level": 50,
+                  "moves": [
+                    "earthquake",
+                    "slash",
+                    "rock-blast",
+                    "stone-edge"
+                  ]
+                },
+                {
+                  "pokemonId": 112,
+                  "level": 55,
+                  "moves": [
+                    "earthquake",
+                    "megahorn",
+                    "rock-blast",
+                    "hammer-arm"
+                  ]
+                },
+                {
+                  "pokemonId": 115,
+                  "level": 53,
+                  "moves": [
+                    "outrage",
+                    "earthquake",
+                    "dizzy-punch",
+                    "sucker-punch"
+                  ]
+                }
+              ]
+            }
           ]
         },
         {
-          "id": "kanto-lorelei", "name": "Lorelei", "title": "Elite Four",
-          "trainerClass": "ELITE_FOUR", "typeSpecialty": "Ice",
-          "rosters": [{ "label": "FRLG", "team": [
-            { "pokemonId": 87,  "level": 54, "moves": ["surf","ice-beam","aurora-beam","rest"] },
-            { "pokemonId": 91,  "level": 53, "moves": ["surf","blizzard","spikes","explosion"] },
-            { "pokemonId": 80,  "level": 54, "moves": ["surf","psychic","amnesia","thunder-wave"] },
-            { "pokemonId": 124, "level": 56, "moves": ["psychic","ice-beam","lovely-kiss","blizzard"] },
-            { "pokemonId": 221, "level": 54, "moves": ["earthquake","blizzard","mud-bomb","amnesia"] },
-            { "pokemonId": 131, "level": 56, "moves": ["surf","ice-beam","thunder","confuse-ray"] }
-          ]}]
+          "id": "kanto-lorelei",
+          "name": "Lorelei",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Ice",
+          "rosters": [
+            {
+              "label": "FRLG",
+              "team": [
+                {
+                  "pokemonId": 87,
+                  "level": 54,
+                  "moves": [
+                    "surf",
+                    "ice-beam",
+                    "aurora-beam",
+                    "rest"
+                  ]
+                },
+                {
+                  "pokemonId": 91,
+                  "level": 53,
+                  "moves": [
+                    "surf",
+                    "blizzard",
+                    "spikes",
+                    "explosion"
+                  ]
+                },
+                {
+                  "pokemonId": 80,
+                  "level": 54,
+                  "moves": [
+                    "surf",
+                    "psychic",
+                    "amnesia",
+                    "thunder-wave"
+                  ]
+                },
+                {
+                  "pokemonId": 124,
+                  "level": 56,
+                  "moves": [
+                    "psychic",
+                    "ice-beam",
+                    "lovely-kiss",
+                    "blizzard"
+                  ]
+                },
+                {
+                  "pokemonId": 221,
+                  "level": 54,
+                  "moves": [
+                    "earthquake",
+                    "blizzard",
+                    "mud-bomb",
+                    "amnesia"
+                  ]
+                },
+                {
+                  "pokemonId": 131,
+                  "level": 56,
+                  "moves": [
+                    "surf",
+                    "ice-beam",
+                    "thunder",
+                    "confuse-ray"
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
-          "id": "kanto-bruno", "name": "Bruno", "title": "Elite Four",
-          "trainerClass": "ELITE_FOUR", "typeSpecialty": "Fighting",
-          "rosters": [{ "label": "FRLG", "team": [
-            { "pokemonId": 95,  "level": 53, "moves": ["rock-tomb","bind","screech","rock-throw"] },
-            { "pokemonId": 107, "level": 55, "moves": ["fire-punch","ice-punch","thunder-punch","mach-punch"] },
-            { "pokemonId": 106, "level": 55, "moves": ["high-jump-kick","blaze-kick","close-combat","rapid-spin"] },
-            { "pokemonId": 95,  "level": 56, "moves": ["rock-tomb","bind","screech","dragon-breath"] },
-            { "pokemonId": 208, "level": 57, "moves": ["earthquake","iron-tail","crunch","screech"] },
-            { "pokemonId": 68,  "level": 58, "moves": ["dynamic-punch","earthquake","cross-chop","karate-chop"] }
-          ]}]
+          "id": "kanto-bruno",
+          "name": "Bruno",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Fighting",
+          "rosters": [
+            {
+              "label": "FRLG",
+              "team": [
+                {
+                  "pokemonId": 95,
+                  "level": 53,
+                  "moves": [
+                    "rock-tomb",
+                    "bind",
+                    "screech",
+                    "rock-throw"
+                  ]
+                },
+                {
+                  "pokemonId": 107,
+                  "level": 55,
+                  "moves": [
+                    "fire-punch",
+                    "ice-punch",
+                    "thunder-punch",
+                    "mach-punch"
+                  ]
+                },
+                {
+                  "pokemonId": 106,
+                  "level": 55,
+                  "moves": [
+                    "high-jump-kick",
+                    "blaze-kick",
+                    "close-combat",
+                    "rapid-spin"
+                  ]
+                },
+                {
+                  "pokemonId": 95,
+                  "level": 56,
+                  "moves": [
+                    "rock-tomb",
+                    "bind",
+                    "screech",
+                    "dragon-breath"
+                  ]
+                },
+                {
+                  "pokemonId": 208,
+                  "level": 57,
+                  "moves": [
+                    "earthquake",
+                    "iron-tail",
+                    "crunch",
+                    "screech"
+                  ]
+                },
+                {
+                  "pokemonId": 68,
+                  "level": 58,
+                  "moves": [
+                    "dynamic-punch",
+                    "earthquake",
+                    "cross-chop",
+                    "karate-chop"
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
-          "id": "kanto-agatha", "name": "Agatha", "title": "Elite Four",
-          "trainerClass": "ELITE_FOUR", "typeSpecialty": "Ghost",
-          "rosters": [{ "label": "FRLG", "team": [
-            { "pokemonId": 94,  "level": 54, "moves": ["shadow-ball","hypnosis","dream-eater","thunderbolt"] },
-            { "pokemonId": 93,  "level": 54, "moves": ["shadow-ball","hypnosis","dream-eater","mean-look"] },
-            { "pokemonId": 200, "level": 53, "moves": ["shadow-ball","perish-song","mean-look","confuse-ray"] },
-            { "pokemonId": 24,  "level": 56, "moves": ["glare","crunch","earthquake","acid"] },
-            { "pokemonId": 93,  "level": 58, "moves": ["shadow-ball","hypnosis","dream-eater","destiny-bond"] },
-            { "pokemonId": 94,  "level": 58, "moves": ["shadow-ball","thunderbolt","fire-punch","sludge-bomb"] }
-          ]}]
+          "id": "kanto-agatha",
+          "name": "Agatha",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Ghost",
+          "rosters": [
+            {
+              "label": "FRLG",
+              "team": [
+                {
+                  "pokemonId": 94,
+                  "level": 54,
+                  "moves": [
+                    "shadow-ball",
+                    "hypnosis",
+                    "dream-eater",
+                    "thunderbolt"
+                  ]
+                },
+                {
+                  "pokemonId": 93,
+                  "level": 54,
+                  "moves": [
+                    "shadow-ball",
+                    "hypnosis",
+                    "dream-eater",
+                    "mean-look"
+                  ]
+                },
+                {
+                  "pokemonId": 200,
+                  "level": 53,
+                  "moves": [
+                    "shadow-ball",
+                    "perish-song",
+                    "mean-look",
+                    "confuse-ray"
+                  ]
+                },
+                {
+                  "pokemonId": 24,
+                  "level": 56,
+                  "moves": [
+                    "glare",
+                    "crunch",
+                    "earthquake",
+                    "acid"
+                  ]
+                },
+                {
+                  "pokemonId": 93,
+                  "level": 58,
+                  "moves": [
+                    "shadow-ball",
+                    "hypnosis",
+                    "dream-eater",
+                    "destiny-bond"
+                  ]
+                },
+                {
+                  "pokemonId": 94,
+                  "level": 58,
+                  "moves": [
+                    "shadow-ball",
+                    "thunderbolt",
+                    "fire-punch",
+                    "sludge-bomb"
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
-          "id": "kanto-lance", "name": "Lance", "title": "Elite Four",
-          "trainerClass": "ELITE_FOUR", "typeSpecialty": "Dragon",
-          "rosters": [{ "label": "FRLG", "team": [
-            { "pokemonId": 130, "level": 56, "moves": ["hyper-beam","surf","ice-beam","dragon-rage"] },
-            { "pokemonId": 148, "level": 56, "moves": ["agility","slam","thunder-wave","dragon-rage"] },
-            { "pokemonId": 148, "level": 56, "moves": ["agility","slam","thunder-wave","hyper-beam"] },
-            { "pokemonId": 142, "level": 58, "moves": ["fly","ancientpower","bite","wing-attack"] },
-            { "pokemonId": 149, "level": 60, "moves": ["hyper-beam","thunder","surf","outrage"] },
-            { "pokemonId": 149, "level": 62, "moves": ["fire-blast","thunder","blizzard","outrage"] }
-          ]}]
+          "id": "kanto-lance",
+          "name": "Lance",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Dragon",
+          "rosters": [
+            {
+              "label": "FRLG",
+              "team": [
+                {
+                  "pokemonId": 130,
+                  "level": 56,
+                  "moves": [
+                    "hyper-beam",
+                    "surf",
+                    "ice-beam",
+                    "dragon-rage"
+                  ]
+                },
+                {
+                  "pokemonId": 148,
+                  "level": 56,
+                  "moves": [
+                    "agility",
+                    "slam",
+                    "thunder-wave",
+                    "dragon-rage"
+                  ]
+                },
+                {
+                  "pokemonId": 148,
+                  "level": 56,
+                  "moves": [
+                    "agility",
+                    "slam",
+                    "thunder-wave",
+                    "hyper-beam"
+                  ]
+                },
+                {
+                  "pokemonId": 142,
+                  "level": 58,
+                  "moves": [
+                    "fly",
+                    "ancientpower",
+                    "bite",
+                    "wing-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 149,
+                  "level": 60,
+                  "moves": [
+                    "hyper-beam",
+                    "thunder",
+                    "surf",
+                    "outrage"
+                  ]
+                },
+                {
+                  "pokemonId": 149,
+                  "level": 62,
+                  "moves": [
+                    "fire-blast",
+                    "thunder",
+                    "blizzard",
+                    "outrage"
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
-          "id": "kanto-blue", "name": "Blue", "title": "Champion",
-          "trainerClass": "CHAMPION", "typeSpecialty": "Mixed",
-          "rosters": [{ "label": "FRLG", "team": [
-            { "pokemonId": 18,  "level": 59, "moves": ["fly","wing-attack","feather-dance","twister"] },
-            { "pokemonId": 65,  "level": 59, "moves": ["psychic","recover","calm-mind","shadow-ball"] },
-            { "pokemonId": 112, "level": 61, "moves": ["earthquake","megahorn","rock-blast","hammer-arm"] },
-            { "pokemonId": 59,  "level": 61, "moves": ["flamethrower","extreme-speed","dragon-pulse","roar"] },
-            { "pokemonId": 103, "level": 63, "moves": ["psychic","sleep-powder","egg-bomb","leaf-storm"] },
-            { "pokemonId": 9,   "level": 65, "moves": ["surf","blizzard","ice-beam","skull-bash"] }
-          ]}]
+          "id": "kanto-blue",
+          "name": "Blue",
+          "title": "Champion",
+          "trainerClass": "CHAMPION",
+          "typeSpecialty": "Mixed",
+          "rosters": [
+            {
+              "label": "FRLG",
+              "team": [
+                {
+                  "pokemonId": 18,
+                  "level": 59,
+                  "moves": [
+                    "fly",
+                    "wing-attack",
+                    "feather-dance",
+                    "twister"
+                  ]
+                },
+                {
+                  "pokemonId": 65,
+                  "level": 59,
+                  "moves": [
+                    "psychic",
+                    "recover",
+                    "calm-mind",
+                    "shadow-ball"
+                  ]
+                },
+                {
+                  "pokemonId": 112,
+                  "level": 61,
+                  "moves": [
+                    "earthquake",
+                    "megahorn",
+                    "rock-blast",
+                    "hammer-arm"
+                  ]
+                },
+                {
+                  "pokemonId": 59,
+                  "level": 61,
+                  "moves": [
+                    "flamethrower",
+                    "extreme-speed",
+                    "dragon-pulse",
+                    "roar"
+                  ]
+                },
+                {
+                  "pokemonId": 103,
+                  "level": 63,
+                  "moves": [
+                    "psychic",
+                    "sleep-powder",
+                    "egg-bomb",
+                    "leaf-storm"
+                  ]
+                },
+                {
+                  "pokemonId": 9,
+                  "level": 65,
+                  "moves": [
+                    "surf",
+                    "blizzard",
+                    "ice-beam",
+                    "skull-bash"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Johto",
+      "trainers": [
+        {
+          "id": "johto-falkner",
+          "name": "Falkner",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Flying",
+          "rosters": [
+            {
+              "label": "Original (GSC)",
+              "team": [
+                {
+                  "pokemonId": 16,
+                  "level": 7,
+                  "moves": [
+                    "gust",
+                    "sand-attack",
+                    "tackle",
+                    "swift"
+                  ]
+                },
+                {
+                  "pokemonId": 17,
+                  "level": 9,
+                  "moves": [
+                    "gust",
+                    "quick-attack",
+                    "wing-attack",
+                    "sand-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 163,
+                  "level": 8,
+                  "moves": [
+                    "hypnosis",
+                    "tackle",
+                    "foresight",
+                    "peck"
+                  ]
+                },
+                {
+                  "pokemonId": 164,
+                  "level": 8,
+                  "moves": [
+                    "hypnosis",
+                    "tackle",
+                    "foresight",
+                    "peck"
+                  ]
+                },
+                {
+                  "pokemonId": 21,
+                  "level": 7,
+                  "moves": [
+                    "growl",
+                    "peck",
+                    "leer",
+                    "fury-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 22,
+                  "level": 9,
+                  "moves": [
+                    "growl",
+                    "peck",
+                    "leer",
+                    "fury-attack"
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "Rematch (HGSS)",
+              "team": [
+                {
+                  "pokemonId": 16,
+                  "level": 35,
+                  "moves": [
+                    "aerial-ace",
+                    "wing-attack",
+                    "roost",
+                    "u-turn"
+                  ]
+                },
+                {
+                  "pokemonId": 17,
+                  "level": 38,
+                  "moves": [
+                    "aerial-ace",
+                    "wing-attack",
+                    "roost",
+                    "u-turn"
+                  ]
+                },
+                {
+                  "pokemonId": 22,
+                  "level": 38,
+                  "moves": [
+                    "drill-peck",
+                    "aerial-ace",
+                    "roost",
+                    "scary-face"
+                  ]
+                },
+                {
+                  "pokemonId": 164,
+                  "level": 41,
+                  "moves": [
+                    "air-slash",
+                    "hypnosis",
+                    "reflect",
+                    "extrasensory"
+                  ]
+                },
+                {
+                  "pokemonId": 279,
+                  "level": 41,
+                  "moves": [
+                    "surf",
+                    "air-slash",
+                    "roost",
+                    "protect"
+                  ]
+                },
+                {
+                  "pokemonId": 398,
+                  "level": 50,
+                  "moves": [
+                    "close-combat",
+                    "fly",
+                    "u-turn",
+                    "final-gambit"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "johto-bugsy",
+          "name": "Bugsy",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Bug",
+          "rosters": [
+            {
+              "label": "Original (GSC)",
+              "team": [
+                {
+                  "pokemonId": 11,
+                  "level": 14,
+                  "moves": [
+                    "tackle",
+                    "harden",
+                    "string-shot",
+                    "bug-bite"
+                  ]
+                },
+                {
+                  "pokemonId": 14,
+                  "level": 14,
+                  "moves": [
+                    "poison-sting",
+                    "string-shot",
+                    "harden",
+                    "bug-bite"
+                  ]
+                },
+                {
+                  "pokemonId": 165,
+                  "level": 13,
+                  "moves": [
+                    "comet-punch",
+                    "string-shot",
+                    "light-screen",
+                    "swift"
+                  ]
+                },
+                {
+                  "pokemonId": 166,
+                  "level": 15,
+                  "moves": [
+                    "comet-punch",
+                    "string-shot",
+                    "light-screen",
+                    "swift"
+                  ]
+                },
+                {
+                  "pokemonId": 123,
+                  "level": 16,
+                  "moves": [
+                    "quick-attack",
+                    "leer",
+                    "focus-energy",
+                    "slash"
+                  ]
+                },
+                {
+                  "pokemonId": 123,
+                  "level": 16,
+                  "moves": [
+                    "quick-attack",
+                    "leer",
+                    "focus-energy",
+                    "fury-cutter"
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "Rematch (HGSS)",
+              "team": [
+                {
+                  "pokemonId": 123,
+                  "level": 46,
+                  "moves": [
+                    "x-scissor",
+                    "quick-attack",
+                    "swords-dance",
+                    "aerial-ace"
+                  ]
+                },
+                {
+                  "pokemonId": 212,
+                  "level": 46,
+                  "moves": [
+                    "x-scissor",
+                    "iron-head",
+                    "swords-dance",
+                    "aerial-ace"
+                  ]
+                },
+                {
+                  "pokemonId": 214,
+                  "level": 47,
+                  "moves": [
+                    "close-combat",
+                    "megahorn",
+                    "stone-edge",
+                    "night-slash"
+                  ]
+                },
+                {
+                  "pokemonId": 291,
+                  "level": 47,
+                  "moves": [
+                    "x-scissor",
+                    "aerial-ace",
+                    "swords-dance",
+                    "baton-pass"
+                  ]
+                },
+                {
+                  "pokemonId": 269,
+                  "level": 48,
+                  "moves": [
+                    "bug-buzz",
+                    "psychic",
+                    "quiver-dance",
+                    "roost"
+                  ]
+                },
+                {
+                  "pokemonId": 267,
+                  "level": 50,
+                  "moves": [
+                    "bug-buzz",
+                    "psychic",
+                    "quiver-dance",
+                    "roost"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "johto-whitney",
+          "name": "Whitney",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Normal",
+          "rosters": [
+            {
+              "label": "Original (GSC)",
+              "team": [
+                {
+                  "pokemonId": 35,
+                  "level": 18,
+                  "moves": [
+                    "pound",
+                    "sing",
+                    "doubleslap",
+                    "minimize"
+                  ]
+                },
+                {
+                  "pokemonId": 36,
+                  "level": 19,
+                  "moves": [
+                    "pound",
+                    "sing",
+                    "doubleslap",
+                    "minimize"
+                  ]
+                },
+                {
+                  "pokemonId": 40,
+                  "level": 18,
+                  "moves": [
+                    "doubleslap",
+                    "sing",
+                    "disable",
+                    "rollout"
+                  ]
+                },
+                {
+                  "pokemonId": 39,
+                  "level": 17,
+                  "moves": [
+                    "pound",
+                    "sing",
+                    "doubleslap",
+                    "defense-curl"
+                  ]
+                },
+                {
+                  "pokemonId": 241,
+                  "level": 20,
+                  "moves": [
+                    "tackle",
+                    "stomp",
+                    "milk-drink",
+                    "rollout"
+                  ]
+                },
+                {
+                  "pokemonId": 241,
+                  "level": 20,
+                  "moves": [
+                    "tackle",
+                    "stomp",
+                    "milk-drink",
+                    "attract"
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "Rematch (HGSS)",
+              "team": [
+                {
+                  "pokemonId": 39,
+                  "level": 42,
+                  "moves": [
+                    "hyper-voice",
+                    "body-slam",
+                    "sing",
+                    "mimic"
+                  ]
+                },
+                {
+                  "pokemonId": 40,
+                  "level": 42,
+                  "moves": [
+                    "hyper-voice",
+                    "body-slam",
+                    "sing",
+                    "mimic"
+                  ]
+                },
+                {
+                  "pokemonId": 36,
+                  "level": 44,
+                  "moves": [
+                    "hyper-voice",
+                    "moonblast",
+                    "sing",
+                    "minimize"
+                  ]
+                },
+                {
+                  "pokemonId": 206,
+                  "level": 44,
+                  "moves": [
+                    "hyper-voice",
+                    "glare",
+                    "rollout",
+                    "baton-pass"
+                  ]
+                },
+                {
+                  "pokemonId": 242,
+                  "level": 46,
+                  "moves": [
+                    "hyper-voice",
+                    "soft-boiled",
+                    "heal-bell",
+                    "seismic-toss"
+                  ]
+                },
+                {
+                  "pokemonId": 241,
+                  "level": 48,
+                  "moves": [
+                    "hyper-voice",
+                    "body-slam",
+                    "milk-drink",
+                    "earthquake"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "johto-morty",
+          "name": "Morty",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Ghost",
+          "rosters": [
+            {
+              "label": "Original (GSC)",
+              "team": [
+                {
+                  "pokemonId": 92,
+                  "level": 21,
+                  "moves": [
+                    "lick",
+                    "hypnosis",
+                    "mean-look",
+                    "curse"
+                  ]
+                },
+                {
+                  "pokemonId": 93,
+                  "level": 21,
+                  "moves": [
+                    "lick",
+                    "hypnosis",
+                    "mean-look",
+                    "curse"
+                  ]
+                },
+                {
+                  "pokemonId": 93,
+                  "level": 23,
+                  "moves": [
+                    "shadow-ball",
+                    "hypnosis",
+                    "mean-look",
+                    "curse"
+                  ]
+                },
+                {
+                  "pokemonId": 94,
+                  "level": 25,
+                  "moves": [
+                    "shadow-ball",
+                    "hypnosis",
+                    "dream-eater",
+                    "curse"
+                  ]
+                },
+                {
+                  "pokemonId": 200,
+                  "level": 22,
+                  "moves": [
+                    "shadow-ball",
+                    "perish-song",
+                    "mean-look",
+                    "psybeam"
+                  ]
+                },
+                {
+                  "pokemonId": 200,
+                  "level": 22,
+                  "moves": [
+                    "shadow-ball",
+                    "perish-song",
+                    "mean-look",
+                    "confuse-ray"
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "Rematch (HGSS)",
+              "team": [
+                {
+                  "pokemonId": 92,
+                  "level": 44,
+                  "moves": [
+                    "shadow-ball",
+                    "hypnosis",
+                    "will-o-wisp",
+                    "destiny-bond"
+                  ]
+                },
+                {
+                  "pokemonId": 93,
+                  "level": 44,
+                  "moves": [
+                    "shadow-ball",
+                    "hypnosis",
+                    "will-o-wisp",
+                    "destiny-bond"
+                  ]
+                },
+                {
+                  "pokemonId": 200,
+                  "level": 46,
+                  "moves": [
+                    "shadow-ball",
+                    "perish-song",
+                    "mean-look",
+                    "confuse-ray"
+                  ]
+                },
+                {
+                  "pokemonId": 429,
+                  "level": 46,
+                  "moves": [
+                    "shadow-ball",
+                    "calm-mind",
+                    "will-o-wisp",
+                    "nasty-plot"
+                  ]
+                },
+                {
+                  "pokemonId": 477,
+                  "level": 48,
+                  "moves": [
+                    "shadow-ball",
+                    "calm-mind",
+                    "will-o-wisp",
+                    "pain-split"
+                  ]
+                },
+                {
+                  "pokemonId": 94,
+                  "level": 50,
+                  "moves": [
+                    "shadow-ball",
+                    "hypnosis",
+                    "dream-eater",
+                    "destiny-bond"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "johto-chuck",
+          "name": "Chuck",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Fighting",
+          "rosters": [
+            {
+              "label": "Original (GSC)",
+              "team": [
+                {
+                  "pokemonId": 56,
+                  "level": 27,
+                  "moves": [
+                    "karate-chop",
+                    "leer",
+                    "focus-energy",
+                    "seismic-toss"
+                  ]
+                },
+                {
+                  "pokemonId": 57,
+                  "level": 28,
+                  "moves": [
+                    "karate-chop",
+                    "leer",
+                    "focus-energy",
+                    "rage"
+                  ]
+                },
+                {
+                  "pokemonId": 236,
+                  "level": 26,
+                  "moves": [
+                    "rolling-kick",
+                    "rapid-spin",
+                    "focus-energy",
+                    "triple-kick"
+                  ]
+                },
+                {
+                  "pokemonId": 107,
+                  "level": 27,
+                  "moves": [
+                    "fire-punch",
+                    "ice-punch",
+                    "thunder-punch",
+                    "mach-punch"
+                  ]
+                },
+                {
+                  "pokemonId": 106,
+                  "level": 27,
+                  "moves": [
+                    "high-jump-kick",
+                    "rolling-kick",
+                    "focus-energy",
+                    "meditate"
+                  ]
+                },
+                {
+                  "pokemonId": 62,
+                  "level": 30,
+                  "moves": [
+                    "waterfall",
+                    "hypnosis",
+                    "dynamic-punch",
+                    "body-slam"
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "Rematch (HGSS)",
+              "team": [
+                {
+                  "pokemonId": 107,
+                  "level": 46,
+                  "moves": [
+                    "fire-punch",
+                    "ice-punch",
+                    "thunder-punch",
+                    "mach-punch"
+                  ]
+                },
+                {
+                  "pokemonId": 106,
+                  "level": 46,
+                  "moves": [
+                    "high-jump-kick",
+                    "blaze-kick",
+                    "close-combat",
+                    "rapid-spin"
+                  ]
+                },
+                {
+                  "pokemonId": 237,
+                  "level": 48,
+                  "moves": [
+                    "close-combat",
+                    "sucker-punch",
+                    "rapid-spin",
+                    "stone-edge"
+                  ]
+                },
+                {
+                  "pokemonId": 534,
+                  "level": 48,
+                  "moves": [
+                    "dynamic-punch",
+                    "stone-edge",
+                    "bulk-up",
+                    "payback"
+                  ]
+                },
+                {
+                  "pokemonId": 62,
+                  "level": 50,
+                  "moves": [
+                    "waterfall",
+                    "hypnosis",
+                    "dynamic-punch",
+                    "earthquake"
+                  ]
+                },
+                {
+                  "pokemonId": 448,
+                  "level": 52,
+                  "moves": [
+                    "close-combat",
+                    "aura-sphere",
+                    "dragon-pulse",
+                    "calm-mind"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "johto-jasmine",
+          "name": "Jasmine",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Steel",
+          "rosters": [
+            {
+              "label": "Original (GSC)",
+              "team": [
+                {
+                  "pokemonId": 81,
+                  "level": 30,
+                  "moves": [
+                    "thundershock",
+                    "thunder-wave",
+                    "sonicboom",
+                    "screech"
+                  ]
+                },
+                {
+                  "pokemonId": 81,
+                  "level": 30,
+                  "moves": [
+                    "thundershock",
+                    "thunder-wave",
+                    "sonicboom",
+                    "screech"
+                  ]
+                },
+                {
+                  "pokemonId": 208,
+                  "level": 35,
+                  "moves": [
+                    "iron-tail",
+                    "sandstorm",
+                    "rock-throw",
+                    "bind"
+                  ]
+                },
+                {
+                  "pokemonId": 82,
+                  "level": 32,
+                  "moves": [
+                    "thunderbolt",
+                    "thunder-wave",
+                    "screech",
+                    "sonicboom"
+                  ]
+                },
+                {
+                  "pokemonId": 303,
+                  "level": 31,
+                  "moves": [
+                    "iron-head",
+                    "crunch",
+                    "sweet-scent",
+                    "vice-grip"
+                  ]
+                },
+                {
+                  "pokemonId": 227,
+                  "level": 32,
+                  "moves": [
+                    "steel-wing",
+                    "aerial-ace",
+                    "spikes",
+                    "swift"
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "Rematch (HGSS)",
+              "team": [
+                {
+                  "pokemonId": 81,
+                  "level": 46,
+                  "moves": [
+                    "thunderbolt",
+                    "magnet-bomb",
+                    "thunder-wave",
+                    "flash-cannon"
+                  ]
+                },
+                {
+                  "pokemonId": 462,
+                  "level": 48,
+                  "moves": [
+                    "thunderbolt",
+                    "flash-cannon",
+                    "thunder-wave",
+                    "tri-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 227,
+                  "level": 48,
+                  "moves": [
+                    "steel-wing",
+                    "drill-peck",
+                    "spikes",
+                    "flash-cannon"
+                  ]
+                },
+                {
+                  "pokemonId": 303,
+                  "level": 46,
+                  "moves": [
+                    "iron-head",
+                    "play-rough",
+                    "crunch",
+                    "swords-dance"
+                  ]
+                },
+                {
+                  "pokemonId": 205,
+                  "level": 48,
+                  "moves": [
+                    "explosion",
+                    "gyro-ball",
+                    "toxic-spikes",
+                    "rapid-spin"
+                  ]
+                },
+                {
+                  "pokemonId": 208,
+                  "level": 50,
+                  "moves": [
+                    "iron-tail",
+                    "earthquake",
+                    "stone-edge",
+                    "crunch"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "johto-pryce",
+          "name": "Pryce",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Ice",
+          "rosters": [
+            {
+              "label": "Original (GSC)",
+              "team": [
+                {
+                  "pokemonId": 86,
+                  "level": 27,
+                  "moves": [
+                    "aurora-beam",
+                    "rest",
+                    "headbutt",
+                    "growl"
+                  ]
+                },
+                {
+                  "pokemonId": 87,
+                  "level": 29,
+                  "moves": [
+                    "aurora-beam",
+                    "rest",
+                    "surf",
+                    "headbutt"
+                  ]
+                },
+                {
+                  "pokemonId": 220,
+                  "level": 28,
+                  "moves": [
+                    "powder-snow",
+                    "mud-slap",
+                    "endure",
+                    "take-down"
+                  ]
+                },
+                {
+                  "pokemonId": 221,
+                  "level": 31,
+                  "moves": [
+                    "blizzard",
+                    "earthquake",
+                    "mud-bomb",
+                    "amnesia"
+                  ]
+                },
+                {
+                  "pokemonId": 131,
+                  "level": 28,
+                  "moves": [
+                    "water-gun",
+                    "ice-beam",
+                    "mist",
+                    "perish-song"
+                  ]
+                },
+                {
+                  "pokemonId": 124,
+                  "level": 30,
+                  "moves": [
+                    "ice-punch",
+                    "lovely-kiss",
+                    "doubleslap",
+                    "mean-look"
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "Rematch (HGSS)",
+              "team": [
+                {
+                  "pokemonId": 86,
+                  "level": 44,
+                  "moves": [
+                    "surf",
+                    "ice-beam",
+                    "aurora-beam",
+                    "aqua-jet"
+                  ]
+                },
+                {
+                  "pokemonId": 87,
+                  "level": 46,
+                  "moves": [
+                    "surf",
+                    "ice-beam",
+                    "aurora-beam",
+                    "aqua-jet"
+                  ]
+                },
+                {
+                  "pokemonId": 221,
+                  "level": 46,
+                  "moves": [
+                    "blizzard",
+                    "earthquake",
+                    "mud-bomb",
+                    "ice-shard"
+                  ]
+                },
+                {
+                  "pokemonId": 131,
+                  "level": 48,
+                  "moves": [
+                    "surf",
+                    "ice-beam",
+                    "thunder",
+                    "perish-song"
+                  ]
+                },
+                {
+                  "pokemonId": 473,
+                  "level": 48,
+                  "moves": [
+                    "blizzard",
+                    "earthquake",
+                    "ice-shard",
+                    "stone-edge"
+                  ]
+                },
+                {
+                  "pokemonId": 365,
+                  "level": 50,
+                  "moves": [
+                    "blizzard",
+                    "surf",
+                    "ice-ball",
+                    "body-slam"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "johto-clair",
+          "name": "Clair",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Dragon",
+          "rosters": [
+            {
+              "label": "Original (GSC)",
+              "team": [
+                {
+                  "pokemonId": 148,
+                  "level": 37,
+                  "moves": [
+                    "dragon-rage",
+                    "thunder-wave",
+                    "slam",
+                    "hyper-beam"
+                  ]
+                },
+                {
+                  "pokemonId": 148,
+                  "level": 37,
+                  "moves": [
+                    "dragon-rage",
+                    "thunder-wave",
+                    "slam",
+                    "hyper-beam"
+                  ]
+                },
+                {
+                  "pokemonId": 148,
+                  "level": 37,
+                  "moves": [
+                    "dragon-rage",
+                    "thunder-wave",
+                    "slam",
+                    "hyper-beam"
+                  ]
+                },
+                {
+                  "pokemonId": 147,
+                  "level": 35,
+                  "moves": [
+                    "dragon-rage",
+                    "thunder-wave",
+                    "slam",
+                    "wrap"
+                  ]
+                },
+                {
+                  "pokemonId": 147,
+                  "level": 35,
+                  "moves": [
+                    "dragon-rage",
+                    "thunder-wave",
+                    "wrap",
+                    "leer"
+                  ]
+                },
+                {
+                  "pokemonId": 230,
+                  "level": 40,
+                  "moves": [
+                    "surf",
+                    "hyper-beam",
+                    "dragon-breath",
+                    "smokescreen"
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "Rematch (HGSS)",
+              "team": [
+                {
+                  "pokemonId": 148,
+                  "level": 51,
+                  "moves": [
+                    "outrage",
+                    "dragon-dance",
+                    "thunder-wave",
+                    "aqua-tail"
+                  ]
+                },
+                {
+                  "pokemonId": 148,
+                  "level": 51,
+                  "moves": [
+                    "outrage",
+                    "dragon-dance",
+                    "thunder-wave",
+                    "aqua-tail"
+                  ]
+                },
+                {
+                  "pokemonId": 230,
+                  "level": 52,
+                  "moves": [
+                    "surf",
+                    "outrage",
+                    "dragon-dance",
+                    "smokescreen"
+                  ]
+                },
+                {
+                  "pokemonId": 373,
+                  "level": 54,
+                  "moves": [
+                    "outrage",
+                    "dragon-claw",
+                    "crunch",
+                    "dragon-dance"
+                  ]
+                },
+                {
+                  "pokemonId": 334,
+                  "level": 52,
+                  "moves": [
+                    "dragon-pulse",
+                    "sky-attack",
+                    "dragon-dance",
+                    "roost"
+                  ]
+                },
+                {
+                  "pokemonId": 149,
+                  "level": 55,
+                  "moves": [
+                    "outrage",
+                    "thunder",
+                    "fire-blast",
+                    "extreme-speed"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "johto-will",
+          "name": "Will",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Psychic",
+          "rosters": [
+            {
+              "label": "HGSS",
+              "team": [
+                {
+                  "pokemonId": 178,
+                  "level": 40,
+                  "moves": [
+                    "psychic",
+                    "confuse-ray",
+                    "reflect",
+                    "air-slash"
+                  ]
+                },
+                {
+                  "pokemonId": 103,
+                  "level": 41,
+                  "moves": [
+                    "psychic",
+                    "sleep-powder",
+                    "egg-bomb",
+                    "confusion"
+                  ]
+                },
+                {
+                  "pokemonId": 80,
+                  "level": 41,
+                  "moves": [
+                    "psychic",
+                    "surf",
+                    "amnesia",
+                    "thunder-wave"
+                  ]
+                },
+                {
+                  "pokemonId": 124,
+                  "level": 41,
+                  "moves": [
+                    "psychic",
+                    "ice-beam",
+                    "lovely-kiss",
+                    "calm-mind"
+                  ]
+                },
+                {
+                  "pokemonId": 178,
+                  "level": 42,
+                  "moves": [
+                    "psychic",
+                    "confuse-ray",
+                    "reflect",
+                    "air-slash"
+                  ]
+                },
+                {
+                  "pokemonId": 196,
+                  "level": 41,
+                  "moves": [
+                    "psychic",
+                    "calm-mind",
+                    "shadow-ball",
+                    "morning-sun"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "johto-koga-e4",
+          "name": "Koga",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Poison",
+          "rosters": [
+            {
+              "label": "HGSS",
+              "team": [
+                {
+                  "pokemonId": 168,
+                  "level": 40,
+                  "moves": [
+                    "poison-sting",
+                    "spider-web",
+                    "scary-face",
+                    "night-shade"
+                  ]
+                },
+                {
+                  "pokemonId": 49,
+                  "level": 41,
+                  "moves": [
+                    "psychic",
+                    "sludge-bomb",
+                    "sleep-powder",
+                    "leech-life"
+                  ]
+                },
+                {
+                  "pokemonId": 205,
+                  "level": 43,
+                  "moves": [
+                    "explosion",
+                    "toxic-spikes",
+                    "rapid-spin",
+                    "volt-switch"
+                  ]
+                },
+                {
+                  "pokemonId": 89,
+                  "level": 42,
+                  "moves": [
+                    "shadow-ball",
+                    "gunk-shot",
+                    "minimize",
+                    "acid-armor"
+                  ]
+                },
+                {
+                  "pokemonId": 169,
+                  "level": 44,
+                  "moves": [
+                    "sludge-bomb",
+                    "cross-poison",
+                    "air-slash",
+                    "confuse-ray"
+                  ]
+                },
+                {
+                  "pokemonId": 169,
+                  "level": 44,
+                  "moves": [
+                    "sludge-bomb",
+                    "cross-poison",
+                    "air-slash",
+                    "mean-look"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "johto-bruno-e4",
+          "name": "Bruno",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Fighting",
+          "rosters": [
+            {
+              "label": "HGSS",
+              "team": [
+                {
+                  "pokemonId": 237,
+                  "level": 42,
+                  "moves": [
+                    "close-combat",
+                    "sucker-punch",
+                    "rapid-spin",
+                    "stone-edge"
+                  ]
+                },
+                {
+                  "pokemonId": 106,
+                  "level": 42,
+                  "moves": [
+                    "high-jump-kick",
+                    "blaze-kick",
+                    "close-combat",
+                    "rapid-spin"
+                  ]
+                },
+                {
+                  "pokemonId": 107,
+                  "level": 42,
+                  "moves": [
+                    "fire-punch",
+                    "ice-punch",
+                    "thunder-punch",
+                    "mach-punch"
+                  ]
+                },
+                {
+                  "pokemonId": 95,
+                  "level": 43,
+                  "moves": [
+                    "rock-tomb",
+                    "bind",
+                    "screech",
+                    "rock-blast"
+                  ]
+                },
+                {
+                  "pokemonId": 95,
+                  "level": 43,
+                  "moves": [
+                    "rock-tomb",
+                    "bind",
+                    "screech",
+                    "earthquake"
+                  ]
+                },
+                {
+                  "pokemonId": 68,
+                  "level": 46,
+                  "moves": [
+                    "dynamic-punch",
+                    "earthquake",
+                    "cross-chop",
+                    "bullet-punch"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "johto-karen",
+          "name": "Karen",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Dark",
+          "rosters": [
+            {
+              "label": "HGSS",
+              "team": [
+                {
+                  "pokemonId": 197,
+                  "level": 42,
+                  "moves": [
+                    "faint-attack",
+                    "confuse-ray",
+                    "quick-attack",
+                    "mean-look"
+                  ]
+                },
+                {
+                  "pokemonId": 45,
+                  "level": 42,
+                  "moves": [
+                    "petal-dance",
+                    "sleep-powder",
+                    "moonlight",
+                    "acid"
+                  ]
+                },
+                {
+                  "pokemonId": 198,
+                  "level": 44,
+                  "moves": [
+                    "night-shade",
+                    "haze",
+                    "mean-look",
+                    "foul-play"
+                  ]
+                },
+                {
+                  "pokemonId": 94,
+                  "level": 45,
+                  "moves": [
+                    "shadow-ball",
+                    "hypnosis",
+                    "dream-eater",
+                    "destiny-bond"
+                  ]
+                },
+                {
+                  "pokemonId": 229,
+                  "level": 47,
+                  "moves": [
+                    "flamethrower",
+                    "crunch",
+                    "nasty-plot",
+                    "foul-play"
+                  ]
+                },
+                {
+                  "pokemonId": 229,
+                  "level": 47,
+                  "moves": [
+                    "flamethrower",
+                    "crunch",
+                    "will-o-wisp",
+                    "foul-play"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "johto-lance",
+          "name": "Lance",
+          "title": "Champion",
+          "trainerClass": "CHAMPION",
+          "typeSpecialty": "Dragon",
+          "rosters": [
+            {
+              "label": "HGSS",
+              "team": [
+                {
+                  "pokemonId": 130,
+                  "level": 44,
+                  "moves": [
+                    "hyper-beam",
+                    "surf",
+                    "ice-fang",
+                    "dragon-dance"
+                  ]
+                },
+                {
+                  "pokemonId": 6,
+                  "level": 46,
+                  "moves": [
+                    "fire-blast",
+                    "fly",
+                    "dragon-rage",
+                    "slash"
+                  ]
+                },
+                {
+                  "pokemonId": 142,
+                  "level": 46,
+                  "moves": [
+                    "fly",
+                    "ancientpower",
+                    "bite",
+                    "wing-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 149,
+                  "level": 47,
+                  "moves": [
+                    "outrage",
+                    "thunder",
+                    "extreme-speed",
+                    "dragon-dance"
+                  ]
+                },
+                {
+                  "pokemonId": 149,
+                  "level": 47,
+                  "moves": [
+                    "outrage",
+                    "thunder",
+                    "extreme-speed",
+                    "hyper-beam"
+                  ]
+                },
+                {
+                  "pokemonId": 149,
+                  "level": 50,
+                  "moves": [
+                    "outrage",
+                    "thunder",
+                    "fire-blast",
+                    "extreme-speed"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "johto-silver",
+          "name": "Silver",
+          "title": "Rival",
+          "trainerClass": "RIVAL",
+          "typeSpecialty": "Mixed",
+          "rosters": [
+            {
+              "label": "Final Battle (HGSS)",
+              "team": [
+                {
+                  "pokemonId": 215,
+                  "level": 38,
+                  "moves": [
+                    "slash",
+                    "beat-up",
+                    "icy-wind",
+                    "screech"
+                  ]
+                },
+                {
+                  "pokemonId": 169,
+                  "level": 38,
+                  "moves": [
+                    "bite",
+                    "leech-life",
+                    "supersonic",
+                    "wing-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 82,
+                  "level": 37,
+                  "moves": [
+                    "thunderbolt",
+                    "thunder-wave",
+                    "screech",
+                    "swift"
+                  ]
+                },
+                {
+                  "pokemonId": 94,
+                  "level": 40,
+                  "moves": [
+                    "shadow-ball",
+                    "hypnosis",
+                    "dream-eater",
+                    "thunderbolt"
+                  ]
+                },
+                {
+                  "pokemonId": 65,
+                  "level": 38,
+                  "moves": [
+                    "psychic",
+                    "calm-mind",
+                    "recover",
+                    "thunder-punch"
+                  ]
+                },
+                {
+                  "pokemonId": 160,
+                  "level": 42,
+                  "moves": [
+                    "surf",
+                    "crunch",
+                    "ice-punch",
+                    "slash"
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     }
