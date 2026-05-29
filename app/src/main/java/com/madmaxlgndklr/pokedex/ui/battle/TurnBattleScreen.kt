@@ -44,6 +44,7 @@ import coil3.compose.AsyncImage
 import com.madmaxlgndklr.pokedex.data.local.HeldItem
 import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
 import com.madmaxlgndklr.pokedex.ui.common.CryPlayer
+import com.madmaxlgndklr.pokedex.ui.common.TypeBadge
 import com.madmaxlgndklr.pokedex.ui.theme.CaughtGold
 import com.madmaxlgndklr.pokedex.ui.theme.GlowBlue
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexCream
@@ -61,6 +62,7 @@ fun TurnBattleScreen(
     val setup by viewModel.setup.collectAsState()
     val battleState by viewModel.battleState.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val battleTrainer by viewModel.battleTrainer.collectAsState()
 
     LaunchedEffect(teamIds) {
         if (setup == null && battleState == null && !isLoading && teamIds.isNotEmpty()) {
@@ -114,6 +116,7 @@ fun TurnBattleScreen(
                 val s = setup!!
                 BattleSetupView(
                     setup = s,
+                    battleTrainer = battleTrainer,
                     teamIds = teamIds,
                     moves = learnableMoves(s.playerDetail, s.level),
                     viewModel = viewModel,
@@ -219,7 +222,8 @@ private fun PendingSwitchView(
 @Composable
 private fun BattleSetupView(
     setup: BattleSetup,
-    teamIds: List<Int>,   // used in Task 5 slot override strip
+    battleTrainer: SelectedTrainer?,
+    teamIds: List<Int>,
     moves: List<LearnableMove>,
     viewModel: TurnBattleViewModel,
     onLevelChange: (Int) -> Unit,
@@ -262,6 +266,41 @@ private fun BattleSetupView(
             )
             // Level picker
             LevelPicker(level = setup.level, onLevelChange = onLevelChange)
+        }
+
+        // Opponent slot
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(PokedexDark.copy(alpha = 0.5f), RoundedCornerShape(6.dp))
+                .padding(8.dp)
+        ) {
+            Text(
+                "VS.",
+                fontFamily = PressStart2P,
+                fontSize = 5.sp,
+                color = PokedexCream.copy(alpha = 0.4f)
+            )
+            Spacer(Modifier.width(8.dp))
+            if (battleTrainer != null) {
+                Text(
+                    battleTrainer.trainer.name.uppercase(),
+                    fontFamily = PressStart2P,
+                    fontSize = 7.sp,
+                    color = PokedexCream,
+                    modifier = Modifier.weight(1f)
+                )
+                TypeBadge(type = battleTrainer.trainer.typeSpecialty)
+            } else {
+                Text(
+                    "RANDOM OPPONENT",
+                    fontFamily = PressStart2P,
+                    fontSize = 7.sp,
+                    color = PokedexCream.copy(alpha = 0.4f),
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
 
         // Team slot strip — tap a slot to expand its overrides
