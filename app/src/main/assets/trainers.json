@@ -8104,6 +8104,751 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Galar",
+      "trainers": [
+        {
+          "id": "galar-milo",
+          "name": "Milo",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Grass",
+          "rosters": [
+            {
+              "label": "SWSH",
+              "team": [
+                {
+                  "pokemonId": 829,
+                  "level": 19,
+                  "moves": [
+                    "leafage",
+                    "growl",
+                    "round",
+                    "magical-leaf"
+                  ]
+                },
+                {
+                  "pokemonId": 315,
+                  "level": 19,
+                  "moves": [
+                    "magical-leaf",
+                    "leech-seed",
+                    "stun-spore",
+                    "mega-drain"
+                  ]
+                },
+                {
+                  "pokemonId": 840,
+                  "level": 19,
+                  "moves": [
+                    "leafage",
+                    "withdraw",
+                    "round",
+                    "magical-leaf"
+                  ]
+                },
+                {
+                  "pokemonId": 546,
+                  "level": 19,
+                  "moves": [
+                    "fairy-wind",
+                    "leech-seed",
+                    "stun-spore",
+                    "mega-drain"
+                  ]
+                },
+                {
+                  "pokemonId": 420,
+                  "level": 19,
+                  "moves": [
+                    "absorb",
+                    "growl",
+                    "helping-hand",
+                    "magical-leaf"
+                  ]
+                },
+                {
+                  "pokemonId": 830,
+                  "level": 20,
+                  "moves": [
+                    "petal-dance",
+                    "cotton-guard",
+                    "ingrain",
+                    "leech-seed"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "galar-nessa",
+          "name": "Nessa",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Water",
+          "rosters": [
+            {
+              "label": "SWSH",
+              "team": [
+                {
+                  "pokemonId": 118,
+                  "level": 22,
+                  "moves": [
+                    "peck",
+                    "water-gun",
+                    "horn-attack",
+                    "agility"
+                  ]
+                },
+                {
+                  "pokemonId": 846,
+                  "level": 23,
+                  "moves": [
+                    "water-gun",
+                    "bite",
+                    "aqua-jet",
+                    "leer"
+                  ]
+                },
+                {
+                  "pokemonId": 116,
+                  "level": 22,
+                  "moves": [
+                    "water-gun",
+                    "smokescreen",
+                    "bubble",
+                    "leer"
+                  ]
+                },
+                {
+                  "pokemonId": 747,
+                  "level": 23,
+                  "moves": [
+                    "poison-sting",
+                    "water-gun",
+                    "aqua-ring",
+                    "bite"
+                  ]
+                },
+                {
+                  "pokemonId": 320,
+                  "level": 23,
+                  "moves": [
+                    "surf",
+                    "amnesia",
+                    "rollout",
+                    "water-pulse"
+                  ]
+                },
+                {
+                  "pokemonId": 834,
+                  "level": 24,
+                  "moves": [
+                    "razor-shell",
+                    "rock-blast",
+                    "waterfall",
+                    "slam"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "galar-kabu",
+          "name": "Kabu",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Fire",
+          "rosters": [
+            {
+              "label": "SWSH",
+              "team": [
+                {
+                  "pokemonId": 218,
+                  "level": 25,
+                  "moves": [
+                    "ember",
+                    "smog",
+                    "rock-throw",
+                    "harden"
+                  ]
+                },
+                {
+                  "pokemonId": 37,
+                  "level": 25,
+                  "moves": [
+                    "ember",
+                    "tail-whip",
+                    "growl",
+                    "quick-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 58,
+                  "level": 25,
+                  "moves": [
+                    "ember",
+                    "bite",
+                    "leer",
+                    "odor-sleuth"
+                  ]
+                },
+                {
+                  "pokemonId": 219,
+                  "level": 26,
+                  "moves": [
+                    "ember",
+                    "rock-throw",
+                    "smog",
+                    "harden"
+                  ]
+                },
+                {
+                  "pokemonId": 608,
+                  "level": 26,
+                  "moves": [
+                    "ember",
+                    "smog",
+                    "will-o-wisp",
+                    "hex"
+                  ]
+                },
+                {
+                  "pokemonId": 851,
+                  "level": 27,
+                  "moves": [
+                    "flame-wheel",
+                    "fire-lash",
+                    "bug-bite",
+                    "leech-life"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "galar-bea",
+          "name": "Bea",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Fighting",
+          "rosters": [
+            {
+              "label": "SW",
+              "team": [
+                {
+                  "pokemonId": 68,
+                  "level": 34,
+                  "moves": [
+                    "dynamic-punch",
+                    "bullet-punch",
+                    "knock-off",
+                    "cross-chop"
+                  ]
+                },
+                {
+                  "pokemonId": 237,
+                  "level": 34,
+                  "moves": [
+                    "close-combat",
+                    "rapid-spin",
+                    "sucker-punch",
+                    "stone-edge"
+                  ]
+                },
+                {
+                  "pokemonId": 539,
+                  "level": 35,
+                  "moves": [
+                    "close-combat",
+                    "hi-jump-kick",
+                    "quick-guard",
+                    "rock-slide"
+                  ]
+                },
+                {
+                  "pokemonId": 448,
+                  "level": 35,
+                  "moves": [
+                    "close-combat",
+                    "aura-sphere",
+                    "quick-attack",
+                    "bone-rush"
+                  ]
+                },
+                {
+                  "pokemonId": 297,
+                  "level": 35,
+                  "moves": [
+                    "close-combat",
+                    "bullet-punch",
+                    "fake-out",
+                    "knock-off"
+                  ]
+                },
+                {
+                  "pokemonId": 865,
+                  "level": 37,
+                  "moves": [
+                    "close-combat",
+                    "leaf-blade",
+                    "night-slash",
+                    "swords-dance"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "galar-opal",
+          "name": "Opal",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Fairy",
+          "rosters": [
+            {
+              "label": "SWSH",
+              "team": [
+                {
+                  "pokemonId": 39,
+                  "level": 36,
+                  "moves": [
+                    "doubleslap",
+                    "sing",
+                    "body-slam",
+                    "moonblast"
+                  ]
+                },
+                {
+                  "pokemonId": 303,
+                  "level": 36,
+                  "moves": [
+                    "play-rough",
+                    "iron-head",
+                    "fairy-wind",
+                    "crunch"
+                  ]
+                },
+                {
+                  "pokemonId": 110,
+                  "level": 37,
+                  "moves": [
+                    "strange-steam",
+                    "sludge-bomb",
+                    "thunderbolt",
+                    "will-o-wisp"
+                  ]
+                },
+                {
+                  "pokemonId": 468,
+                  "level": 37,
+                  "moves": [
+                    "moonblast",
+                    "air-slash",
+                    "aura-sphere",
+                    "thunder"
+                  ]
+                },
+                {
+                  "pokemonId": 35,
+                  "level": 37,
+                  "moves": [
+                    "moonblast",
+                    "doubleslap",
+                    "minimize",
+                    "sing"
+                  ]
+                },
+                {
+                  "pokemonId": 869,
+                  "level": 38,
+                  "moves": [
+                    "decorate",
+                    "moonblast",
+                    "dazzling-gleam",
+                    "misty-terrain"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "galar-gordie",
+          "name": "Gordie",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Rock",
+          "rosters": [
+            {
+              "label": "SW",
+              "team": [
+                {
+                  "pokemonId": 213,
+                  "level": 40,
+                  "moves": [
+                    "rock-blast",
+                    "power-trick",
+                    "rollout",
+                    "bug-bite"
+                  ]
+                },
+                {
+                  "pokemonId": 185,
+                  "level": 40,
+                  "moves": [
+                    "rock-slide",
+                    "earthquake",
+                    "block",
+                    "stealth-rock"
+                  ]
+                },
+                {
+                  "pokemonId": 219,
+                  "level": 41,
+                  "moves": [
+                    "rock-slide",
+                    "earth-power",
+                    "overheat",
+                    "stealth-rock"
+                  ]
+                },
+                {
+                  "pokemonId": 75,
+                  "level": 41,
+                  "moves": [
+                    "rock-blast",
+                    "earthquake",
+                    "explosion",
+                    "stealth-rock"
+                  ]
+                },
+                {
+                  "pokemonId": 874,
+                  "level": 41,
+                  "moves": [
+                    "stone-edge",
+                    "earthquake",
+                    "rock-polish",
+                    "heavy-slam"
+                  ]
+                },
+                {
+                  "pokemonId": 839,
+                  "level": 42,
+                  "moves": [
+                    "tar-shot",
+                    "heat-crash",
+                    "smack-down",
+                    "stealth-rock"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "galar-piers",
+          "name": "Piers",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Dark",
+          "rosters": [
+            {
+              "label": "SWSH",
+              "team": [
+                {
+                  "pokemonId": 560,
+                  "level": 44,
+                  "moves": [
+                    "crunch",
+                    "high-jump-kick",
+                    "dragon-dance",
+                    "head-smash"
+                  ]
+                },
+                {
+                  "pokemonId": 687,
+                  "level": 44,
+                  "moves": [
+                    "topsy-turvy",
+                    "foul-play",
+                    "psycho-cut",
+                    "night-slash"
+                  ]
+                },
+                {
+                  "pokemonId": 435,
+                  "level": 45,
+                  "moves": [
+                    "crunch",
+                    "sucker-punch",
+                    "toxic",
+                    "explosion"
+                  ]
+                },
+                {
+                  "pokemonId": 197,
+                  "level": 45,
+                  "moves": [
+                    "foul-play",
+                    "moonlight",
+                    "dark-pulse",
+                    "last-resort"
+                  ]
+                },
+                {
+                  "pokemonId": 430,
+                  "level": 46,
+                  "moves": [
+                    "foul-play",
+                    "sucker-punch",
+                    "nasty-plot",
+                    "pursuit"
+                  ]
+                },
+                {
+                  "pokemonId": 862,
+                  "level": 46,
+                  "moves": [
+                    "darkest-lariat",
+                    "gunk-shot",
+                    "counter",
+                    "facade"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "galar-raihan",
+          "name": "Raihan",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Dragon",
+          "rosters": [
+            {
+              "label": "SWSH",
+              "team": [
+                {
+                  "pokemonId": 330,
+                  "level": 46,
+                  "moves": [
+                    "dragon-claw",
+                    "earthquake",
+                    "crunch",
+                    "sandstorm"
+                  ]
+                },
+                {
+                  "pokemonId": 526,
+                  "level": 47,
+                  "moves": [
+                    "earthquake",
+                    "rock-slide",
+                    "stealth-rock",
+                    "stone-edge"
+                  ]
+                },
+                {
+                  "pokemonId": 844,
+                  "level": 47,
+                  "moves": [
+                    "coil",
+                    "bulldoze",
+                    "wrap",
+                    "glare"
+                  ]
+                },
+                {
+                  "pokemonId": 142,
+                  "level": 47,
+                  "moves": [
+                    "crunch",
+                    "wing-attack",
+                    "ancientpower",
+                    "bite"
+                  ]
+                },
+                {
+                  "pokemonId": 340,
+                  "level": 47,
+                  "moves": [
+                    "surf",
+                    "earthquake",
+                    "sandstorm",
+                    "amnesia"
+                  ]
+                },
+                {
+                  "pokemonId": 884,
+                  "level": 48,
+                  "moves": [
+                    "dragon-pulse",
+                    "flash-cannon",
+                    "steel-beam",
+                    "dragon-dance"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "galar-leon",
+          "name": "Leon",
+          "title": "Champion",
+          "trainerClass": "CHAMPION",
+          "typeSpecialty": "Mixed",
+          "rosters": [
+            {
+              "label": "SWSH",
+              "team": [
+                {
+                  "pokemonId": 681,
+                  "level": 62,
+                  "moves": [
+                    "shadow-ball",
+                    "iron-head",
+                    "king-shield",
+                    "swords-dance"
+                  ]
+                },
+                {
+                  "pokemonId": 612,
+                  "level": 63,
+                  "moves": [
+                    "dragon-dance",
+                    "outrage",
+                    "poison-jab",
+                    "iron-tail"
+                  ]
+                },
+                {
+                  "pokemonId": 537,
+                  "level": 64,
+                  "moves": [
+                    "earth-power",
+                    "surf",
+                    "muddy-water",
+                    "hyper-voice"
+                  ]
+                },
+                {
+                  "pokemonId": 866,
+                  "level": 64,
+                  "moves": [
+                    "psychic",
+                    "ice-punch",
+                    "triple-axel",
+                    "nasty-plot"
+                  ]
+                },
+                {
+                  "pokemonId": 887,
+                  "level": 65,
+                  "moves": [
+                    "dragon-rush",
+                    "phantom-force",
+                    "thunderbolt",
+                    "shadow-ball"
+                  ]
+                },
+                {
+                  "pokemonId": 6,
+                  "level": 65,
+                  "moves": [
+                    "flamethrower",
+                    "air-slash",
+                    "thunder-punch",
+                    "max-strike"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "galar-hop",
+          "name": "Hop",
+          "title": "Rival",
+          "trainerClass": "RIVAL",
+          "typeSpecialty": "Mixed",
+          "rosters": [
+            {
+              "label": "Final Battle (SWSH)",
+              "team": [
+                {
+                  "pokemonId": 398,
+                  "level": 60,
+                  "moves": [
+                    "close-combat",
+                    "fly",
+                    "u-turn",
+                    "sky-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 877,
+                  "level": 61,
+                  "moves": [
+                    "aura-wheel",
+                    "bite",
+                    "spark",
+                    "quick-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 508,
+                  "level": 61,
+                  "moves": [
+                    "play-rough",
+                    "fire-fang",
+                    "thunder-fang",
+                    "superpower"
+                  ]
+                },
+                {
+                  "pokemonId": 245,
+                  "level": 62,
+                  "moves": [
+                    "surf",
+                    "blizzard",
+                    "aurora-beam",
+                    "hydro-pump"
+                  ]
+                },
+                {
+                  "pokemonId": 473,
+                  "level": 62,
+                  "moves": [
+                    "blizzard",
+                    "earthquake",
+                    "ice-shard",
+                    "stone-edge"
+                  ]
+                },
+                {
+                  "pokemonId": 812,
+                  "level": 63,
+                  "moves": [
+                    "wood-hammer",
+                    "high-horsepower",
+                    "drum-beating",
+                    "grassy-glide"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
