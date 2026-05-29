@@ -107,35 +107,32 @@ fun TeamScreen(
             Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = PokedexCream)
         }
 
-        androidx.compose.foundation.layout.Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
+        Text(
+            text = "MY TEAM",
+            fontFamily = PressStart2P,
+            fontSize = 8.sp,
+            color = CaughtGold,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
                 .offset(y = sh * 0.22f)
                 .padding(horizontal = 16.dp)
+        )
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .offset(y = sh * 0.22f)
+                .background(GlowBlue.copy(alpha = 0.25f), RoundedCornerShape(4.dp))
+                .border(1.5.dp, GlowBlue, RoundedCornerShape(4.dp))
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onNavigateBattle
+                )
+                .padding(horizontal = 10.dp, vertical = 6.dp)
         ) {
-            Text(
-                text = "MY TEAM",
-                fontFamily = PressStart2P,
-                fontSize = 8.sp,
-                color = CaughtGold
-            )
-            androidx.compose.foundation.layout.Spacer(Modifier.weight(1f))
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .background(GlowBlue.copy(alpha = 0.25f), RoundedCornerShape(4.dp))
-                    .border(1.5.dp, GlowBlue, RoundedCornerShape(4.dp))
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        onClick = onNavigateBattle
-                    )
-                    .padding(horizontal = 10.dp, vertical = 6.dp)
-            ) {
-                Text("BATTLE", fontFamily = PressStart2P, fontSize = 6.sp, color = GlowBlue)
-            }
+            Text("BATTLE", fontFamily = PressStart2P, fontSize = 6.sp, color = GlowBlue)
         }
 
         // Team slots row

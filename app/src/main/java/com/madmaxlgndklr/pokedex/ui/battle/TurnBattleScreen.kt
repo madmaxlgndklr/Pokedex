@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -239,286 +240,308 @@ private fun BattleSetupView(
 
     var showStatConfig by remember { mutableStateOf(false) }
     var showNaturePicker by remember { mutableStateOf(false) }
+    var showItems by remember { mutableStateOf(false) }
     var expandedSlot by remember { mutableStateOf<Int?>(null) }
 
-    Column(
-        modifier = Modifier.fillMaxSize().padding(10.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        // Pokemon + level row
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(PokedexDark.copy(alpha = 0.5f), RoundedCornerShape(6.dp))
-                .padding(8.dp)
+    Box(Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(start = 10.dp, end = 10.dp, top = 10.dp, bottom = 72.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            AsyncImage(
-                model = RetrofitClient.spriteUrl(setup.playerDetail.id),
-                contentDescription = setup.playerDetail.name,
-                modifier = Modifier.size(48.dp)
-            )
-            Spacer(Modifier.width(8.dp))
-            Text(
-                setup.playerDetail.name.uppercase(),
-                fontFamily = PressStart2P, fontSize = 7.sp, color = PokedexCream,
-                modifier = Modifier.weight(1f)
-            )
-            // Level picker
-            LevelPicker(level = setup.level, onLevelChange = onLevelChange)
-        }
-
-        // Opponent slot
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(PokedexDark.copy(alpha = 0.5f), RoundedCornerShape(6.dp))
-                .padding(8.dp)
-        ) {
-            Text(
-                "VS.",
-                fontFamily = PressStart2P,
-                fontSize = 5.sp,
-                color = PokedexCream.copy(alpha = 0.4f)
-            )
-            Spacer(Modifier.width(8.dp))
-            if (battleTrainer != null) {
-                Text(
-                    battleTrainer.trainer.name.uppercase(),
-                    fontFamily = PressStart2P,
-                    fontSize = 7.sp,
-                    color = PokedexCream,
-                    modifier = Modifier.weight(1f)
-                )
-                TypeBadge(type = battleTrainer.trainer.typeSpecialty)
-            } else {
-                Text(
-                    "RANDOM OPPONENT",
-                    fontFamily = PressStart2P,
-                    fontSize = 7.sp,
-                    color = PokedexCream.copy(alpha = 0.4f),
-                    modifier = Modifier.weight(1f)
-                )
-            }
-        }
-
-        // Team slot strip — tap a slot to expand its overrides
-        if (teamIds.size > 1) {
-            Text(
-                "TEAM  (TAP TO CUSTOMIZE)",
-                fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream.copy(alpha = 0.5f)
-            )
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                itemsIndexed(teamIds, key = { _, id -> id }) { idx, _ ->
-                    val hasOverride = setup.teamOverrides.containsKey(idx)
-                    val isExpanded = expandedSlot == idx
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .size(44.dp)
-                            .background(
-                                when {
-                                    isExpanded -> GlowBlue.copy(alpha = 0.3f)
-                                    hasOverride -> CaughtGold.copy(alpha = 0.2f)
-                                    else -> PokedexDark.copy(alpha = 0.4f)
-                                },
-                                RoundedCornerShape(4.dp)
-                            )
-                            .border(
-                                1.dp,
-                                when {
-                                    isExpanded -> GlowBlue
-                                    hasOverride -> CaughtGold
-                                    else -> Color.Transparent
-                                },
-                                RoundedCornerShape(4.dp)
-                            )
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) { expandedSlot = if (isExpanded) null else idx }
-                            .padding(4.dp)
-                    ) {
-                        Text(
-                            "${idx + 1}",
-                            fontFamily = PressStart2P, fontSize = 7.sp,
-                            color = if (isExpanded) GlowBlue else PokedexCream.copy(alpha = 0.7f)
-                        )
-                    }
-                }
-            }
-
-            val slot = expandedSlot
-            if (slot != null && slot < teamIds.size) {
-                val ov = setup.teamOverrides[slot]
-                val slotLevel = ov?.level ?: setup.level
-                val slotNature = ov?.nature ?: setup.nature
-
-                Column(
+            // Pokemon + level row
+            item {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(PokedexDark.copy(alpha = 0.4f), RoundedCornerShape(6.dp))
-                        .padding(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                        .background(PokedexDark.copy(alpha = 0.5f), RoundedCornerShape(6.dp))
+                        .padding(8.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    AsyncImage(
+                        model = RetrofitClient.spriteUrl(setup.playerDetail.id),
+                        contentDescription = setup.playerDetail.name,
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        setup.playerDetail.name.uppercase(),
+                        fontFamily = PressStart2P, fontSize = 7.sp, color = PokedexCream,
+                        modifier = Modifier.weight(1f)
+                    )
+                    LevelPicker(level = setup.level, onLevelChange = onLevelChange)
+                }
+            }
+
+            // Opponent slot
+            item {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(PokedexDark.copy(alpha = 0.5f), RoundedCornerShape(6.dp))
+                        .padding(8.dp)
+                ) {
+                    Text("VS.", fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream.copy(alpha = 0.4f))
+                    Spacer(Modifier.width(8.dp))
+                    if (battleTrainer != null) {
                         Text(
-                            "SLOT ${slot + 1}",
-                            fontFamily = PressStart2P, fontSize = 6.sp, color = GlowBlue
+                            battleTrainer.trainer.name.uppercase(),
+                            fontFamily = PressStart2P, fontSize = 7.sp, color = PokedexCream,
+                            modifier = Modifier.weight(1f)
                         )
-                        if (ov != null) {
-                            Text(
-                                "RESET",
-                                fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexRed,
-                                modifier = Modifier.clickable(
+                        TypeBadge(type = battleTrainer.trainer.typeSpecialty)
+                    } else {
+                        Text(
+                            "RANDOM OPPONENT",
+                            fontFamily = PressStart2P, fontSize = 7.sp,
+                            color = PokedexCream.copy(alpha = 0.4f),
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+            }
+
+            // Team slot strip
+            if (teamIds.size > 1) {
+                item {
+                    Text(
+                        "TEAM  (TAP TO CUSTOMIZE)",
+                        fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream.copy(alpha = 0.5f)
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        itemsIndexed(teamIds, key = { _, id -> id }) { idx, _ ->
+                            val hasOverride = setup.teamOverrides.containsKey(idx)
+                            val isExpanded = expandedSlot == idx
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier
+                                    .size(44.dp)
+                                    .background(
+                                        when {
+                                            isExpanded -> GlowBlue.copy(alpha = 0.3f)
+                                            hasOverride -> CaughtGold.copy(alpha = 0.2f)
+                                            else -> PokedexDark.copy(alpha = 0.4f)
+                                        },
+                                        RoundedCornerShape(4.dp)
+                                    )
+                                    .border(
+                                        1.dp,
+                                        when {
+                                            isExpanded -> GlowBlue
+                                            hasOverride -> CaughtGold
+                                            else -> Color.Transparent
+                                        },
+                                        RoundedCornerShape(4.dp)
+                                    )
+                                    .clickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = null
+                                    ) { expandedSlot = if (isExpanded) null else idx }
+                                    .padding(4.dp)
+                            ) {
+                                Text(
+                                    "${idx + 1}",
+                                    fontFamily = PressStart2P, fontSize = 7.sp,
+                                    color = if (isExpanded) GlowBlue else PokedexCream.copy(alpha = 0.7f)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                val slot = expandedSlot
+                if (slot != null && slot < teamIds.size) {
+                    item {
+                        val ov = setup.teamOverrides[slot]
+                        val slotLevel = ov?.level ?: setup.level
+                        val slotNature = ov?.nature ?: setup.nature
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(PokedexDark.copy(alpha = 0.4f), RoundedCornerShape(6.dp))
+                                .padding(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("SLOT ${slot + 1}", fontFamily = PressStart2P, fontSize = 6.sp, color = GlowBlue)
+                                if (ov != null) {
+                                    Text(
+                                        "RESET",
+                                        fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexRed,
+                                        modifier = Modifier.clickable(
+                                            interactionSource = remember { MutableInteractionSource() },
+                                            indication = null
+                                        ) { viewModel.setSlotOverride(slot, null) }
+                                    )
+                                }
+                            }
+                            LevelPicker(
+                                level = slotLevel,
+                                onLevelChange = { newLevel ->
+                                    val clamped = newLevel.coerceIn(1, 100)
+                                    val newOv = (ov ?: SlotOverride()).copy(level = clamped)
+                                    val effective = if (newOv.level == setup.level && newOv.nature == null) null else newOv
+                                    viewModel.setSlotOverride(slot, effective)
+                                }
+                            )
+                            if (gen >= 3) {
+                                Text(
+                                    "NATURE: ${slotNature.name.uppercase()}",
+                                    fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue
+                                )
+                                NaturePicker(
+                                    selectedNature = slotNature,
+                                    onNatureSelected = { nature ->
+                                        val newOv = (ov ?: SlotOverride()).copy(nature = nature)
+                                        val effective = if (newOv.level == null && newOv.nature == setup.nature) null else newOv
+                                        viewModel.setSlotOverride(slot, effective)
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Gen toggle
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    val isGen12 = gen <= 2
+                    listOf("GEN I–II" to true, "GEN III+" to false).forEach { (label, isGen12Option) ->
+                        val selected = isGen12 == isGen12Option
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .background(
+                                    if (selected) CaughtGold else PokedexDark.copy(alpha = 0.5f),
+                                    RoundedCornerShape(4.dp)
+                                )
+                                .clickable(
                                     interactionSource = remember { MutableInteractionSource() },
                                     indication = null
-                                ) { viewModel.setSlotOverride(slot, null) }
+                                ) {
+                                    val newGen = if (isGen12Option) 1 else 5
+                                    viewModel.setGen(newGen)
+                                    val defaultConfig = if (isGen12Option)
+                                        StatConfig.Gen12Config(IntArray(5) { 15 }, IntArray(5) { 0 })
+                                    else
+                                        StatConfig.Gen3PlusConfig(IntArray(6) { 31 }, IntArray(6) { 0 })
+                                    viewModel.setStatConfig(defaultConfig)
+                                    viewModel.setNature(Natures.HARDY)
+                                }
+                                .padding(horizontal = 8.dp, vertical = 6.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                label, fontFamily = PressStart2P, fontSize = 6.sp,
+                                color = if (selected) PokedexDark else PokedexCream
                             )
                         }
                     }
-                    LevelPicker(
-                        level = slotLevel,
-                        onLevelChange = { newLevel ->
-                            val clamped = newLevel.coerceIn(1, 100)
-                            val newOv = (ov ?: SlotOverride()).copy(level = clamped)
-                            val effective = if (newOv.level == setup.level && newOv.nature == null) null else newOv
-                            viewModel.setSlotOverride(slot, effective)
-                        }
+                }
+            }
+
+            // Stats section (collapsible)
+            item {
+                Text(
+                    text = if (showStatConfig) "STATS ▲" else "STATS ▼",
+                    fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue,
+                    modifier = Modifier.clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { showStatConfig = !showStatConfig }
+                )
+            }
+            if (showStatConfig) {
+                item {
+                    val isEvSumValid = setup.let { s ->
+                        val cfg = s.statConfig
+                        if (cfg is StatConfig.Gen3PlusConfig) StatFormulas.isEvSumValid(cfg.evs) else true
+                    }
+                    StatConfigSection(
+                        gen = gen,
+                        statConfig = setup.statConfig,
+                        label = if (gen <= 2) "DVs / Stat Exp" else "IVs / EVs",
+                        onConfigChange = { viewModel.setStatConfig(it) },
+                        isEvSumValid = isEvSumValid,
+                        modifier = Modifier.fillMaxWidth()
                     )
-                    if (gen >= 3) {
-                        Text(
-                            "NATURE: ${slotNature.name.uppercase()}",
-                            fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue
-                        )
+                }
+            }
+
+            // Nature picker (collapsible, Gen 3+)
+            if (gen >= 3) {
+                item {
+                    Text(
+                        text = if (showNaturePicker) "NATURE ▲" else "NATURE: ${setup.nature.name.uppercase()} ▼",
+                        fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue,
+                        modifier = Modifier.clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) { showNaturePicker = !showNaturePicker }
+                    )
+                }
+                if (showNaturePicker) {
+                    item {
                         NaturePicker(
-                            selectedNature = slotNature,
-                            onNatureSelected = { nature ->
-                                val newOv = (ov ?: SlotOverride()).copy(nature = nature)
-                                val effective = if (newOv.level == null && newOv.nature == setup.nature) null else newOv
-                                viewModel.setSlotOverride(slot, effective)
-                            }
+                            selectedNature = setup.nature,
+                            onNatureSelected = { viewModel.setNature(it); showNaturePicker = false }
                         )
                     }
                 }
             }
-        }
 
-        // Gen toggle
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            val isGen12 = gen <= 2
-            listOf("GEN I–II" to true, "GEN III+" to false).forEach { (label, isGen12Option) ->
-                val selected = isGen12 == isGen12Option
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .background(
-                            if (selected) CaughtGold else PokedexDark.copy(alpha = 0.5f),
-                            RoundedCornerShape(4.dp)
-                        )
-                        .clickable(
+            // Held items (collapsible)
+            item {
+                if (syncError) {
+                    Text(
+                        "ITEMS UNAVAILABLE — SYNC IN SETTINGS",
+                        fontFamily = PressStart2P, fontSize = 5.sp,
+                        color = PokedexCream.copy(alpha = 0.5f)
+                    )
+                } else {
+                    Text(
+                        text = if (showItems) "ITEM ▲" else "ITEM: ${setup.heldItem?.displayName ?: "NONE"} ▼",
+                        fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue,
+                        modifier = Modifier.clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null
-                        ) {
-                            val newGen = if (isGen12Option) 1 else 5
-                            viewModel.setGen(newGen)
-                            val defaultConfig = if (isGen12Option)
-                                StatConfig.Gen12Config(IntArray(5) { 15 }, IntArray(5) { 0 })
-                            else
-                                StatConfig.Gen3PlusConfig(IntArray(6) { 31 }, IntArray(6) { 0 })
-                            viewModel.setStatConfig(defaultConfig)
-                            viewModel.setNature(Natures.HARDY)
+                        ) { showItems = !showItems }
+                    )
+                    if (showItems) {
+                        Spacer(Modifier.height(4.dp))
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            item {
+                                val noneSelected = setup.heldItem == null
+                                ItemCard("NONE", "No item", noneSelected) { viewModel.setHeldItem(null) }
+                            }
+                            items(heldItems) { heldItem ->
+                                val selected = setup.heldItem?.id == heldItem.id
+                                ItemCard(heldItem.displayName, heldItem.effectSummary, selected) { viewModel.setHeldItem(heldItem) }
+                            }
                         }
-                        .padding(horizontal = 8.dp, vertical = 6.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(label, fontFamily = PressStart2P, fontSize = 6.sp,
-                        color = if (selected) PokedexDark else PokedexCream)
+                    }
                 }
             }
-        }
 
-        // Stat config toggle + section
-        Text(
-            text = if (showStatConfig) "STATS ▲" else "STATS ▼",
-            fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue,
-            modifier = Modifier.clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) { showStatConfig = !showStatConfig }
-        )
-        if (showStatConfig) {
-            val isEvSumValid = setup.let { s ->
-                val cfg = s.statConfig
-                if (cfg is StatConfig.Gen3PlusConfig) StatFormulas.isEvSumValid(cfg.evs) else true
-            }
-            StatConfigSection(
-                gen = gen,
-                statConfig = setup.statConfig,
-                label = if (gen <= 2) "DVs / Stat Exp" else "IVs / EVs",
-                onConfigChange = { viewModel.setStatConfig(it) },
-                isEvSumValid = isEvSumValid,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-
-        // Nature picker (Gen 3+)
-        if (gen >= 3) {
-            Text(
-                text = if (showNaturePicker) "NATURE ▲" else "NATURE: ${setup.nature.name.uppercase()}",
-                fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue,
-                modifier = Modifier.clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) { showNaturePicker = !showNaturePicker }
-            )
-            if (showNaturePicker) {
-                NaturePicker(
-                    selectedNature = setup.nature,
-                    onNatureSelected = { viewModel.setNature(it); showNaturePicker = false }
+            // Moves header
+            item {
+                Text(
+                    "MOVES  ${selectedSet.size}/4",
+                    fontFamily = PressStart2P, fontSize = 5.sp, color = CaughtGold
                 )
             }
-        }
 
-        // Held item picker
-        if (syncError) {
-            Text(
-                "ITEMS UNAVAILABLE — SYNC IN SETTINGS",
-                fontFamily = PressStart2P, fontSize = 5.sp,
-                color = PokedexCream.copy(alpha = 0.5f)
-            )
-        } else {
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                item {
-                    val noneSelected = setup.heldItem == null
-                    ItemCard("NONE", "No item", noneSelected) { viewModel.setHeldItem(null) }
-                }
-                items(heldItems) { item ->
-                    val selected = setup.heldItem?.id == item.id
-                    ItemCard(item.displayName, item.effectSummary, selected) { viewModel.setHeldItem(item) }
-                }
-            }
-        }
-
-        // Move count header
-        Text(
-            "MOVES  ${selectedSet.size}/4",
-            fontFamily = PressStart2P, fontSize = 5.sp, color = CaughtGold
-        )
-
-        // Move list
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
+            // Move list (flat — no nested LazyColumn)
             items(moves) { move ->
                 MoveRow(
                     move = move,
@@ -529,7 +552,7 @@ private fun BattleSetupView(
             }
         }
 
-        // Fight / Start Battle button
+        // Pinned START BATTLE button
         Text(
             text = "START BATTLE",
             fontFamily = PressStart2P,
@@ -537,7 +560,9 @@ private fun BattleSetupView(
             color = if (canStart && selectedSet.isNotEmpty()) CaughtGold else PokedexCream.copy(alpha = 0.3f),
             textAlign = TextAlign.Center,
             modifier = Modifier
+                .align(Alignment.BottomCenter)
                 .fillMaxWidth()
+                .padding(horizontal = 10.dp, vertical = 8.dp)
                 .background(
                     if (canStart && selectedSet.isNotEmpty()) PokedexRed else PokedexDark.copy(alpha = 0.4f),
                     RoundedCornerShape(4.dp)
