@@ -119,10 +119,7 @@ fun TurnBattleScreen(
                     setup = s,
                     battleTrainer = battleTrainer,
                     teamIds = teamIds,
-                    moves = learnableMoves(s.playerDetail, s.level),
                     viewModel = viewModel,
-                    onLevelChange = { viewModel.setSetupLevel(it) },
-                    onToggleMove = { viewModel.toggleSetupMove(it) },
                     onFight = { viewModel.startBattleFromSetup(teamIds) }
                 )
             }
@@ -225,23 +222,39 @@ private fun BattleSetupView(
     setup: BattleSetup,
     battleTrainer: SelectedTrainer?,
     teamIds: List<Int>,
-    moves: List<LearnableMove>,
     viewModel: TurnBattleViewModel,
-    onLevelChange: (Int) -> Unit,
-    onToggleMove: (String) -> Unit,
     onFight: () -> Unit
 ) {
-    val selectedSet = setup.selectedMoveNames.toSet()
-
+    val selectedSetupSlot by viewModel.selectedSetupSlot.collectAsState()
+    val slotDetails by viewModel.slotDetails.collectAsState()
     val gen by viewModel.selectedGen.collectAsState()
     val heldItems by viewModel.heldItems.collectAsState()
     val syncError by viewModel.heldItemSyncError.collectAsState()
     val canStart by viewModel.canStartBattle.collectAsState()
 
+    val activeOv = setup.teamOverrides[selectedSetupSlot]
+    val activeDetail = slotDetails[selectedSetupSlot] ?: setup.playerDetail
+    val activeLevel = activeOv?.level ?: setup.level
+    val activeNature = activeOv?.nature ?: setup.nature
+    val activeStatConfig = activeOv?.statConfig ?: setup.statConfig
+    val activeMoves = learnableMoves(activeDetail, activeLevel)
+    val activeSelected: List<String> = when {
+        selectedSetupSlot == 0 -> setup.selectedMoveNames
+        activeOv?.selectedMoveNames != null -> activeOv.selectedMoveNames
+        else -> activeMoves.filter { it.available }.take(4).map { it.name }
+    }
+    val selectedSet = activeSelected.toSet()
+    val slot0HasMoves = setup.selectedMoveNames.isNotEmpty()
+
     var showStatConfig by remember { mutableStateOf(false) }
     var showNaturePicker by remember { mutableStateOf(false) }
     var showItems by remember { mutableStateOf(false) }
-    var expandedSlot by remember { mutableStateOf<Int?>(null) }
+
+    LaunchedEffect(selectedSetupSlot) {
+        showStatConfig = false
+        showNaturePicker = false
+        showItems = false
+    }
 
     Box(Modifier.fillMaxSize()) {
         LazyColumn(
@@ -249,7 +262,7 @@ private fun BattleSetupView(
             contentPadding = PaddingValues(start = 10.dp, end = 10.dp, top = 10.dp, bottom = 72.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Pokemon + level row
+            // Active slot Pokémon + level row
             item {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -259,17 +272,17 @@ private fun BattleSetupView(
                         .padding(8.dp)
                 ) {
                     AsyncImage(
-                        model = RetrofitClient.spriteUrl(setup.playerDetail.id),
-                        contentDescription = setup.playerDetail.name,
+                        model = RetrofitClient.spriteUrl(activeDetail.id),
+                        contentDescription = activeDetail.name,
                         modifier = Modifier.size(48.dp)
                     )
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        setup.playerDetail.name.uppercase(),
+                        activeDetail.name.uppercase(),
                         fontFamily = PressStart2P, fontSize = 7.sp, color = PokedexCream,
                         modifier = Modifier.weight(1f)
                     )
-                    LevelPicker(level = setup.level, onLevelChange = onLevelChange)
+                    LevelPicker(level = activeLevel, onLevelChange = { viewModel.setSlotLevel(selectedSetupSlot, it) })
                 }
             }
 
@@ -302,25 +315,25 @@ private fun BattleSetupView(
                 }
             }
 
-            // Team slot strip
+            // Team slot strip — tap to switch which Pokémon you're configuring
             if (teamIds.size > 1) {
                 item {
                     Text(
-                        "TEAM  (TAP TO CUSTOMIZE)",
+                        "TEAM",
                         fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexCream.copy(alpha = 0.5f)
                     )
                     Spacer(Modifier.height(4.dp))
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         itemsIndexed(teamIds, key = { _, id -> id }) { idx, _ ->
+                            val isActive = selectedSetupSlot == idx
                             val hasOverride = setup.teamOverrides.containsKey(idx)
-                            val isExpanded = expandedSlot == idx
                             Box(
                                 contentAlignment = Alignment.Center,
                                 modifier = Modifier
                                     .size(44.dp)
                                     .background(
                                         when {
-                                            isExpanded -> GlowBlue.copy(alpha = 0.3f)
+                                            isActive -> GlowBlue.copy(alpha = 0.3f)
                                             hasOverride -> CaughtGold.copy(alpha = 0.2f)
                                             else -> PokedexDark.copy(alpha = 0.4f)
                                         },
@@ -329,7 +342,7 @@ private fun BattleSetupView(
                                     .border(
                                         1.dp,
                                         when {
-                                            isExpanded -> GlowBlue
+                                            isActive -> GlowBlue
                                             hasOverride -> CaughtGold
                                             else -> Color.Transparent
                                         },
@@ -338,73 +351,27 @@ private fun BattleSetupView(
                                     .clickable(
                                         interactionSource = remember { MutableInteractionSource() },
                                         indication = null
-                                    ) { expandedSlot = if (isExpanded) null else idx }
+                                    ) { viewModel.selectSetupSlot(idx, teamIds) }
                                     .padding(4.dp)
                             ) {
                                 Text(
                                     "${idx + 1}",
                                     fontFamily = PressStart2P, fontSize = 7.sp,
-                                    color = if (isExpanded) GlowBlue else PokedexCream.copy(alpha = 0.7f)
+                                    color = if (isActive) GlowBlue else PokedexCream.copy(alpha = 0.7f)
                                 )
                             }
                         }
                     }
-                }
-
-                val slot = expandedSlot
-                if (slot != null && slot < teamIds.size) {
-                    item {
-                        val ov = setup.teamOverrides[slot]
-                        val slotLevel = ov?.level ?: setup.level
-                        val slotNature = ov?.nature ?: setup.nature
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(PokedexDark.copy(alpha = 0.4f), RoundedCornerShape(6.dp))
-                                .padding(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text("SLOT ${slot + 1}", fontFamily = PressStart2P, fontSize = 6.sp, color = GlowBlue)
-                                if (ov != null) {
-                                    Text(
-                                        "RESET",
-                                        fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexRed,
-                                        modifier = Modifier.clickable(
-                                            interactionSource = remember { MutableInteractionSource() },
-                                            indication = null
-                                        ) { viewModel.setSlotOverride(slot, null) }
-                                    )
-                                }
-                            }
-                            LevelPicker(
-                                level = slotLevel,
-                                onLevelChange = { newLevel ->
-                                    val clamped = newLevel.coerceIn(1, 100)
-                                    val newOv = (ov ?: SlotOverride()).copy(level = clamped)
-                                    val effective = if (newOv.level == setup.level && newOv.nature == null) null else newOv
-                                    viewModel.setSlotOverride(slot, effective)
-                                }
-                            )
-                            if (gen >= 3) {
-                                Text(
-                                    "NATURE: ${slotNature.name.uppercase()}",
-                                    fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue
-                                )
-                                NaturePicker(
-                                    selectedNature = slotNature,
-                                    onNatureSelected = { nature ->
-                                        val newOv = (ov ?: SlotOverride()).copy(nature = nature)
-                                        val effective = if (newOv.level == null && newOv.nature == setup.nature) null else newOv
-                                        viewModel.setSlotOverride(slot, effective)
-                                    }
-                                )
-                            }
-                        }
+                    if (selectedSetupSlot != 0 && setup.teamOverrides.containsKey(selectedSetupSlot)) {
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            "RESET SLOT ${selectedSetupSlot + 1}",
+                            fontFamily = PressStart2P, fontSize = 5.sp, color = PokedexRed.copy(alpha = 0.7f),
+                            modifier = Modifier.clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) { viewModel.setSlotOverride(selectedSetupSlot, null) }
+                        )
                     }
                 }
             }
@@ -450,7 +417,7 @@ private fun BattleSetupView(
                 }
             }
 
-            // Stats section (collapsible)
+            // Stats section (collapsible) — shows active slot's config
             item {
                 Text(
                     text = if (showStatConfig) "STATS ▲" else "STATS ▼",
@@ -463,26 +430,24 @@ private fun BattleSetupView(
             }
             if (showStatConfig) {
                 item {
-                    val isEvSumValid = setup.let { s ->
-                        val cfg = s.statConfig
-                        if (cfg is StatConfig.Gen3PlusConfig) StatFormulas.isEvSumValid(cfg.evs) else true
-                    }
+                    val isEvSumValid = if (activeStatConfig is StatConfig.Gen3PlusConfig)
+                        StatFormulas.isEvSumValid(activeStatConfig.evs) else true
                     StatConfigSection(
                         gen = gen,
-                        statConfig = setup.statConfig,
+                        statConfig = activeStatConfig,
                         label = if (gen <= 2) "DVs / Stat Exp" else "IVs / EVs",
-                        onConfigChange = { viewModel.setStatConfig(it) },
+                        onConfigChange = { viewModel.setSlotStatConfig(selectedSetupSlot, it) },
                         isEvSumValid = isEvSumValid,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
 
-            // Nature picker (collapsible, Gen 3+)
+            // Nature picker (collapsible, Gen 3+) — shows active slot's nature
             if (gen >= 3) {
                 item {
                     Text(
-                        text = if (showNaturePicker) "NATURE ▲" else "NATURE: ${setup.nature.name.uppercase()} ▼",
+                        text = if (showNaturePicker) "NATURE ▲" else "NATURE: ${activeNature.name.uppercase()} ▼",
                         fontFamily = PressStart2P, fontSize = 5.sp, color = GlowBlue,
                         modifier = Modifier.clickable(
                             interactionSource = remember { MutableInteractionSource() },
@@ -493,8 +458,8 @@ private fun BattleSetupView(
                 if (showNaturePicker) {
                     item {
                         NaturePicker(
-                            selectedNature = setup.nature,
-                            onNatureSelected = { viewModel.setNature(it); showNaturePicker = false }
+                            selectedNature = activeNature,
+                            onNatureSelected = { viewModel.setSlotNature(selectedSetupSlot, it); showNaturePicker = false }
                         )
                     }
                 }
@@ -533,7 +498,7 @@ private fun BattleSetupView(
                 }
             }
 
-            // Moves header
+            // Moves header — shows active slot's move count
             item {
                 Text(
                     "MOVES  ${selectedSet.size}/4",
@@ -541,38 +506,38 @@ private fun BattleSetupView(
                 )
             }
 
-            // Move list (flat — no nested LazyColumn)
-            items(moves) { move ->
+            // Move list for active slot
+            items(activeMoves) { move ->
                 MoveRow(
                     move = move,
                     selected = move.name in selectedSet,
                     selectionFull = selectedSet.size >= 4 && move.name !in selectedSet,
-                    onToggle = { if (move.available) onToggleMove(move.name) }
+                    onToggle = { if (move.available) viewModel.toggleSlotMove(selectedSetupSlot, move.name) }
                 )
             }
         }
 
-        // Pinned START BATTLE button
+        // Pinned START BATTLE button — enabled when slot 0 has at least one move selected
         Text(
             text = "START BATTLE",
             fontFamily = PressStart2P,
             fontSize = 7.sp,
-            color = if (canStart && selectedSet.isNotEmpty()) CaughtGold else PokedexCream.copy(alpha = 0.3f),
+            color = if (canStart && slot0HasMoves) CaughtGold else PokedexCream.copy(alpha = 0.3f),
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp, vertical = 8.dp)
                 .background(
-                    if (canStart && selectedSet.isNotEmpty()) PokedexRed else PokedexDark.copy(alpha = 0.4f),
+                    if (canStart && slot0HasMoves) PokedexRed else PokedexDark.copy(alpha = 0.4f),
                     RoundedCornerShape(4.dp)
                 )
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    enabled = canStart && selectedSet.isNotEmpty()
+                    enabled = canStart && slot0HasMoves
                 ) {
-                    if (canStart && selectedSet.isNotEmpty()) onFight()
+                    if (canStart && slot0HasMoves) onFight()
                 }
                 .padding(horizontal = 12.dp, vertical = 10.dp)
         )

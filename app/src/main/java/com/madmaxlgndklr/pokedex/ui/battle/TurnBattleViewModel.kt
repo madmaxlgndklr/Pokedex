@@ -20,7 +20,8 @@ data class SlotOverride(
     val level: Int? = null,
     val statConfig: StatConfig? = null,
     val nature: Nature? = null,
-    val heldItem: HeldItem? = null
+    val heldItem: HeldItem? = null,
+    val selectedMoveNames: List<String>? = null
 )
 
 data class BattleSetup(
@@ -88,6 +89,12 @@ class TurnBattleViewModel(
     private val _battleTrainer = MutableStateFlow<SelectedTrainer?>(null)
     val battleTrainer: StateFlow<SelectedTrainer?> = _battleTrainer
 
+    private val _selectedSetupSlot = MutableStateFlow(0)
+    val selectedSetupSlot: StateFlow<Int> = _selectedSetupSlot
+
+    private val _slotDetails = MutableStateFlow<Map<Int, PokemonDetail>>(emptyMap())
+    val slotDetails: StateFlow<Map<Int, PokemonDetail>> = _slotDetails
+
     val canStartBattle: StateFlow<Boolean> = _setup
         .map { setup ->
             val cfg = setup?.statConfig
@@ -115,6 +122,64 @@ class TurnBattleViewModel(
         _setup.value = s.copy(teamOverrides = newOverrides)
     }
 
+    fun selectSetupSlot(idx: Int, teamIds: List<Int>) {
+        _selectedSetupSlot.value = idx
+        if (_slotDetails.value.containsKey(idx)) return
+        if (idx >= teamIds.size) return
+        viewModelScope.launch {
+            try {
+                val detail = repo.getPokemonDetail(teamIds[idx])
+                _slotDetails.value = _slotDetails.value + (idx to detail)
+            } catch (e: Exception) { }
+        }
+    }
+
+    fun toggleSlotMove(slot: Int, moveName: String) {
+        if (slot == 0) { toggleSetupMove(moveName); return }
+        val s = _setup.value ?: return
+        val ov = s.teamOverrides[slot]
+        val detail = _slotDetails.value[slot] ?: return
+        val level = ov?.level ?: s.level
+        val autoMoves = learnableMoves(detail, level).filter { it.available }.take(4).map { it.name }
+        val current = ov?.selectedMoveNames ?: autoMoves
+        val newSelected = when {
+            moveName in current -> current - moveName
+            current.size < 4 -> current + moveName
+            else -> current
+        }
+        val newOv = (ov ?: SlotOverride()).copy(selectedMoveNames = newSelected)
+        setSlotOverride(slot, newOv)
+    }
+
+    fun setSlotLevel(slot: Int, level: Int) {
+        if (slot == 0) { setSetupLevel(level); return }
+        val s = _setup.value ?: return
+        val clamped = level.coerceIn(1, 100)
+        val detail = _slotDetails.value[slot] ?: return
+        val ov = s.teamOverrides[slot]
+        val availableNames = learnableMoves(detail, clamped).filter { it.available }.map { it.name }.toSet()
+        val filteredMoves = ov?.selectedMoveNames?.filter { it in availableNames }
+        val newOv = (ov ?: SlotOverride()).copy(level = clamped, selectedMoveNames = filteredMoves)
+        val effective = if (newOv.level == s.level && newOv.nature == null && newOv.selectedMoveNames == null && newOv.heldItem == null && newOv.statConfig == null) null else newOv
+        setSlotOverride(slot, effective)
+    }
+
+    fun setSlotNature(slot: Int, nature: Nature) {
+        if (slot == 0) { setNature(nature); return }
+        val s = _setup.value ?: return
+        val ov = s.teamOverrides[slot]
+        val newOv = (ov ?: SlotOverride()).copy(nature = nature)
+        setSlotOverride(slot, newOv)
+    }
+
+    fun setSlotStatConfig(slot: Int, config: StatConfig) {
+        if (slot == 0) { setStatConfig(config); return }
+        val s = _setup.value ?: return
+        val ov = s.teamOverrides[slot]
+        val newOv = (ov ?: SlotOverride()).copy(statConfig = config)
+        setSlotOverride(slot, newOv)
+    }
+
     fun setGen(gen: Int) {
         viewModelScope.launch {
             settingsRepo.setGen(gen)
@@ -140,6 +205,8 @@ class TurnBattleViewModel(
                 val level = 50
                 val defaults = learnableMoves(detail, level).filter { it.available }.take(4).map { it.name }
                 _setup.value = BattleSetup(detail, level, defaults)
+                _slotDetails.value = mapOf(0 to detail)
+                _selectedSetupSlot.value = 0
             } catch (e: Exception) {
             } finally {
                 _isLoading.value = false
@@ -186,8 +253,11 @@ class TurnBattleViewModel(
                     val statConfig = ov?.statConfig ?: s.statConfig
                     val nature = ov?.nature ?: s.nature
                     val heldItem = ov?.heldItem ?: s.heldItem
-                    val moves = if (idx == 0) resolveMoves(s.selectedMoveNames)
-                        else resolveMoves(learnableMoves(detail, level).filter { it.available }.take(4).map { it.name })
+                    val moves = when {
+                        idx == 0 -> resolveMoves(s.selectedMoveNames)
+                        ov?.selectedMoveNames != null -> resolveMoves(ov.selectedMoveNames)
+                        else -> resolveMoves(learnableMoves(detail, level).filter { it.available }.take(4).map { it.name })
+                    }
                     BattleEngine.buildBattlePokemon(detail, level, moves, statConfig, nature, heldItem)
                 }
                 val bt = _battleTrainer.value
@@ -214,6 +284,8 @@ class TurnBattleViewModel(
     fun resetToSetup() {
         _battleState.value = null
         _battleTrainer.value = null
+        _selectedSetupSlot.value = 0
+        _slotDetails.value = emptyMap()
     }
 
     fun loadTrainerSetup(trainer: Trainer, rosterIndex: Int, teamIds: List<Int>) {
@@ -238,8 +310,11 @@ class TurnBattleViewModel(
                     val statConfig = ov?.statConfig ?: s.statConfig
                     val nature = ov?.nature ?: s.nature
                     val heldItem = ov?.heldItem ?: s.heldItem
-                    val moves = if (idx == 0) resolveMoves(s.selectedMoveNames)
-                        else resolveMoves(learnableMoves(detail, level).filter { it.available }.take(4).map { it.name })
+                    val moves = when {
+                        idx == 0 -> resolveMoves(s.selectedMoveNames)
+                        ov?.selectedMoveNames != null -> resolveMoves(ov.selectedMoveNames)
+                        else -> resolveMoves(learnableMoves(detail, level).filter { it.available }.take(4).map { it.name })
+                    }
                     BattleEngine.buildBattlePokemon(detail, level, moves, statConfig, nature, heldItem)
                 }
                 val opponentTeam = trainer.rosters[rosterIndex].team.mapNotNull { tp ->
