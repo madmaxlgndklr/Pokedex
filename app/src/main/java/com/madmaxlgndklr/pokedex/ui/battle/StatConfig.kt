@@ -131,5 +131,5 @@ object StatFormulas {
         }
     }
 
-    fun isEvSumValid(evs: IntArray): Boolean = evs.sum() <= 510
+    fun isEvSumValid(evs: IntArray): Boolean = evs.sum() <= 510 && evs.all { it in 0..252 }
 }

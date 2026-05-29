@@ -26,7 +26,7 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
 
     val searchHistory: Flow<List<String>> = dataStore.data.map { prefs ->
         prefs[SEARCH_HISTORY_KEY]
-            ?.split("|||")
+            ?.split("")
             ?.filter { it.isNotBlank() }
             ?: emptyList()
     }
@@ -34,11 +34,11 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
     suspend fun addSearchHistory(query: String) {
         dataStore.edit { prefs ->
             val current = prefs[SEARCH_HISTORY_KEY]
-                ?.split("|||")
+                ?.split("")
                 ?.filter { it.isNotBlank() }
                 ?: emptyList()
             val updated = (listOf(query) + current.filter { it != query }).take(10)
-            prefs[SEARCH_HISTORY_KEY] = updated.joinToString("|||")
+            prefs[SEARCH_HISTORY_KEY] = updated.joinToString("")
         }
     }
 

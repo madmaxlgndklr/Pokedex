@@ -34,7 +34,12 @@ object CryPlayer {
     private fun criesDir(): File =
         File(appContext.filesDir, "cries").also { it.mkdirs() }
 
-    private fun cryFile(name: String) = File(criesDir(), "$name.ogg")
+    private fun normalizeName(name: String): String =
+        name.lowercase()
+            .replace("♀", "-f").replace("♂", "-m")
+            .replace("[^a-z0-9-]".toRegex(), "")
+
+    private fun cryFile(name: String) = File(criesDir(), "${normalizeName(name)}.ogg")
 
     suspend fun isCryAvailable(name: String): Boolean {
         if (!::networkObserver.isInitialized) return false
@@ -43,9 +48,10 @@ object CryPlayer {
 
     fun play(name: String) {
         if (!::appContext.isInitialized) return
+        val normalized = normalizeName(name)
         val file = cryFile(name)
         val uri = if (file.exists()) Uri.fromFile(file)
-                  else Uri.parse("$CDN/$name.ogg")
+                  else Uri.parse("$CDN/$normalized.ogg")
         Handler(Looper.getMainLooper()).post {
             if (player == null) {
                 player = ExoPlayer.Builder(appContext).build()
@@ -60,7 +66,7 @@ object CryPlayer {
         }
         // Cache streamed audio in background so next play is local
         if (!file.exists()) {
-            scope.launch { downloadCry(name) }
+            scope.launch { downloadCry(normalized) }
         }
     }
 
@@ -77,11 +83,12 @@ object CryPlayer {
 
     suspend fun downloadCry(name: String): Boolean {
         if (!::appContext.isInitialized) return false
-        val file = cryFile(name)
+        val normalized = normalizeName(name)
+        val file = cryFile(normalized)
         if (file.exists() && file.length() > 0) return true
-        val tmp = File(criesDir(), "$name.ogg.tmp")
+        val tmp = File(criesDir(), "$normalized.ogg.tmp")
         return try {
-            val request = Request.Builder().url("$CDN/$name.ogg").build()
+            val request = Request.Builder().url("$CDN/$normalized.ogg").build()
             val response = withContext(Dispatchers.IO) {
                 RetrofitClient.httpClient.newCall(request).execute()
             }
@@ -90,7 +97,7 @@ object CryPlayer {
                 val bytes = resp.body?.bytes() ?: return@use false
                 if (bytes.isEmpty()) return@use false
                 tmp.writeBytes(bytes)
-                tmp.renameTo(file)
+                tmp.renameTo(File(criesDir(), "$normalized.ogg"))
                 true
             }
         } catch (_: Exception) {
@@ -103,7 +110,7 @@ object CryPlayer {
         if (!::appContext.isInitialized) return
         val total = names.size
         val completed = AtomicInteger(0)
-        val semaphore = Semaphore(40)
+        val semaphore = Semaphore(6)
         kotlinx.coroutines.coroutineScope {
             names.forEach { name ->
                 launch(Dispatchers.IO) {

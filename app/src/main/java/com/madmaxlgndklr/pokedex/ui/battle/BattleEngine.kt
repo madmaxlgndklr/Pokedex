@@ -204,8 +204,15 @@ object BattleEngine {
         val (fa, fd) = applyMove(firstAttacker, firstMove, firstDefender)
         commitMove(fa, fd, firstAttackerIsPlayer)
 
-        // Check faint after first move
-        if (!firstIsPlayer && playerTeam[playerIdx].currentHp <= 0) {
+        // Check faint after first move — check simultaneous faint first
+        val playerFaintedFirst = playerTeam[playerIdx].currentHp <= 0
+        val opponentFaintedFirst = opponentTeam[opponentIdx].currentHp <= 0
+        if (playerFaintedFirst && opponentFaintedFirst) {
+            log.add("${player().detail.name.uppercase()} fainted!")
+            log.add("${opponent().detail.name.uppercase()} fainted!")
+            return BattleState.Lost(state.log + log)   // player loses on simultaneous faint
+        }
+        if (!firstIsPlayer && playerFaintedFirst) {
             log.add("${player().detail.name.uppercase()} fainted!")
             val endLog = state.log + log
             val alive = playerTeam.count { it.currentHp > 0 }
@@ -216,7 +223,7 @@ object BattleEngine {
                 log = endLog
             )
         }
-        if (firstIsPlayer && opponentTeam[opponentIdx].currentHp <= 0) {
+        if (firstIsPlayer && opponentFaintedFirst) {
             log.add("${opponent().detail.name.uppercase()} fainted!")
             val endLog = state.log + log
             val aliveOpp = opponentTeam.count { it.currentHp > 0 }
@@ -237,7 +244,14 @@ object BattleEngine {
                 val (sa, sd) = applyMove(secondAttacker, secondMove, secondDefender)
                 commitMove(sa, sd, !firstAttackerIsPlayer)
 
-                if (!secondIsPlayer && playerTeam[playerIdx].currentHp <= 0) {
+                val playerFaintedSecond = playerTeam[playerIdx].currentHp <= 0
+                val opponentFaintedSecond = opponentTeam[opponentIdx].currentHp <= 0
+                if (playerFaintedSecond && opponentFaintedSecond) {
+                    log.add("${player().detail.name.uppercase()} fainted!")
+                    log.add("${opponent().detail.name.uppercase()} fainted!")
+                    return BattleState.Lost(state.log + log)
+                }
+                if (!secondIsPlayer && playerFaintedSecond) {
                     log.add("${player().detail.name.uppercase()} fainted!")
                     val endLog = state.log + log
                     val alive = playerTeam.count { it.currentHp > 0 }
@@ -248,7 +262,7 @@ object BattleEngine {
                         log = endLog
                     )
                 }
-                if (secondIsPlayer && opponentTeam[opponentIdx].currentHp <= 0) {
+                if (secondIsPlayer && opponentFaintedSecond) {
                     log.add("${opponent().detail.name.uppercase()} fainted!")
                     val endLog = state.log + log
                     val aliveOpp = opponentTeam.count { it.currentHp > 0 }
@@ -328,7 +342,8 @@ object BattleEngine {
         val typeAdvantage = DamageEngine.computeEffectiveness(gen, opponentBestType, candidate.detail.types)
         val defenseScore = if (typeAdvantage == 0f) 10f else 1f / typeAdvantage
         val hpFraction = candidate.currentHp.toFloat() / candidate.maxHp
-        return defenseScore * hpFraction
+        // Type advantage is primary; HP is a tie-breaker weighted at 25%
+        return defenseScore * (0.75f + hpFraction * 0.25f)
     }
 
     private fun aiForcedSwitchIndex(team: List<BattlePokemon>): Int? =
@@ -347,8 +362,7 @@ object BattleEngine {
         }
         val isPhysical = when {
             gen >= 4 -> move.category == "physical"
-            gen <= 1 -> true
-            else -> DamageEngine.isPhysicalGen23(move.type)
+            else -> DamageEngine.isPhysicalGen23(move.type)  // Gen 1/2/3: type determines physical/special
         }
         val atkStat = if (isPhysical) "attack" else "special-attack"
         val defStat = if (isPhysical) "defense" else "special-defense"

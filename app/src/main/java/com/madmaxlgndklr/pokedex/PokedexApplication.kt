@@ -9,6 +9,10 @@ import com.madmaxlgndklr.pokedex.data.repository.HeldItemRepository
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.ui.common.CryPlayer
 import com.madmaxlgndklr.pokedex.ui.common.NetworkObserver
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class PokedexApplication : Application() {
     private val database by lazy { AppDatabase.getInstance(this) }
@@ -31,9 +35,13 @@ class PokedexApplication : Application() {
     val settingsRepository by lazy { SettingsRepository(settingsDataStore) }
     val networkObserver by lazy { NetworkObserver(this) }
 
+    private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
     override fun onCreate() {
         super.onCreate()
-        filesDir.listFiles { _, n -> n.endsWith(".tmp") }?.forEach { it.delete() }
+        appScope.launch {
+            filesDir.listFiles { _, n -> n.endsWith(".tmp") }?.forEach { it.delete() }
+        }
         CryPlayer.init(this, networkObserver)
     }
 }
