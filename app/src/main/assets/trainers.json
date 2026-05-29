@@ -4088,6 +4088,1047 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Sinnoh",
+      "trainers": [
+        {
+          "id": "sinnoh-roark",
+          "name": "Roark",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Rock",
+          "rosters": [
+            {
+              "label": "DPPt",
+              "team": [
+                {
+                  "pokemonId": 74,
+                  "level": 12,
+                  "moves": [
+                    "tackle",
+                    "defense-curl",
+                    "mud-slap",
+                    "rock-throw"
+                  ]
+                },
+                {
+                  "pokemonId": 95,
+                  "level": 11,
+                  "moves": [
+                    "tackle",
+                    "screech",
+                    "bind",
+                    "rock-throw"
+                  ]
+                },
+                {
+                  "pokemonId": 185,
+                  "level": 12,
+                  "moves": [
+                    "tackle",
+                    "harden",
+                    "rock-throw",
+                    "block"
+                  ]
+                },
+                {
+                  "pokemonId": 111,
+                  "level": 11,
+                  "moves": [
+                    "tackle",
+                    "tail-whip",
+                    "stomp",
+                    "horn-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 138,
+                  "level": 11,
+                  "moves": [
+                    "water-gun",
+                    "withdraw",
+                    "tackle",
+                    "bite"
+                  ]
+                },
+                {
+                  "pokemonId": 408,
+                  "level": 14,
+                  "moves": [
+                    "leer",
+                    "headbutt",
+                    "focus-energy",
+                    "take-down"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sinnoh-gardenia",
+          "name": "Gardenia",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Grass",
+          "rosters": [
+            {
+              "label": "DPPt",
+              "team": [
+                {
+                  "pokemonId": 420,
+                  "level": 19,
+                  "moves": [
+                    "absorb",
+                    "growl",
+                    "helping-hand",
+                    "magical-leaf"
+                  ]
+                },
+                {
+                  "pokemonId": 182,
+                  "level": 20,
+                  "moves": [
+                    "magical-leaf",
+                    "stun-spore",
+                    "sleep-powder",
+                    "synthesis"
+                  ]
+                },
+                {
+                  "pokemonId": 189,
+                  "level": 20,
+                  "moves": [
+                    "mega-drain",
+                    "stun-spore",
+                    "cotton-spore",
+                    "leech-seed"
+                  ]
+                },
+                {
+                  "pokemonId": 315,
+                  "level": 19,
+                  "moves": [
+                    "mega-drain",
+                    "leech-seed",
+                    "stun-spore",
+                    "magical-leaf"
+                  ]
+                },
+                {
+                  "pokemonId": 253,
+                  "level": 20,
+                  "moves": [
+                    "absorb",
+                    "quick-attack",
+                    "pursuit",
+                    "mega-drain"
+                  ]
+                },
+                {
+                  "pokemonId": 407,
+                  "level": 22,
+                  "moves": [
+                    "mega-drain",
+                    "magical-leaf",
+                    "stun-spore",
+                    "petal-dance"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sinnoh-maylene",
+          "name": "Maylene",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Fighting",
+          "rosters": [
+            {
+              "label": "DPPt",
+              "team": [
+                {
+                  "pokemonId": 307,
+                  "level": 28,
+                  "moves": [
+                    "bide",
+                    "meditate",
+                    "confusion",
+                    "force-palm"
+                  ]
+                },
+                {
+                  "pokemonId": 67,
+                  "level": 27,
+                  "moves": [
+                    "karate-chop",
+                    "bulk-up",
+                    "focus-energy",
+                    "leer"
+                  ]
+                },
+                {
+                  "pokemonId": 66,
+                  "level": 28,
+                  "moves": [
+                    "karate-chop",
+                    "leer",
+                    "focus-energy",
+                    "seismic-toss"
+                  ]
+                },
+                {
+                  "pokemonId": 308,
+                  "level": 29,
+                  "moves": [
+                    "force-palm",
+                    "meditate",
+                    "calm-mind",
+                    "detect"
+                  ]
+                },
+                {
+                  "pokemonId": 56,
+                  "level": 28,
+                  "moves": [
+                    "karate-chop",
+                    "leer",
+                    "focus-energy",
+                    "seismic-toss"
+                  ]
+                },
+                {
+                  "pokemonId": 448,
+                  "level": 30,
+                  "moves": [
+                    "force-palm",
+                    "quick-attack",
+                    "metal-claw",
+                    "calm-mind"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sinnoh-crasher-wake",
+          "name": "Crasher Wake",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Water",
+          "rosters": [
+            {
+              "label": "DPPt",
+              "team": [
+                {
+                  "pokemonId": 195,
+                  "level": 33,
+                  "moves": [
+                    "surf",
+                    "earthquake",
+                    "yawn",
+                    "slam"
+                  ]
+                },
+                {
+                  "pokemonId": 55,
+                  "level": 33,
+                  "moves": [
+                    "surf",
+                    "ice-beam",
+                    "psych-up",
+                    "zen-headbutt"
+                  ]
+                },
+                {
+                  "pokemonId": 340,
+                  "level": 34,
+                  "moves": [
+                    "surf",
+                    "earthquake",
+                    "amnesia",
+                    "tickle"
+                  ]
+                },
+                {
+                  "pokemonId": 130,
+                  "level": 34,
+                  "moves": [
+                    "surf",
+                    "ice-fang",
+                    "dragon-rage",
+                    "bite"
+                  ]
+                },
+                {
+                  "pokemonId": 60,
+                  "level": 33,
+                  "moves": [
+                    "surf",
+                    "bubble-beam",
+                    "hypnosis",
+                    "double-slap"
+                  ]
+                },
+                {
+                  "pokemonId": 419,
+                  "level": 37,
+                  "moves": [
+                    "surf",
+                    "crunch",
+                    "aqua-jet",
+                    "swift"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sinnoh-fantina",
+          "name": "Fantina",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Ghost",
+          "rosters": [
+            {
+              "label": "DPPt",
+              "team": [
+                {
+                  "pokemonId": 93,
+                  "level": 32,
+                  "moves": [
+                    "shadow-ball",
+                    "hypnosis",
+                    "payback",
+                    "confuse-ray"
+                  ]
+                },
+                {
+                  "pokemonId": 200,
+                  "level": 32,
+                  "moves": [
+                    "shadow-ball",
+                    "will-o-wisp",
+                    "psybeam",
+                    "confuse-ray"
+                  ]
+                },
+                {
+                  "pokemonId": 354,
+                  "level": 34,
+                  "moves": [
+                    "shadow-ball",
+                    "will-o-wisp",
+                    "calm-mind",
+                    "shadow-sneak"
+                  ]
+                },
+                {
+                  "pokemonId": 353,
+                  "level": 32,
+                  "moves": [
+                    "shadow-ball",
+                    "will-o-wisp",
+                    "confuse-ray",
+                    "spite"
+                  ]
+                },
+                {
+                  "pokemonId": 425,
+                  "level": 34,
+                  "moves": [
+                    "shadow-ball",
+                    "calm-mind",
+                    "gust",
+                    "minimize"
+                  ]
+                },
+                {
+                  "pokemonId": 429,
+                  "level": 36,
+                  "moves": [
+                    "shadow-ball",
+                    "calm-mind",
+                    "will-o-wisp",
+                    "mystical-fire"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sinnoh-byron",
+          "name": "Byron",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Steel",
+          "rosters": [
+            {
+              "label": "DPPt",
+              "team": [
+                {
+                  "pokemonId": 227,
+                  "level": 36,
+                  "moves": [
+                    "steel-wing",
+                    "aerial-ace",
+                    "spikes",
+                    "swift"
+                  ]
+                },
+                {
+                  "pokemonId": 95,
+                  "level": 36,
+                  "moves": [
+                    "iron-tail",
+                    "screech",
+                    "bind",
+                    "rock-throw"
+                  ]
+                },
+                {
+                  "pokemonId": 208,
+                  "level": 37,
+                  "moves": [
+                    "iron-tail",
+                    "earthquake",
+                    "crunch",
+                    "rock-blast"
+                  ]
+                },
+                {
+                  "pokemonId": 82,
+                  "level": 36,
+                  "moves": [
+                    "flash-cannon",
+                    "thunder-wave",
+                    "screech",
+                    "tri-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 205,
+                  "level": 36,
+                  "moves": [
+                    "gyro-ball",
+                    "explosion",
+                    "toxic-spikes",
+                    "rapid-spin"
+                  ]
+                },
+                {
+                  "pokemonId": 411,
+                  "level": 40,
+                  "moves": [
+                    "iron-defense",
+                    "metal-burst",
+                    "iron-head",
+                    "stealth-rock"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sinnoh-candice",
+          "name": "Candice",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Ice",
+          "rosters": [
+            {
+              "label": "DPPt",
+              "team": [
+                {
+                  "pokemonId": 362,
+                  "level": 40,
+                  "moves": [
+                    "blizzard",
+                    "hail",
+                    "shadow-ball",
+                    "ice-shard"
+                  ]
+                },
+                {
+                  "pokemonId": 460,
+                  "level": 40,
+                  "moves": [
+                    "blizzard",
+                    "ice-punch",
+                    "leech-seed",
+                    "wood-hammer"
+                  ]
+                },
+                {
+                  "pokemonId": 220,
+                  "level": 40,
+                  "moves": [
+                    "powder-snow",
+                    "mud-bomb",
+                    "take-down",
+                    "ice-shard"
+                  ]
+                },
+                {
+                  "pokemonId": 221,
+                  "level": 41,
+                  "moves": [
+                    "blizzard",
+                    "earthquake",
+                    "ice-shard",
+                    "mud-bomb"
+                  ]
+                },
+                {
+                  "pokemonId": 459,
+                  "level": 40,
+                  "moves": [
+                    "blizzard",
+                    "ice-shard",
+                    "leech-seed",
+                    "wood-hammer"
+                  ]
+                },
+                {
+                  "pokemonId": 478,
+                  "level": 44,
+                  "moves": [
+                    "blizzard",
+                    "shadow-ball",
+                    "will-o-wisp",
+                    "ice-shard"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sinnoh-volkner",
+          "name": "Volkner",
+          "title": "Gym Leader",
+          "trainerClass": "GYM_LEADER",
+          "typeSpecialty": "Electric",
+          "rosters": [
+            {
+              "label": "DPPt",
+              "team": [
+                {
+                  "pokemonId": 26,
+                  "level": 46,
+                  "moves": [
+                    "thunderbolt",
+                    "volt-tackle",
+                    "quick-attack",
+                    "iron-tail"
+                  ]
+                },
+                {
+                  "pokemonId": 101,
+                  "level": 46,
+                  "moves": [
+                    "thunderbolt",
+                    "explosion",
+                    "thunder-wave",
+                    "signal-beam"
+                  ]
+                },
+                {
+                  "pokemonId": 135,
+                  "level": 47,
+                  "moves": [
+                    "thunderbolt",
+                    "shadow-ball",
+                    "quick-attack",
+                    "thunder-wave"
+                  ]
+                },
+                {
+                  "pokemonId": 82,
+                  "level": 46,
+                  "moves": [
+                    "flash-cannon",
+                    "thunderbolt",
+                    "thunder-wave",
+                    "tri-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 466,
+                  "level": 48,
+                  "moves": [
+                    "thunder-punch",
+                    "fire-punch",
+                    "ice-punch",
+                    "thunder-wave"
+                  ]
+                },
+                {
+                  "pokemonId": 405,
+                  "level": 50,
+                  "moves": [
+                    "thunderbolt",
+                    "crunch",
+                    "ice-fang",
+                    "thunder-fang"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sinnoh-aaron",
+          "name": "Aaron",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Bug",
+          "rosters": [
+            {
+              "label": "DPPt",
+              "team": [
+                {
+                  "pokemonId": 269,
+                  "level": 53,
+                  "moves": [
+                    "bug-buzz",
+                    "psychic",
+                    "quiver-dance",
+                    "stun-spore"
+                  ]
+                },
+                {
+                  "pokemonId": 267,
+                  "level": 53,
+                  "moves": [
+                    "bug-buzz",
+                    "psychic",
+                    "quiver-dance",
+                    "silver-wind"
+                  ]
+                },
+                {
+                  "pokemonId": 416,
+                  "level": 54,
+                  "moves": [
+                    "attack-order",
+                    "defend-order",
+                    "heal-order",
+                    "power-gem"
+                  ]
+                },
+                {
+                  "pokemonId": 214,
+                  "level": 54,
+                  "moves": [
+                    "megahorn",
+                    "close-combat",
+                    "stone-edge",
+                    "night-slash"
+                  ]
+                },
+                {
+                  "pokemonId": 452,
+                  "level": 57,
+                  "moves": [
+                    "cross-poison",
+                    "night-slash",
+                    "crunch",
+                    "swords-dance"
+                  ]
+                },
+                {
+                  "pokemonId": 212,
+                  "level": 55,
+                  "moves": [
+                    "x-scissor",
+                    "iron-head",
+                    "swords-dance",
+                    "night-slash"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sinnoh-bertha",
+          "name": "Bertha",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Ground",
+          "rosters": [
+            {
+              "label": "DPPt",
+              "team": [
+                {
+                  "pokemonId": 340,
+                  "level": 55,
+                  "moves": [
+                    "surf",
+                    "earthquake",
+                    "amnesia",
+                    "tickle"
+                  ]
+                },
+                {
+                  "pokemonId": 76,
+                  "level": 56,
+                  "moves": [
+                    "earthquake",
+                    "rock-blast",
+                    "explosion",
+                    "stone-edge"
+                  ]
+                },
+                {
+                  "pokemonId": 185,
+                  "level": 56,
+                  "moves": [
+                    "earthquake",
+                    "rock-slide",
+                    "stone-edge",
+                    "block"
+                  ]
+                },
+                {
+                  "pokemonId": 472,
+                  "level": 59,
+                  "moves": [
+                    "earthquake",
+                    "x-scissor",
+                    "stone-edge",
+                    "swords-dance"
+                  ]
+                },
+                {
+                  "pokemonId": 232,
+                  "level": 57,
+                  "moves": [
+                    "earthquake",
+                    "hyper-voice",
+                    "rapid-spin",
+                    "thunder-fang"
+                  ]
+                },
+                {
+                  "pokemonId": 450,
+                  "level": 59,
+                  "moves": [
+                    "earthquake",
+                    "crunch",
+                    "stone-edge",
+                    "slack-off"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sinnoh-flint",
+          "name": "Flint",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Fire",
+          "rosters": [
+            {
+              "label": "DPPt",
+              "team": [
+                {
+                  "pokemonId": 78,
+                  "level": 53,
+                  "moves": [
+                    "flamethrower",
+                    "agility",
+                    "bounce",
+                    "fire-blast"
+                  ]
+                },
+                {
+                  "pokemonId": 59,
+                  "level": 55,
+                  "moves": [
+                    "flamethrower",
+                    "extreme-speed",
+                    "dragon-pulse",
+                    "roar"
+                  ]
+                },
+                {
+                  "pokemonId": 467,
+                  "level": 55,
+                  "moves": [
+                    "flamethrower",
+                    "thunder-punch",
+                    "fire-blast",
+                    "screech"
+                  ]
+                },
+                {
+                  "pokemonId": 136,
+                  "level": 55,
+                  "moves": [
+                    "flamethrower",
+                    "shadow-ball",
+                    "sand-attack",
+                    "quick-attack"
+                  ]
+                },
+                {
+                  "pokemonId": 392,
+                  "level": 58,
+                  "moves": [
+                    "flamethrower",
+                    "close-combat",
+                    "earthquake",
+                    "u-turn"
+                  ]
+                },
+                {
+                  "pokemonId": 392,
+                  "level": 61,
+                  "moves": [
+                    "fire-blast",
+                    "close-combat",
+                    "earthquake",
+                    "thunderpunch"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sinnoh-lucian",
+          "name": "Lucian",
+          "title": "Elite Four",
+          "trainerClass": "ELITE_FOUR",
+          "typeSpecialty": "Psychic",
+          "rosters": [
+            {
+              "label": "DPPt",
+              "team": [
+                {
+                  "pokemonId": 122,
+                  "level": 55,
+                  "moves": [
+                    "psychic",
+                    "reflect",
+                    "light-screen",
+                    "calm-mind"
+                  ]
+                },
+                {
+                  "pokemonId": 437,
+                  "level": 56,
+                  "moves": [
+                    "psychic",
+                    "iron-defense",
+                    "calm-mind",
+                    "future-sight"
+                  ]
+                },
+                {
+                  "pokemonId": 308,
+                  "level": 56,
+                  "moves": [
+                    "psychic",
+                    "calm-mind",
+                    "detect",
+                    "hi-jump-kick"
+                  ]
+                },
+                {
+                  "pokemonId": 196,
+                  "level": 58,
+                  "moves": [
+                    "psychic",
+                    "calm-mind",
+                    "shadow-ball",
+                    "morning-sun"
+                  ]
+                },
+                {
+                  "pokemonId": 475,
+                  "level": 59,
+                  "moves": [
+                    "psychic",
+                    "leaf-blade",
+                    "calm-mind",
+                    "close-combat"
+                  ]
+                },
+                {
+                  "pokemonId": 65,
+                  "level": 60,
+                  "moves": [
+                    "psychic",
+                    "recover",
+                    "calm-mind",
+                    "shadow-ball"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sinnoh-cynthia",
+          "name": "Cynthia",
+          "title": "Champion",
+          "trainerClass": "CHAMPION",
+          "typeSpecialty": "Mixed",
+          "rosters": [
+            {
+              "label": "DPPt",
+              "team": [
+                {
+                  "pokemonId": 442,
+                  "level": 61,
+                  "moves": [
+                    "shadow-ball",
+                    "will-o-wisp",
+                    "calm-mind",
+                    "silver-wind"
+                  ]
+                },
+                {
+                  "pokemonId": 423,
+                  "level": 60,
+                  "moves": [
+                    "surf",
+                    "earth-power",
+                    "ice-beam",
+                    "stone-edge"
+                  ]
+                },
+                {
+                  "pokemonId": 350,
+                  "level": 60,
+                  "moves": [
+                    "surf",
+                    "ice-beam",
+                    "recover",
+                    "mirror-coat"
+                  ]
+                },
+                {
+                  "pokemonId": 468,
+                  "level": 60,
+                  "moves": [
+                    "air-slash",
+                    "aura-sphere",
+                    "fire-blast",
+                    "thunder"
+                  ]
+                },
+                {
+                  "pokemonId": 448,
+                  "level": 62,
+                  "moves": [
+                    "aura-sphere",
+                    "dragon-pulse",
+                    "calm-mind",
+                    "swords-dance"
+                  ]
+                },
+                {
+                  "pokemonId": 445,
+                  "level": 66,
+                  "moves": [
+                    "outrage",
+                    "earthquake",
+                    "crunch",
+                    "swords-dance"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "sinnoh-barry",
+          "name": "Barry",
+          "title": "Rival",
+          "trainerClass": "RIVAL",
+          "typeSpecialty": "Mixed",
+          "rosters": [
+            {
+              "label": "Final Battle (DPPt)",
+              "team": [
+                {
+                  "pokemonId": 398,
+                  "level": 58,
+                  "moves": [
+                    "close-combat",
+                    "fly",
+                    "u-turn",
+                    "final-gambit"
+                  ]
+                },
+                {
+                  "pokemonId": 430,
+                  "level": 59,
+                  "moves": [
+                    "pursuit",
+                    "foul-play",
+                    "sucker-punch",
+                    "night-slash"
+                  ]
+                },
+                {
+                  "pokemonId": 405,
+                  "level": 60,
+                  "moves": [
+                    "thunderbolt",
+                    "crunch",
+                    "ice-fang",
+                    "thunder-fang"
+                  ]
+                },
+                {
+                  "pokemonId": 392,
+                  "level": 61,
+                  "moves": [
+                    "flamethrower",
+                    "close-combat",
+                    "earthquake",
+                    "u-turn"
+                  ]
+                },
+                {
+                  "pokemonId": 419,
+                  "level": 60,
+                  "moves": [
+                    "surf",
+                    "crunch",
+                    "aqua-jet",
+                    "ice-fang"
+                  ]
+                },
+                {
+                  "pokemonId": 389,
+                  "level": 63,
+                  "moves": [
+                    "leaf-storm",
+                    "earthquake",
+                    "crunch",
+                    "synthesis"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
