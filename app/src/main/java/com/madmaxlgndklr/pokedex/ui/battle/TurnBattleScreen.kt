@@ -41,10 +41,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
 import com.madmaxlgndklr.pokedex.data.local.HeldItem
-import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
 import com.madmaxlgndklr.pokedex.ui.common.CryPlayer
+import com.madmaxlgndklr.pokedex.ui.common.PokemonImage
 import com.madmaxlgndklr.pokedex.ui.common.TypeBadge
 import com.madmaxlgndklr.pokedex.ui.theme.CaughtGold
 import com.madmaxlgndklr.pokedex.ui.theme.GlowBlue
@@ -175,8 +174,9 @@ private fun PendingSwitchView(
                         )
                         .padding(8.dp)
                 ) {
-                    AsyncImage(
-                        model = RetrofitClient.spriteUrl(poke.detail.id),
+                    PokemonImage(
+                        id = poke.detail.id,
+                        name = poke.detail.name,
                         contentDescription = poke.detail.name,
                         modifier = Modifier.size(40.dp).then(
                             if (isFainted) Modifier.alpha(0.4f) else Modifier
@@ -271,8 +271,9 @@ private fun BattleSetupView(
                         .background(PokedexDark.copy(alpha = 0.5f), RoundedCornerShape(6.dp))
                         .padding(8.dp)
                 ) {
-                    AsyncImage(
-                        model = RetrofitClient.spriteUrl(activeDetail.id),
+                    PokemonImage(
+                        id = activeDetail.id,
+                        name = activeDetail.name,
                         contentDescription = activeDetail.name,
                         modifier = Modifier.size(48.dp)
                     )
@@ -930,8 +931,9 @@ private fun OngoingBattleView(
                             else Modifier
                         )
                 ) {
-                    AsyncImage(
-                        model = RetrofitClient.spriteUrl(poke.detail.id),
+                    PokemonImage(
+                        id = poke.detail.id,
+                        name = poke.detail.name,
                         contentDescription = poke.detail.name,
                         modifier = Modifier.size(28.dp).then(
                             if (isFainted) Modifier.alpha(0.3f) else Modifier
@@ -966,8 +968,9 @@ private fun CombatantRow(pokemon: BattlePokemon, isFront: Boolean) {
             .background(PokedexDark.copy(alpha = 0.5f), RoundedCornerShape(6.dp))
             .padding(8.dp)
     ) {
-        AsyncImage(
-            model = RetrofitClient.spriteUrl(pokemon.detail.id),
+        PokemonImage(
+            id = pokemon.detail.id,
+            name = pokemon.detail.name,
             contentDescription = pokemon.detail.name,
             modifier = Modifier.size(56.dp)
         )

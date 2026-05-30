@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
 import com.madmaxlgndklr.pokedex.model.EvolutionStage
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexCream
 import com.madmaxlgndklr.pokedex.ui.theme.PressStart2P
@@ -42,13 +41,13 @@ fun EvolutionChain(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 stage.members.forEach { node ->
-                    val spriteUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${node.id}.png"
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.clickable(onClickLabel = node.name) { onPokemonClick(node.id) }
                     ) {
-                        AsyncImage(
-                            model = spriteUrl,
+                        PokemonImage(
+                            id = node.id,
+                            name = node.name,
                             contentDescription = "${node.name} sprite",
                             modifier = Modifier.size(56.dp)
                         )

@@ -44,9 +44,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
 import com.madmaxlgndklr.pokedex.model.PokemonDetail
+import com.madmaxlgndklr.pokedex.ui.common.PokemonImage
 import com.madmaxlgndklr.pokedex.ui.theme.CaughtGold
 import com.madmaxlgndklr.pokedex.ui.theme.GlowBlue
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexCream
@@ -283,8 +282,9 @@ private fun SlotPanel(
 @Composable
 private fun PokemonSlotDisplay(detail: PokemonDetail) {
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        AsyncImage(
-            model = RetrofitClient.spriteUrl(detail.id),
+        PokemonImage(
+            id = detail.id,
+            name = detail.name,
             contentDescription = detail.name,
             modifier = Modifier.size(48.dp)
         )

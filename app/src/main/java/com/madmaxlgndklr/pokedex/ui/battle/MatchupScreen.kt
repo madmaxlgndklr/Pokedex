@@ -40,9 +40,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
 import com.madmaxlgndklr.pokedex.model.PokemonDetail
+import com.madmaxlgndklr.pokedex.ui.common.PokemonImage
 import com.madmaxlgndklr.pokedex.ui.theme.CaughtGold
 import com.madmaxlgndklr.pokedex.ui.theme.GlowBlue
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexCream
@@ -149,8 +148,9 @@ private fun TeamColumn(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                AsyncImage(
-                    model = RetrofitClient.spriteUrl(pokemon.id),
+                PokemonImage(
+                    id = pokemon.id,
+                    name = pokemon.name,
                     contentDescription = pokemon.name,
                     modifier = Modifier.size(32.dp)
                 )

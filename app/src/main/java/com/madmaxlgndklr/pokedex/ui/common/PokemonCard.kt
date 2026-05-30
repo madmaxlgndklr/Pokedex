@@ -18,7 +18,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexCream
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexDarkRed
 import com.madmaxlgndklr.pokedex.ui.theme.PressStart2P
@@ -31,8 +30,6 @@ fun PokemonCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val spriteUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png"
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -41,8 +38,9 @@ fun PokemonCard(
             .clickable(onClickLabel = name, onClick = onClick)
             .padding(8.dp)
     ) {
-        AsyncImage(
-            model = spriteUrl,
+        PokemonImage(
+            id = id,
+            name = name,
             contentDescription = "$name sprite",
             modifier = Modifier.size(80.dp)
         )

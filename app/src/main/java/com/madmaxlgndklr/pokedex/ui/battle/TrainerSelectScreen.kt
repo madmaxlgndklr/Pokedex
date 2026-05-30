@@ -33,8 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
+import com.madmaxlgndklr.pokedex.ui.common.PokemonImage
 import com.madmaxlgndklr.pokedex.ui.common.TypeBadge
 import com.madmaxlgndklr.pokedex.ui.theme.GlowBlue
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexCream
@@ -162,9 +161,10 @@ private fun TrainerCard(trainer: Trainer, onClick: () -> Unit) {
             Spacer(Modifier.height(4.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                 trainer.rosters[0].team.forEach { tp ->
-                    AsyncImage(
-                        model = RetrofitClient.spriteUrl(tp.pokemonId),
-                        contentDescription = null,
+                    PokemonImage(
+                        id = tp.pokemonId,
+                        name = "",
+                        contentDescription = "",
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -238,9 +238,10 @@ private fun TrainerBottomSheet(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(vertical = 2.dp)
             ) {
-                AsyncImage(
-                    model = RetrofitClient.spriteUrl(tp.pokemonId),
-                    contentDescription = null,
+                PokemonImage(
+                    id = tp.pokemonId,
+                    name = "",
+                    contentDescription = "",
                     modifier = Modifier.size(40.dp)
                 )
                 Spacer(Modifier.width(8.dp))

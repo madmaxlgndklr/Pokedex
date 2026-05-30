@@ -37,10 +37,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
 import com.madmaxlgndklr.pokedex.data.local.TrainerRecord
 import com.madmaxlgndklr.pokedex.data.local.WildRecord
-import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
+import com.madmaxlgndklr.pokedex.ui.common.PokemonImage
 import com.madmaxlgndklr.pokedex.ui.common.TypeBadge
 import com.madmaxlgndklr.pokedex.ui.theme.CaughtGold
 import com.madmaxlgndklr.pokedex.ui.theme.GlowBlue
@@ -301,8 +300,9 @@ private fun WildRecordRow(record: WildRecord) {
             .background(PokedexDark.copy(alpha = 0.4f), RoundedCornerShape(6.dp))
             .padding(horizontal = 10.dp, vertical = 6.dp)
     ) {
-        AsyncImage(
-            model = RetrofitClient.spriteUrl(record.pokemonId),
+        PokemonImage(
+            id = record.pokemonId,
+            name = record.pokemonName,
             contentDescription = record.pokemonName,
             modifier = Modifier.size(36.dp)
         )
@@ -445,9 +445,10 @@ private fun TrainerDetailOverlay(
                                         horizontalAlignment = Alignment.CenterHorizontally,
                                         verticalArrangement = Arrangement.spacedBy(2.dp)
                                     ) {
-                                        AsyncImage(
-                                            model = RetrofitClient.spriteUrl(tp.pokemonId),
-                                            contentDescription = null,
+                                        PokemonImage(
+                                            id = tp.pokemonId,
+                                            name = "",
+                                            contentDescription = "",
                                             modifier = Modifier.size(48.dp)
                                         )
                                         Text(

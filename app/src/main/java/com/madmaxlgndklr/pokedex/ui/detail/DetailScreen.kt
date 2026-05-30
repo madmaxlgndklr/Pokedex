@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.madmaxlgndklr.pokedex.R
 import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
+import com.madmaxlgndklr.pokedex.ui.common.PokemonImage
 import com.madmaxlgndklr.pokedex.model.EvolutionNode
 import com.madmaxlgndklr.pokedex.model.PokemonDetail
 import com.madmaxlgndklr.pokedex.model.PokemonStat
@@ -577,8 +578,9 @@ private fun EvoStageBox(
             color = PokedexCream.copy(alpha = 0.7f)
         )
         if (node != null) {
-            AsyncImage(
-                model = RetrofitClient.spriteUrl(node.id),
+            PokemonImage(
+                id = node.id,
+                name = node.name,
                 contentDescription = node.name,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.size(52.dp)

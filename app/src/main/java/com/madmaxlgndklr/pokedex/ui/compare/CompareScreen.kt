@@ -40,10 +40,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
 import com.madmaxlgndklr.pokedex.R
-import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
 import com.madmaxlgndklr.pokedex.model.PokemonDetail
+import com.madmaxlgndklr.pokedex.ui.common.PokemonImage
 import com.madmaxlgndklr.pokedex.model.PokemonStat
 import com.madmaxlgndklr.pokedex.ui.common.UiState
 import com.madmaxlgndklr.pokedex.ui.common.swipeBack
@@ -198,8 +197,9 @@ private fun PokemonCompareCard(
             .background(PokedexDark.copy(alpha = 0.55f), RoundedCornerShape(6.dp))
             .padding(6.dp)
     ) {
-        AsyncImage(
-            model = RetrofitClient.spriteUrl(detail.id),
+        PokemonImage(
+            id = detail.id,
+            name = detail.name,
             contentDescription = detail.name,
             contentScale = ContentScale.Fit,
             modifier = Modifier.size(panelWidth * 0.55f)

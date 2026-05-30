@@ -63,11 +63,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
 import com.madmaxlgndklr.pokedex.R
-import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
 import com.madmaxlgndklr.pokedex.model.PokemonSummary
 import com.madmaxlgndklr.pokedex.ui.common.BottomNavBar
+import com.madmaxlgndklr.pokedex.ui.common.PokemonImage
 import com.madmaxlgndklr.pokedex.ui.common.DexSelection
 import com.madmaxlgndklr.pokedex.ui.common.Generation
 import com.madmaxlgndklr.pokedex.ui.common.NavDestination
@@ -431,8 +430,9 @@ private fun SpriteRowItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        AsyncImage(
-            model = RetrofitClient.spriteUrl(pokemon.id),
+        PokemonImage(
+            id = pokemon.id,
+            name = pokemon.name,
             contentDescription = pokemon.name,
             contentScale = ContentScale.Fit,
             modifier = Modifier.size(96.dp)
