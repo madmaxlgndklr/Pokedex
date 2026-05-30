@@ -39,11 +39,18 @@ class SettingsViewModel(
     val musicOnLaunch: StateFlow<Boolean> = settingsRepo.musicOnLaunch
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
+    val spriteMode: StateFlow<String> = settingsRepo.spriteMode
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "modern")
+
     private val _syncState = MutableStateFlow<SyncState>(SyncState.Idle)
     val syncState: StateFlow<SyncState> = _syncState
 
     fun setMusicOnLaunch(enabled: Boolean) {
         viewModelScope.launch { settingsRepo.setMusicOnLaunch(enabled) }
+    }
+
+    fun setSpriteMode(mode: String) {
+        viewModelScope.launch { settingsRepo.setSpriteMode(mode) }
     }
 
     fun syncWithOptions(options: SyncOptions) {

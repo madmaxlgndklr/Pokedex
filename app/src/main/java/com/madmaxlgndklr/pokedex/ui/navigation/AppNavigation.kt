@@ -52,6 +52,7 @@ import com.madmaxlgndklr.pokedex.ui.battle.RecordViewModel
 import com.madmaxlgndklr.pokedex.ui.battle.TrainerSelectViewModel
 import com.madmaxlgndklr.pokedex.ui.team.TeamScreen
 import com.madmaxlgndklr.pokedex.ui.team.TeamViewModel
+import com.madmaxlgndklr.pokedex.ui.common.SpriteModeProvider
 
 private object Routes {
     const val SEARCH = "search"
@@ -89,6 +90,7 @@ fun AppNavigation() {
 
     // null = not yet loaded from DataStore; avoids starting music before we know the preference
     val musicOnLaunch: Boolean? by settingsRepo.musicOnLaunch.collectAsState(initial = null)
+    val spriteMode: String by settingsRepo.spriteMode.collectAsState(initial = "modern")
 
     val currentMusicOnLaunch by rememberUpdatedState(musicOnLaunch ?: true)
 
@@ -144,6 +146,7 @@ fun AppNavigation() {
         }
     }
 
+    SpriteModeProvider(mode = spriteMode) {
     Box(Modifier.fillMaxSize()) {
         NavHost(
             navController = navController,
@@ -362,4 +365,5 @@ fun AppNavigation() {
             )
         }
     }
+    } // SpriteModeProvider
 }

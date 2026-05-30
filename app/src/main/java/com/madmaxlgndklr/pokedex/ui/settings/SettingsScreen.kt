@@ -66,6 +66,7 @@ fun SettingsScreen(
     onNavigateMyCollection: () -> Unit
 ) {
     val musicOnLaunch by viewModel.musicOnLaunch.collectAsState()
+    val spriteMode by viewModel.spriteMode.collectAsState()
     val syncState by viewModel.syncState.collectAsState()
     var showSyncDialog by remember { mutableStateOf(false) }
     var syncOptions by remember { mutableStateOf(SyncOptions()) }
@@ -197,6 +198,44 @@ fun SettingsScreen(
                 fontSize = 9.sp,
                 color = CaughtGold
             )
+
+            HorizontalDivider(color = PokedexCream.copy(alpha = 0.25f))
+
+            // Sprite mode row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "SPRITE MODE",
+                    fontFamily = PressStart2P,
+                    fontSize = 7.sp,
+                    color = PokedexCream
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    listOf("modern" to "3D GIF", "retro" to "GB", "ds" to "DS").forEach { (mode, label) ->
+                        val selected = spriteMode == mode
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    color = if (selected) CaughtGold else PokedexDark,
+                                    shape = RoundedCornerShape(3.dp)
+                                )
+                                .clickable { viewModel.setSpriteMode(mode) }
+                                .padding(horizontal = 6.dp, vertical = 4.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = label,
+                                fontFamily = PressStart2P,
+                                fontSize = 5.sp,
+                                color = if (selected) PokedexDark else PokedexCream.copy(alpha = 0.6f)
+                            )
+                        }
+                    }
+                }
+            }
 
             HorizontalDivider(color = PokedexCream.copy(alpha = 0.25f))
 
