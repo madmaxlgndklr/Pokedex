@@ -40,9 +40,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
+import com.madmaxlgndklr.pokedex.ui.common.PokemonImage
 import com.madmaxlgndklr.pokedex.R
-import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
 import com.madmaxlgndklr.pokedex.ui.common.BottomNavBar
 import com.madmaxlgndklr.pokedex.ui.common.NavDestination
 import com.madmaxlgndklr.pokedex.ui.common.swipeBack
@@ -165,9 +164,10 @@ fun TeamScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
-                            AsyncImage(
-                                model = RetrofitClient.spriteUrl(entry.id),
-                                contentDescription = entry.detail?.name,
+                            PokemonImage(
+                                id = entry.id,
+                                name = entry.detail?.name ?: "",
+                                contentDescription = entry.detail?.name ?: "",
                                 contentScale = ContentScale.Fit,
                                 modifier = Modifier.size(48.dp)
                             )

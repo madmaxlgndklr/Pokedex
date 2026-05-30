@@ -18,8 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
+import com.madmaxlgndklr.pokedex.ui.common.PokemonImage
 import com.madmaxlgndklr.pokedex.model.PokemonSummary
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexCream
 import com.madmaxlgndklr.pokedex.ui.theme.PokedexDark
@@ -56,8 +55,9 @@ private fun SpriteGridItem(id: Int, name: String, onClick: () -> Unit) {
             .padding(6.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AsyncImage(
-            model = RetrofitClient.spriteUrl(id),
+        PokemonImage(
+            id = id,
+            name = name,
             contentDescription = name,
             contentScale = ContentScale.Fit,
             modifier = Modifier.size(72.dp)
