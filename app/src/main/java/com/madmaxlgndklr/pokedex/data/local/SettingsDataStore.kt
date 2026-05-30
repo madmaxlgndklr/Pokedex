@@ -74,4 +74,12 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
 
     suspend fun loadBattleConfigJson(): String? =
         dataStore.data.map { it[BATTLE_CONFIG_KEY] }.first()
+
+    private val SPRITE_MODE_KEY = stringPreferencesKey("sprite_mode")
+
+    val spriteMode: Flow<String> = dataStore.data.map { it[SPRITE_MODE_KEY] ?: "modern" }
+
+    suspend fun setSpriteMode(mode: String) {
+        dataStore.edit { it[SPRITE_MODE_KEY] = mode }
+    }
 }
