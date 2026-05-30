@@ -258,7 +258,7 @@ class TurnBattleViewModel(
                     val nature = Natures.ALL.find { it.name.equals(savedDto.nature, ignoreCase = true) } ?: Natures.HARDY
                     val slots = savedDto.slots
                         .mapKeys { it.key.toIntOrNull() ?: -1 }
-                        .filter { it.key >= 1 }
+                        .filter { it.key > 0 }
                         .mapValues { (_, v) ->
                             SlotOverride(
                                 level = v.level,
