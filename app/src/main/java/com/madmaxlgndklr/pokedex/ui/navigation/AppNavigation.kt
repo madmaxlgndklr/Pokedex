@@ -43,6 +43,8 @@ import com.madmaxlgndklr.pokedex.ui.search.SearchScreen
 import com.madmaxlgndklr.pokedex.ui.search.SearchViewModel
 import com.madmaxlgndklr.pokedex.ui.settings.SettingsScreen
 import com.madmaxlgndklr.pokedex.ui.settings.SettingsViewModel
+import com.madmaxlgndklr.pokedex.ui.profile.ProfileScreen
+import com.madmaxlgndklr.pokedex.ui.profile.ProfileViewModel
 import com.madmaxlgndklr.pokedex.ui.battle.BattleHubScreen
 import com.madmaxlgndklr.pokedex.ui.battle.DamageCalcViewModel
 import com.madmaxlgndklr.pokedex.ui.battle.MatchupViewModel
@@ -59,6 +61,7 @@ private object Routes {
     const val FULL_LIST = "full_list"
     const val MY_COLLECTION = "my_collection"
     const val SETTINGS = "settings"
+    const val PROFILE = "profile"
     const val TEAM = "team"
     const val COMPARE = "compare/{firstId}"
     const val DETAIL = "detail/{pokemonId}"
@@ -74,10 +77,12 @@ private object Routes {
 fun AppNavigation() {
     val navController = rememberNavController()
     val context = LocalContext.current
-    val repo = (context.applicationContext as PokedexApplication).repository
-    val settingsRepo = (context.applicationContext as PokedexApplication).settingsRepository
+    val app = context.applicationContext as PokedexApplication
+    val repo = app.repository
+    val settingsRepo = app.settingsRepository
+    val syncRepository = app.syncRepository
 
-    val teamVm: TeamViewModel = viewModel(factory = TeamViewModel.factory(repo, settingsRepo))
+    val teamVm: TeamViewModel = viewModel(factory = TeamViewModel.factory(repo, settingsRepo, syncRepository))
 
     val scope = rememberCoroutineScope()
     var statusBarVisible by remember { mutableStateOf(false) }
@@ -181,7 +186,7 @@ fun AppNavigation() {
                 FullListScreen(
                     viewModel = vm,
                     onPokemonClick = { id -> navController.navigate(Routes.detail(id)) },
-                    onBack = { navController.popBackStack() },
+                    onBack = { if (!navController.popBackStack()) activity?.finish() },
                     onNavigateMyCollection = {
                         navController.navigate(Routes.MY_COLLECTION) {
                             popUpTo(Routes.FULL_LIST) { inclusive = true }
@@ -197,7 +202,7 @@ fun AppNavigation() {
                 MyCollectionScreen(
                     viewModel = vm,
                     onPokemonClick = { id -> navController.navigate(Routes.detail(id)) },
-                    onBack = { navController.popBackStack() },
+                    onBack = { if (!navController.popBackStack()) activity?.finish() },
                     onNavigateFullList = {
                         navController.navigate(Routes.FULL_LIST) {
                             popUpTo(Routes.MY_COLLECTION) { inclusive = true }
@@ -234,7 +239,6 @@ fun AppNavigation() {
                 )
             }
             composable(Routes.SETTINGS) {
-                val app = context.applicationContext as PokedexApplication
                 val vm: SettingsViewModel = viewModel(factory = SettingsViewModel.factory(settingsRepo, repo, app.heldItemRepository))
                 SettingsScreen(
                     viewModel = vm,
@@ -254,7 +258,21 @@ fun AppNavigation() {
                         navController.navigate(Routes.MY_COLLECTION) {
                             popUpTo(Routes.SETTINGS) { inclusive = true }
                         }
-                    }
+                    },
+                    onNavigateProfile = { navController.navigate(Routes.PROFILE) }
+                )
+            }
+            composable(Routes.PROFILE) {
+                val vm: ProfileViewModel = viewModel(
+                    factory = ProfileViewModel.factory(
+                        app.settingsRepository,
+                        app.authRepository,
+                        app.syncRepository
+                    )
+                )
+                ProfileScreen(
+                    viewModel = vm,
+                    onBack = { navController.popBackStack() }
                 )
             }
             composable(
@@ -319,7 +337,7 @@ fun AppNavigation() {
                     factory = DamageCalcViewModel.factory(repo, settingsRepo, preloadId)
                 )
                 val battleVm: TurnBattleViewModel = viewModel(
-                    factory = TurnBattleViewModel.factory(repo, settingsRepo)
+                    factory = TurnBattleViewModel.factory(repo, settingsRepo, syncRepository)
                 )
                 val matchupVm: MatchupViewModel = viewModel(
                     factory = MatchupViewModel.factory(repo)
@@ -328,13 +346,12 @@ fun AppNavigation() {
                 val trainerVm: TrainerSelectViewModel = viewModel(
                     factory = TrainerSelectViewModel.factory(trainerRepo)
                 )
-                val battleApp = context.applicationContext as PokedexApplication
                 val recordVm: RecordViewModel = viewModel(
-                    factory = RecordViewModel.factory(battleApp.battleRecordRepository, trainerRepo)
+                    factory = RecordViewModel.factory(app.battleRecordRepository, trainerRepo)
                 )
                 LaunchedEffect(Unit) {
-                    battleVm.loadHeldItems(battleApp.heldItemRepository)
-                    battleVm.setRecordRepository(battleApp.battleRecordRepository)
+                    battleVm.loadHeldItems(app.heldItemRepository)
+                    battleVm.setRecordRepository(app.battleRecordRepository)
                 }
                 BattleHubScreen(
                     calcVm = calcVm,

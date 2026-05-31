@@ -256,17 +256,31 @@ private fun DetailContent(
         }
 
         // Sprite — tappable to toggle shiny
-        AsyncImage(
-            model = if (showShiny) RetrofitClient.shinySpriteUrl(detail.id) else detail.spriteUrl,
-            contentDescription = detail.name,
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .size(sw * 0.36f)
-                .offset(x = sw * 0.32f, y = sh * 0.38f)
-                .pointerInput(Unit) {
-                    detectTapGestures { showShiny = !showShiny }
-                }
-        )
+        if (showShiny) {
+            AsyncImage(
+                model = RetrofitClient.shinySpriteUrl(detail.id),
+                contentDescription = detail.name,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .size(sw * 0.36f)
+                    .offset(x = sw * 0.32f, y = sh * 0.38f)
+                    .pointerInput(Unit) {
+                        detectTapGestures { showShiny = !showShiny }
+                    }
+            )
+        } else {
+            PokemonImage(
+                id = detail.id,
+                name = detail.name,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .size(sw * 0.36f)
+                    .offset(x = sw * 0.32f, y = sh * 0.38f)
+                    .pointerInput(Unit) {
+                        detectTapGestures { showShiny = !showShiny }
+                    }
+            )
+        }
 
         if (showCryButton) {
             Box(

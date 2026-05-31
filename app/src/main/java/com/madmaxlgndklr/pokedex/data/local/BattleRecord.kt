@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import androidx.room.Transaction
 
 @Entity(tableName = "trainer_records")
 data class TrainerRecord(
@@ -49,4 +50,28 @@ interface BattleRecordDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertWildRecord(record: WildRecord)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllTrainerRecords(records: List<TrainerRecord>)
+
+    @Query("DELETE FROM trainer_records")
+    suspend fun deleteAllTrainerRecords()
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllWildRecords(records: List<WildRecord>)
+
+    @Query("DELETE FROM wild_records")
+    suspend fun deleteAllWildRecords()
+
+    @Transaction
+    suspend fun replaceAllTrainerRecords(records: List<TrainerRecord>) {
+        deleteAllTrainerRecords()
+        if (records.isNotEmpty()) insertAllTrainerRecords(records)
+    }
+
+    @Transaction
+    suspend fun replaceAllWildRecords(records: List<WildRecord>) {
+        deleteAllWildRecords()
+        if (records.isNotEmpty()) insertAllWildRecords(records)
+    }
 }

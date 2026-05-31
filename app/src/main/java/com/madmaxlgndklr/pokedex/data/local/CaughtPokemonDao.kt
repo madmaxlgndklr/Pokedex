@@ -20,4 +20,10 @@ interface CaughtPokemonDao {
 
     @Query("SELECT COUNT(*) > 0 FROM caught_pokemon WHERE id = :id")
     fun isCaught(id: Int): Flow<Boolean>
+
+    @Query("SELECT id FROM caught_pokemon")
+    suspend fun getAllIds(): List<Int>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAll(entities: List<CaughtPokemonEntity>)
 }

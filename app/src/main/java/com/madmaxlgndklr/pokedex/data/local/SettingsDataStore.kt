@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
@@ -20,7 +21,10 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
     val musicOnLaunch: Flow<Boolean> = dataStore.data.map { it[MUSIC_ON_LAUNCH] ?: true }
 
     suspend fun setMusicOnLaunch(enabled: Boolean) {
-        dataStore.edit { it[MUSIC_ON_LAUNCH] = enabled }
+        dataStore.edit { prefs ->
+            prefs[MUSIC_ON_LAUNCH] = enabled
+            prefs[SETTINGS_UPDATED_AT_KEY] = System.currentTimeMillis()
+        }
     }
 
     private val SEARCH_HISTORY_KEY = stringPreferencesKey("search_history")
@@ -55,6 +59,14 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
     suspend fun setTeam(ids: List<Int>) {
         dataStore.edit { prefs ->
             prefs[TEAM_KEY] = ids.take(6).joinToString(",")
+            prefs[TEAM_UPDATED_AT_KEY] = System.currentTimeMillis()
+        }
+    }
+
+    suspend fun setTeam(ids: List<Int>, updatedAt: Long) {
+        dataStore.edit { prefs ->
+            prefs[TEAM_KEY] = ids.take(6).joinToString(",")
+            prefs[TEAM_UPDATED_AT_KEY] = updatedAt
         }
     }
 
@@ -63,17 +75,56 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
     val selectedGen: Flow<Int> = dataStore.data.map { it[SELECTED_GEN_KEY] ?: 5 }
 
     suspend fun setGen(gen: Int) {
-        dataStore.edit { it[SELECTED_GEN_KEY] = gen }
+        dataStore.edit { prefs ->
+            prefs[SELECTED_GEN_KEY] = gen
+            prefs[SETTINGS_UPDATED_AT_KEY] = System.currentTimeMillis()
+        }
     }
 
     private val BATTLE_CONFIG_KEY = stringPreferencesKey("battle_config_v1")
 
     suspend fun saveBattleConfig(json: String) {
-        dataStore.edit { it[BATTLE_CONFIG_KEY] = json }
+        dataStore.edit { prefs ->
+            prefs[BATTLE_CONFIG_KEY] = json
+            prefs[BATTLE_CONFIG_UPDATED_AT_KEY] = System.currentTimeMillis()
+        }
+    }
+
+    suspend fun saveBattleConfig(json: String, updatedAt: Long) {
+        dataStore.edit { prefs ->
+            prefs[BATTLE_CONFIG_KEY] = json
+            prefs[BATTLE_CONFIG_UPDATED_AT_KEY] = updatedAt
+        }
     }
 
     suspend fun loadBattleConfigJson(): String? =
         dataStore.data.map { it[BATTLE_CONFIG_KEY] }.first()
+
+    // Group A — trainerName
+    private val TRAINER_NAME_KEY = stringPreferencesKey("trainer_name")
+
+    val trainerName: Flow<String> = dataStore.data.map { it[TRAINER_NAME_KEY] ?: "" }
+
+    suspend fun setTrainerName(name: String) {
+        val now = System.currentTimeMillis()
+        dataStore.edit { prefs ->
+            prefs[TRAINER_NAME_KEY] = name.take(16)
+            prefs[SETTINGS_UPDATED_AT_KEY] = now
+        }
+    }
+
+    // Group B — sync timestamp keys
+    private val TEAM_UPDATED_AT_KEY = longPreferencesKey("team_updated_at")
+    val teamUpdatedAt: Flow<Long> = dataStore.data.map { it[TEAM_UPDATED_AT_KEY] ?: 0L }
+    suspend fun setTeamUpdatedAt(ts: Long) { dataStore.edit { it[TEAM_UPDATED_AT_KEY] = ts } }
+
+    private val BATTLE_CONFIG_UPDATED_AT_KEY = longPreferencesKey("battle_config_updated_at")
+    val battleConfigUpdatedAt: Flow<Long> = dataStore.data.map { it[BATTLE_CONFIG_UPDATED_AT_KEY] ?: 0L }
+    suspend fun setBattleConfigUpdatedAt(ts: Long) { dataStore.edit { it[BATTLE_CONFIG_UPDATED_AT_KEY] = ts } }
+
+    private val SETTINGS_UPDATED_AT_KEY = longPreferencesKey("settings_updated_at")
+    val settingsUpdatedAt: Flow<Long> = dataStore.data.map { it[SETTINGS_UPDATED_AT_KEY] ?: 0L }
+    suspend fun setSettingsUpdatedAt(ts: Long) { dataStore.edit { it[SETTINGS_UPDATED_AT_KEY] = ts } }
 
     private val SPRITE_MODE_KEY = stringPreferencesKey("sprite_mode")
 

@@ -63,7 +63,8 @@ fun SettingsScreen(
     onToggleMute: () -> Unit,
     onBack: () -> Unit,
     onNavigateFullList: () -> Unit,
-    onNavigateMyCollection: () -> Unit
+    onNavigateMyCollection: () -> Unit,
+    onNavigateProfile: () -> Unit = {}
 ) {
     val musicOnLaunch by viewModel.musicOnLaunch.collectAsState()
     val spriteMode by viewModel.spriteMode.collectAsState()
@@ -298,6 +299,33 @@ fun SettingsScreen(
                 fontSize = 7.sp,
                 color = PokedexCream.copy(alpha = 0.7f)
             )
+
+            HorizontalDivider(color = PokedexCream.copy(alpha = 0.25f))
+
+            // Trainer Profile
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { onNavigateProfile() },
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "TRAINER PROFILE",
+                    fontFamily = PressStart2P,
+                    fontSize = 7.sp,
+                    color = PokedexCream
+                )
+                Text(
+                    text = "▶",
+                    fontFamily = PressStart2P,
+                    fontSize = 7.sp,
+                    color = GlowBlue
+                )
+            }
 
             HorizontalDivider(color = PokedexCream.copy(alpha = 0.25f))
 

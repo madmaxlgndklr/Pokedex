@@ -1,0 +1,23 @@
+package com.madmaxlgndklr.pokedex.data.remote
+
+import com.madmaxlgndklr.pokedex.BuildConfig
+import io.github.jan.supabase.auth.Auth
+import io.github.jan.supabase.compose.auth.ComposeAuth
+import io.github.jan.supabase.compose.auth.googleNativeLogin
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.realtime.Realtime
+
+object SupabaseModule {
+    val client = createSupabaseClient(
+        supabaseUrl = BuildConfig.SUPABASE_URL,
+        supabaseKey = BuildConfig.SUPABASE_ANON_KEY
+    ) {
+        install(Auth)
+        install(Postgrest)
+        install(Realtime)
+        install(ComposeAuth) {
+            googleNativeLogin(serverClientId = BuildConfig.GOOGLE_SERVER_CLIENT_ID)
+        }
+    }
+}

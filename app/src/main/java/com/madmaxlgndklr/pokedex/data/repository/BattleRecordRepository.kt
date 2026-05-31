@@ -5,7 +5,10 @@ import com.madmaxlgndklr.pokedex.data.local.TrainerRecord
 import com.madmaxlgndklr.pokedex.data.local.WildRecord
 import com.madmaxlgndklr.pokedex.ui.battle.Trainer
 
-class BattleRecordRepository(private val dao: BattleRecordDao) {
+class BattleRecordRepository(
+    private val dao: BattleRecordDao,
+    private val sync: com.madmaxlgndklr.pokedex.data.remote.SyncRepository? = null
+) {
 
     suspend fun getAllTrainerRecords(): List<TrainerRecord> = dao.getAllTrainerRecords()
     suspend fun getAllWildRecords(): List<WildRecord> = dao.getAllWildRecords()
@@ -35,6 +38,7 @@ class BattleRecordRepository(private val dao: BattleRecordDao) {
             )
         }
         dao.upsertTrainerRecord(updated)
+        sync?.pushTrainerRecord(updated)
     }
 
     suspend fun recordWildBattle(pokemonId: Int, pokemonName: String, won: Boolean) {
@@ -56,5 +60,6 @@ class BattleRecordRepository(private val dao: BattleRecordDao) {
             )
         }
         dao.upsertWildRecord(updated)
+        sync?.pushWildRecord(updated)
     }
 }

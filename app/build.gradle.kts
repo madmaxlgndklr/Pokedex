@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -16,9 +17,14 @@ android {
         applicationId = "com.madmaxlgndklr.pokedex"
         minSdk = 24
         targetSdk = 36
-        versionCode = 2
-        versionName = "0.2"
+        versionCode = 32
+        versionName = "0.32"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        val localProps = org.jetbrains.kotlin.konan.properties.Properties()
+        localProps.load(rootProject.file("local.properties").inputStream())
+        buildConfigField("String", "SUPABASE_URL", "\"${localProps.getProperty("SUPABASE_URL", "")}\"")
+        buildConfigField("String", "SUPABASE_ANON_KEY", "\"${localProps.getProperty("SUPABASE_ANON_KEY", "")}\"")
+        buildConfigField("String", "GOOGLE_SERVER_CLIENT_ID", "\"${localProps.getProperty("GOOGLE_SERVER_CLIENT_ID", "")}\"")
     }
 
     buildTypes {
@@ -36,6 +42,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -65,6 +72,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+    implementation(libs.coil.gif)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.datastore.preferences)
     implementation(libs.media3.exoplayer)
@@ -82,4 +90,11 @@ dependencies {
 
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    implementation(platform(libs.supabase.bom))
+    implementation(libs.supabase.postgrest)
+    implementation(libs.supabase.auth)
+    implementation(libs.supabase.compose.auth)
+    implementation(libs.supabase.realtime)
+    implementation(libs.ktor.client.android)
 }
