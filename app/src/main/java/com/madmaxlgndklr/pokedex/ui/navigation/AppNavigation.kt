@@ -43,6 +43,8 @@ import com.madmaxlgndklr.pokedex.ui.search.SearchScreen
 import com.madmaxlgndklr.pokedex.ui.search.SearchViewModel
 import com.madmaxlgndklr.pokedex.ui.settings.SettingsScreen
 import com.madmaxlgndklr.pokedex.ui.settings.SettingsViewModel
+import com.madmaxlgndklr.pokedex.ui.profile.ProfileScreen
+import com.madmaxlgndklr.pokedex.ui.profile.ProfileViewModel
 import com.madmaxlgndklr.pokedex.ui.battle.BattleHubScreen
 import com.madmaxlgndklr.pokedex.ui.battle.DamageCalcViewModel
 import com.madmaxlgndklr.pokedex.ui.battle.MatchupViewModel
@@ -59,6 +61,7 @@ private object Routes {
     const val FULL_LIST = "full_list"
     const val MY_COLLECTION = "my_collection"
     const val SETTINGS = "settings"
+    const val PROFILE = "profile"
     const val TEAM = "team"
     const val COMPARE = "compare/{firstId}"
     const val DETAIL = "detail/{pokemonId}"
@@ -254,7 +257,22 @@ fun AppNavigation() {
                         navController.navigate(Routes.MY_COLLECTION) {
                             popUpTo(Routes.SETTINGS) { inclusive = true }
                         }
-                    }
+                    },
+                    onNavigateProfile = { navController.navigate(Routes.PROFILE) }
+                )
+            }
+            composable(Routes.PROFILE) {
+                val app = context.applicationContext as PokedexApplication
+                val vm: ProfileViewModel = viewModel(
+                    factory = ProfileViewModel.factory(
+                        app.settingsRepository,
+                        app.authRepository,
+                        app.syncRepository
+                    )
+                )
+                ProfileScreen(
+                    viewModel = vm,
+                    onBack = { navController.popBackStack() }
                 )
             }
             composable(
