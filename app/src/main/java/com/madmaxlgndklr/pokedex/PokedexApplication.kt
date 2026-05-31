@@ -54,6 +54,7 @@ class PokedexApplication : Application() {
         appScope.launch {
             runCatching { authRepository.signInAnonymously() }
             syncRepository.syncOnOpen()
+            syncRepository.startRealtimeSync()
         }
         CryPlayer.init(this, networkObserver)
     }

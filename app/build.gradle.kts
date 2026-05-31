@@ -22,9 +22,9 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         val localProps = org.jetbrains.kotlin.konan.properties.Properties()
         localProps.load(rootProject.file("local.properties").inputStream())
-        buildConfigField("String", "SUPABASE_URL", "\"${localProps.getProperty("SUPABASE_URL")}\"")
-        buildConfigField("String", "SUPABASE_ANON_KEY", "\"${localProps.getProperty("SUPABASE_ANON_KEY")}\"")
-        buildConfigField("String", "GOOGLE_SERVER_CLIENT_ID", "\"${localProps.getProperty("GOOGLE_SERVER_CLIENT_ID")}\"")
+        buildConfigField("String", "SUPABASE_URL", "\"${localProps.getProperty("SUPABASE_URL", "")}\"")
+        buildConfigField("String", "SUPABASE_ANON_KEY", "\"${localProps.getProperty("SUPABASE_ANON_KEY", "")}\"")
+        buildConfigField("String", "GOOGLE_SERVER_CLIENT_ID", "\"${localProps.getProperty("GOOGLE_SERVER_CLIENT_ID", "")}\"")
     }
 
     buildTypes {
@@ -95,5 +95,6 @@ dependencies {
     implementation(libs.supabase.postgrest)
     implementation(libs.supabase.auth)
     implementation(libs.supabase.compose.auth)
+    implementation(libs.supabase.realtime)
     implementation(libs.ktor.client.android)
 }

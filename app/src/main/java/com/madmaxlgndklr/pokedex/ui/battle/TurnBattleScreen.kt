@@ -232,7 +232,8 @@ private fun BattleSetupView(
     val syncError by viewModel.heldItemSyncError.collectAsState()
     val canStart by viewModel.canStartBattle.collectAsState()
 
-    val activeOv = setup.teamOverrides[selectedSetupSlot]
+    val activePokemonId = teamIds.getOrNull(selectedSetupSlot)
+    val activeOv = if (selectedSetupSlot == 0 || activePokemonId == null) null else setup.teamOverrides[activePokemonId]
     val activeDetail = slotDetails[selectedSetupSlot] ?: setup.playerDetail
     val activeLevel = activeOv?.level ?: setup.level
     val activeNature = activeOv?.nature ?: setup.nature
