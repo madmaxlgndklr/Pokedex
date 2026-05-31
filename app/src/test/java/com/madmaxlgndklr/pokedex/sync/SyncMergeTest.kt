@@ -42,6 +42,14 @@ class SyncMergeTest {
     }
 
     @Test
+    fun `mergeTrainerRecords picks non-null firstDefeatedAt`() {
+        val local = listOf(TrainerRecord("t1", "Brock", "Gym Leader", "Kanto", "GymLeader", "Rock", wins = 1, losses = 0, firstDefeatedAt = null, lastBattledAt = 100))
+        val remote = listOf(RemoteTrainerRow("t1", "Brock", "Gym Leader", "Kanto", "GymLeader", "Rock", wins = 0, losses = 0, firstDefeatedAt = 50L, lastBattledAt = 100))
+        val result = MergeUtils.mergeTrainerRecords(local, remote)
+        assertEquals(50L, result[0].firstDefeatedAt)
+    }
+
+    @Test
     fun `mergeWildRecords uses max wins and losses`() {
         val local = listOf(WildRecord(25, "pikachu", wins = 10, losses = 1, lastBattledAt = 100))
         val remote = listOf(RemoteWildRow(25, "pikachu", wins = 8, losses = 3, lastBattledAt = 200))

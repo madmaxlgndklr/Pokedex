@@ -217,8 +217,6 @@ class SyncRepository(
 
         // caught_pokemon — stored in Room via CaughtPokemonEntity(id, name, caughtAt)
         val localCaughtIds = caughtDao.getAllIds()
-        val remoteCaughtIds = remote.caught.map { it.pokemonId }
-        val mergedCaughtIds = MergeUtils.mergeCaughtPokemon(localCaughtIds, remoteCaughtIds)
         // Insert remote-only entries (name unknown at sync time; use empty string as placeholder)
         val localSet = localCaughtIds.toSet()
         val toInsert = remote.caught
@@ -239,14 +237,12 @@ class SyncRepository(
         // trainer_records
         val localTrainers = battleDao.getAllTrainerRecords()
         val mergedTrainers = MergeUtils.mergeTrainerRecords(localTrainers, remote.trainers)
-        battleDao.deleteAllTrainerRecords()
-        battleDao.insertAllTrainerRecords(mergedTrainers)
+        battleDao.replaceAllTrainerRecords(mergedTrainers)
 
         // wild_records
         val localWild = battleDao.getAllWildRecords()
         val mergedWild = MergeUtils.mergeWildRecords(localWild, remote.wild)
-        battleDao.deleteAllWildRecords()
-        battleDao.insertAllWildRecords(mergedWild)
+        battleDao.replaceAllWildRecords(mergedWild)
 
         // battle_config
         val localConfigJson = settingsRepo.loadBattleConfigJson() ?: "{}"
@@ -269,7 +265,7 @@ class SyncRepository(
             MergeUtils.RemoteSettings(it.generation, it.musicOnLaunch, it.trainerName, it.updatedAt)
         }
         val merged = MergeUtils.mergeSettings(localSettings, remoteSettings)
-        if (merged !== localSettings) {
+        if (merged != localSettings) {
             settingsRepo.setGen(merged.generation)
             settingsRepo.setMusicOnLaunch(merged.musicOnLaunch)
             settingsRepo.setTrainerName(merged.trainerName)
