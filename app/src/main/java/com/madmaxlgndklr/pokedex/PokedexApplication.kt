@@ -36,7 +36,7 @@ class PokedexApplication : Application() {
             database.heldItemDao()
         )
     }
-    val battleRecordRepository by lazy { BattleRecordRepository(database.battleRecordDao()) }
+    val battleRecordRepository by lazy { BattleRecordRepository(database.battleRecordDao(), syncRepository) }
     val settingsRepository by lazy { SettingsRepository(settingsDataStore) }
     val authRepository by lazy { AuthRepository() }
     val syncRepository by lazy {
