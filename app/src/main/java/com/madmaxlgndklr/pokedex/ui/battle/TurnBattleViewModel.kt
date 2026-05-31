@@ -115,7 +115,7 @@ class TurnBattleViewModel(
             _setup.filterNotNull().debounce(800L).collect { setup ->
                 val json = setup.toDto().toJson()
                 val now = System.currentTimeMillis()
-                settingsRepo.saveBattleConfig(json)
+                settingsRepo.saveBattleConfig(json, now)
                 syncRepository.pushBattleConfig(json, now)
             }
         }

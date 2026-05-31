@@ -23,7 +23,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
@@ -176,6 +175,7 @@ class SyncRepository(
     private val supabase = SupabaseModule.client
     private val pg = supabase.postgrest
     private val auth = supabase.auth
+    private var realtimeDebounceJob: Job? = null
 
     private fun userId(): String? = auth.currentUserOrNull()?.id
 
@@ -491,10 +491,9 @@ class SyncRepository(
         val uid = userId() ?: return
         scope.launch(Dispatchers.IO) {
             runCatching {
-                var debounceJob: Job? = null
                 val debouncedSync: () -> Unit = {
-                    debounceJob?.cancel()
-                    debounceJob = scope.launch(Dispatchers.IO) {
+                    realtimeDebounceJob?.cancel()
+                    realtimeDebounceJob = scope.launch(Dispatchers.IO) {
                         delay(1000)
                         syncOnOpen()
                     }
