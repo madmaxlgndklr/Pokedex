@@ -4,7 +4,10 @@ import android.app.Application
 import com.madmaxlgndklr.pokedex.data.local.AppDatabase
 import com.madmaxlgndklr.pokedex.data.local.SettingsRepository
 import com.madmaxlgndklr.pokedex.data.local.settingsDataStore
+import com.madmaxlgndklr.pokedex.data.remote.AuthRepository
 import com.madmaxlgndklr.pokedex.data.remote.RetrofitClient
+import com.madmaxlgndklr.pokedex.data.remote.SupabaseModule
+import com.madmaxlgndklr.pokedex.data.remote.SyncRepository
 import com.madmaxlgndklr.pokedex.data.repository.BattleRecordRepository
 import com.madmaxlgndklr.pokedex.data.repository.HeldItemRepository
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
@@ -35,6 +38,10 @@ class PokedexApplication : Application() {
     }
     val battleRecordRepository by lazy { BattleRecordRepository(database.battleRecordDao()) }
     val settingsRepository by lazy { SettingsRepository(settingsDataStore) }
+    val authRepository by lazy { AuthRepository() }
+    val syncRepository by lazy {
+        SyncRepository(database, settingsRepository, appScope)
+    }
     val networkObserver by lazy { NetworkObserver(this) }
 
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -43,6 +50,10 @@ class PokedexApplication : Application() {
         super.onCreate()
         appScope.launch {
             filesDir.listFiles { _, n -> n.endsWith(".tmp") }?.forEach { it.delete() }
+        }
+        appScope.launch {
+            runCatching { authRepository.signInAnonymously() }
+            syncRepository.syncOnOpen()
         }
         CryPlayer.init(this, networkObserver)
     }
