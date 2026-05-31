@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.madmaxlgndklr.pokedex.data.local.SettingsRepository
+import com.madmaxlgndklr.pokedex.data.remote.SyncRepository
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.model.PokemonDetail
 import com.madmaxlgndklr.pokedex.ui.common.typeWeaknesses
@@ -19,7 +20,8 @@ data class TeamEntry(val id: Int, val detail: PokemonDetail?)
 
 class TeamViewModel(
     private val repository: PokemonRepository,
-    private val settingsRepo: SettingsRepository
+    private val settingsRepo: SettingsRepository,
+    private val syncRepository: SyncRepository
 ) : ViewModel() {
 
     val teamIds: StateFlow<List<Int>> = settingsRepo.team
@@ -45,19 +47,27 @@ class TeamViewModel(
     fun addToTeam(id: Int) {
         val current = teamIds.value
         if (id in current || current.size >= 6) return
-        viewModelScope.launch { settingsRepo.setTeam(current + id) }
+        val newTeam = current + id
+        viewModelScope.launch {
+            settingsRepo.setTeam(newTeam)
+            syncRepository.pushTeam(newTeam)
+        }
     }
 
     fun removeFromTeam(id: Int) {
-        viewModelScope.launch { settingsRepo.setTeam(teamIds.value.filter { it != id }) }
+        val filtered = teamIds.value.filter { it != id }
+        viewModelScope.launch {
+            settingsRepo.setTeam(filtered)
+            syncRepository.pushTeam(filtered)
+        }
     }
 
     fun isOnTeam(id: Int): Boolean = id in teamIds.value
 
     companion object {
-        fun factory(repository: PokemonRepository, settingsRepo: SettingsRepository): ViewModelProvider.Factory =
+        fun factory(repository: PokemonRepository, settingsRepo: SettingsRepository, syncRepository: SyncRepository): ViewModelProvider.Factory =
             viewModelFactory {
-                initializer { TeamViewModel(repository, settingsRepo) }
+                initializer { TeamViewModel(repository, settingsRepo, syncRepository) }
             }
     }
 }

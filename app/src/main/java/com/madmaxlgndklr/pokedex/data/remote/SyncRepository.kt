@@ -8,13 +8,27 @@ import com.madmaxlgndklr.pokedex.data.local.WildRecord
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.realtime.PostgresAction
+import io.github.jan.supabase.realtime.channel
+import io.github.jan.supabase.realtime.postgresChangeFlow
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonArray
 
 // ── Remote DTOs ──────────────────────────────────────────────────────────────
 
@@ -166,12 +180,17 @@ class SyncRepository(
     private fun userId(): String? = auth.currentUserOrNull()?.id
 
     suspend fun syncOnOpen() {
-        val uid = userId() ?: return
+        val uid = userId()
+        Log.d("Sync", "syncOnOpen uid=$uid")
+        if (uid == null) return
         try {
             val remote = pullAll(uid)
             writeLocal(remote)
             pushDiff(uid, remote)
-        } catch (_: Exception) { }
+            Log.d("Sync", "syncOnOpen complete")
+        } catch (e: Exception) {
+            Log.e("Sync", "syncOnOpen failed", e)
+        }
     }
 
     private suspend fun pullAll(userId: String): RemoteState {
@@ -231,7 +250,8 @@ class SyncRepository(
         val localTeamUpdatedAt = settingsRepo.teamUpdatedAt.first()
         val mergedTeam = MergeUtils.mergeTeam(localTeamIds, localTeamUpdatedAt, remote.team?.teamJson, remote.team?.updatedAt)
         if (mergedTeam != localTeamIds) {
-            settingsRepo.setTeam(mergedTeam)
+            val ts = remote.team?.updatedAt ?: System.currentTimeMillis()
+            settingsRepo.setTeam(mergedTeam, ts)
         }
 
         // trainer_records
@@ -252,7 +272,8 @@ class SyncRepository(
             remote.battleConfig?.configJson?.toString(), remote.battleConfig?.updatedAt
         )
         if (mergedConfig != localConfigJson) {
-            settingsRepo.saveBattleConfig(mergedConfig)
+            val ts = remote.battleConfig?.updatedAt ?: System.currentTimeMillis()
+            settingsRepo.saveBattleConfig(mergedConfig, ts)
         }
 
         // settings
@@ -282,21 +303,32 @@ class SyncRepository(
         val missing = localCaughtIds.filter { it !in remoteCaughtIds }
         if (missing.isNotEmpty()) {
             val now = System.currentTimeMillis()
-            pg.from("caught_pokemon").upsert(missing.map { mapOf("user_id" to userId, "pokemon_id" to it, "caught_at" to now) })
+            pg.from("caught_pokemon").upsert(missing.map { id ->
+                buildJsonObject {
+                    put("user_id", userId)
+                    put("pokemon_id", id)
+                    put("caught_at", now)
+                }
+            })
         }
 
         // trainer_records
         val trainers = battleDao.getAllTrainerRecords()
         if (trainers.isNotEmpty()) {
             pg.from("trainer_records").upsert(trainers.map { t ->
-                mapOf(
-                    "user_id" to userId, "trainer_id" to t.trainerId,
-                    "name" to t.name, "title" to t.title, "region" to t.region,
-                    "trainer_class" to t.trainerClass, "type_specialty" to t.typeSpecialty,
-                    "wins" to t.wins, "losses" to t.losses,
-                    "first_defeated_at" to t.firstDefeatedAt,
-                    "last_battled_at" to t.lastBattledAt
-                )
+                buildJsonObject {
+                    put("user_id", userId)
+                    put("trainer_id", t.trainerId)
+                    put("name", t.name)
+                    put("title", t.title)
+                    put("region", t.region)
+                    put("trainer_class", t.trainerClass)
+                    put("type_specialty", t.typeSpecialty)
+                    put("wins", t.wins)
+                    put("losses", t.losses)
+                    put("first_defeated_at", t.firstDefeatedAt)
+                    put("last_battled_at", t.lastBattledAt)
+                }
             })
         }
 
@@ -304,12 +336,14 @@ class SyncRepository(
         val wildRecords = battleDao.getAllWildRecords()
         if (wildRecords.isNotEmpty()) {
             pg.from("wild_records").upsert(wildRecords.map { w ->
-                mapOf(
-                    "user_id" to userId, "pokemon_id" to w.pokemonId,
-                    "pokemon_name" to w.pokemonName,
-                    "wins" to w.wins, "losses" to w.losses,
-                    "last_battled_at" to w.lastBattledAt
-                )
+                buildJsonObject {
+                    put("user_id", userId)
+                    put("pokemon_id", w.pokemonId)
+                    put("pokemon_name", w.pokemonName)
+                    put("wins", w.wins)
+                    put("losses", w.losses)
+                    put("last_battled_at", w.lastBattledAt)
+                }
             })
         }
 
@@ -318,7 +352,11 @@ class SyncRepository(
             val teamIds = settingsRepo.team.first()
             val teamUpdatedAt = settingsRepo.teamUpdatedAt.first()
             if (teamIds.isNotEmpty()) {
-                pg.from("team").upsert(mapOf("user_id" to userId, "team_json" to teamIds, "updated_at" to teamUpdatedAt))
+                pg.from("team").upsert(buildJsonObject {
+                    put("user_id", userId)
+                    putJsonArray("team_json") { teamIds.forEach { add(JsonPrimitive(it)) } }
+                    put("updated_at", teamUpdatedAt)
+                })
             }
         }
 
@@ -327,11 +365,11 @@ class SyncRepository(
             val configJson = settingsRepo.loadBattleConfigJson()
             val configUpdatedAt = settingsRepo.battleConfigUpdatedAt.first()
             if (configJson != null && configJson != "{}") {
-                pg.from("battle_config").upsert(mapOf(
-                    "user_id" to userId,
-                    "config_json" to kotlinx.serialization.json.Json.parseToJsonElement(configJson),
-                    "updated_at" to configUpdatedAt
-                ))
+                pg.from("battle_config").upsert(buildJsonObject {
+                    put("user_id", userId)
+                    put("config_json", Json.parseToJsonElement(configJson))
+                    put("updated_at", configUpdatedAt)
+                })
             }
         }
 
@@ -341,13 +379,13 @@ class SyncRepository(
             val music = settingsRepo.musicOnLaunch.first()
             val trainerName = settingsRepo.trainerName.first()
             val settingsUpdatedAt = settingsRepo.settingsUpdatedAt.first()
-            pg.from("settings").upsert(mapOf(
-                "user_id" to userId,
-                "generation" to gen,
-                "music_on_launch" to music,
-                "trainer_name" to trainerName,
-                "updated_at" to settingsUpdatedAt
-            ))
+            pg.from("settings").upsert(buildJsonObject {
+                put("user_id", userId)
+                put("generation", gen)
+                put("music_on_launch", music)
+                put("trainer_name", trainerName)
+                put("updated_at", settingsUpdatedAt)
+            })
         }
     }
 
@@ -356,11 +394,15 @@ class SyncRepository(
         scope.launch(Dispatchers.IO) {
             runCatching {
                 if (isCaught) {
-                    pg.from("caught_pokemon").upsert(mapOf("user_id" to uid, "pokemon_id" to pokemonId, "caught_at" to System.currentTimeMillis()))
+                    pg.from("caught_pokemon").upsert(buildJsonObject {
+                        put("user_id", uid)
+                        put("pokemon_id", pokemonId)
+                        put("caught_at", System.currentTimeMillis())
+                    })
                 } else {
                     pg.from("caught_pokemon").delete { filter { eq("user_id", uid); eq("pokemon_id", pokemonId) } }
                 }
-            }
+            }.onFailure { Log.e("Sync", "pushCaughtToggle failed", it) }
         }
     }
 
@@ -368,23 +410,36 @@ class SyncRepository(
         val uid = userId() ?: return
         val now = System.currentTimeMillis()
         scope.launch(Dispatchers.IO) {
-            runCatching { pg.from("team").upsert(mapOf("user_id" to uid, "team_json" to teamIds, "updated_at" to now)) }
+            runCatching {
+                pg.from("team").upsert(buildJsonObject {
+                    put("user_id", uid)
+                    putJsonArray("team_json") { teamIds.forEach { add(JsonPrimitive(it)) } }
+                    put("updated_at", now)
+                })
+            }.onFailure { Log.e("Sync", "pushTeam failed", it) }
         }
     }
 
     fun pushTrainerRecord(record: TrainerRecord) {
-        val uid = userId() ?: return
+        val uid = userId()
+        Log.d("Sync", "pushTrainerRecord uid=$uid trainer=${record.trainerId}")
+        uid ?: return
         scope.launch(Dispatchers.IO) {
             runCatching {
-                pg.from("trainer_records").upsert(mapOf(
-                    "user_id" to uid, "trainer_id" to record.trainerId,
-                    "name" to record.name, "title" to record.title, "region" to record.region,
-                    "trainer_class" to record.trainerClass, "type_specialty" to record.typeSpecialty,
-                    "wins" to record.wins, "losses" to record.losses,
-                    "first_defeated_at" to record.firstDefeatedAt,
-                    "last_battled_at" to record.lastBattledAt
-                ))
-            }
+                pg.from("trainer_records").upsert(buildJsonObject {
+                    put("user_id", uid)
+                    put("trainer_id", record.trainerId)
+                    put("name", record.name)
+                    put("title", record.title)
+                    put("region", record.region)
+                    put("trainer_class", record.trainerClass)
+                    put("type_specialty", record.typeSpecialty)
+                    put("wins", record.wins)
+                    put("losses", record.losses)
+                    put("first_defeated_at", record.firstDefeatedAt)
+                    put("last_battled_at", record.lastBattledAt)
+                })
+            }.onFailure { Log.e("Sync", "pushTrainerRecord failed", it) }
         }
     }
 
@@ -392,13 +447,15 @@ class SyncRepository(
         val uid = userId() ?: return
         scope.launch(Dispatchers.IO) {
             runCatching {
-                pg.from("wild_records").upsert(mapOf(
-                    "user_id" to uid, "pokemon_id" to record.pokemonId,
-                    "pokemon_name" to record.pokemonName,
-                    "wins" to record.wins, "losses" to record.losses,
-                    "last_battled_at" to record.lastBattledAt
-                ))
-            }
+                pg.from("wild_records").upsert(buildJsonObject {
+                    put("user_id", uid)
+                    put("pokemon_id", record.pokemonId)
+                    put("pokemon_name", record.pokemonName)
+                    put("wins", record.wins)
+                    put("losses", record.losses)
+                    put("last_battled_at", record.lastBattledAt)
+                })
+            }.onFailure { Log.e("Sync", "pushWildRecord failed", it) }
         }
     }
 
@@ -406,12 +463,12 @@ class SyncRepository(
         val uid = userId() ?: return
         scope.launch(Dispatchers.IO) {
             runCatching {
-                pg.from("battle_config").upsert(mapOf(
-                    "user_id" to uid,
-                    "config_json" to kotlinx.serialization.json.Json.parseToJsonElement(configJson),
-                    "updated_at" to updatedAt
-                ))
-            }
+                pg.from("battle_config").upsert(buildJsonObject {
+                    put("user_id", uid)
+                    put("config_json", Json.parseToJsonElement(configJson))
+                    put("updated_at", updatedAt)
+                })
+            }.onFailure { Log.e("Sync", "pushBattleConfig failed", it) }
         }
     }
 
@@ -419,13 +476,41 @@ class SyncRepository(
         val uid = userId() ?: return
         scope.launch(Dispatchers.IO) {
             runCatching {
-                pg.from("settings").upsert(mapOf(
-                    "user_id" to uid,
-                    "generation" to generation,
-                    "music_on_launch" to musicOnLaunch,
-                    "trainer_name" to trainerName,
-                    "updated_at" to updatedAt
-                ))
+                pg.from("settings").upsert(buildJsonObject {
+                    put("user_id", uid)
+                    put("generation", generation)
+                    put("music_on_launch", musicOnLaunch)
+                    put("trainer_name", trainerName)
+                    put("updated_at", updatedAt)
+                })
+            }.onFailure { Log.e("Sync", "pushSettings failed", it) }
+        }
+    }
+
+    fun startRealtimeSync() {
+        val uid = userId() ?: return
+        scope.launch(Dispatchers.IO) {
+            runCatching {
+                var debounceJob: Job? = null
+                val debouncedSync: () -> Unit = {
+                    debounceJob?.cancel()
+                    debounceJob = scope.launch(Dispatchers.IO) {
+                        delay(1000)
+                        syncOnOpen()
+                    }
+                }
+
+                val syncTables = listOf(
+                    "caught_pokemon", "team", "battle_config",
+                    "trainer_records", "wild_records", "settings"
+                )
+                val channel = supabase.channel("sync:$uid")
+                for (table in syncTables) {
+                    channel.postgresChangeFlow<PostgresAction>(schema = "public") {
+                        this.table = table
+                    }.onEach { debouncedSync() }.launchIn(scope)
+                }
+                channel.subscribe()
             }
         }
     }

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.madmaxlgndklr.pokedex.data.local.HeldItem
 import com.madmaxlgndklr.pokedex.data.local.SettingsRepository
+import com.madmaxlgndklr.pokedex.data.remote.SyncRepository
 import com.madmaxlgndklr.pokedex.data.repository.BattleRecordRepository
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.model.PokemonDetail
@@ -68,7 +69,8 @@ fun learnableMoves(detail: PokemonDetail, level: Int): List<LearnableMove> {
 
 class TurnBattleViewModel(
     private val repo: PokemonRepository,
-    private val settingsRepo: SettingsRepository
+    private val settingsRepo: SettingsRepository,
+    private val syncRepository: SyncRepository
 ) : ViewModel() {
 
     private val _battleState = MutableStateFlow<BattleState?>(null)
@@ -111,7 +113,10 @@ class TurnBattleViewModel(
     init {
         viewModelScope.launch {
             _setup.filterNotNull().debounce(800L).collect { setup ->
-                settingsRepo.saveBattleConfig(setup.toDto().toJson())
+                val json = setup.toDto().toJson()
+                val now = System.currentTimeMillis()
+                settingsRepo.saveBattleConfig(json)
+                syncRepository.pushBattleConfig(json, now)
             }
         }
         viewModelScope.launch {
@@ -156,11 +161,11 @@ class TurnBattleViewModel(
         _setup.value = _setup.value?.copy(heldItem = item)
     }
 
-    fun setSlotOverride(pokemonId: Int, override: SlotOverride?) {
+    fun setSlotOverride(slotKey: Int, override: SlotOverride?) {
         val s = _setup.value ?: return
         val newOverrides = s.teamOverrides.toMutableMap()
-        if (override == null) newOverrides.remove(pokemonId)
-        else newOverrides[pokemonId] = override
+        if (override == null) newOverrides.remove(slotKey)
+        else newOverrides[slotKey] = override
         _setup.value = s.copy(teamOverrides = newOverrides)
     }
 
@@ -258,7 +263,7 @@ class TurnBattleViewModel(
                     val nature = Natures.ALL.find { it.name.equals(savedDto.nature, ignoreCase = true) } ?: Natures.HARDY
                     val slots = savedDto.slots
                         .mapKeys { it.key.toIntOrNull() ?: -1 }
-                        .filter { it.key > 0 }
+                        .filter { it.key > 0 }  // pokemonId keys; slot-index legacies (1-5) also pass through harmlessly
                         .mapValues { (_, v) ->
                             SlotOverride(
                                 level = v.level,
@@ -324,7 +329,7 @@ class TurnBattleViewModel(
                     val detail = if (idx == 0) s.playerDetail else {
                         try { repo.getPokemonDetail(pokemonId) } catch (e: Exception) { s.playerDetail }
                     }
-                    val ov = s.teamOverrides[pokemonId]
+                    val ov = if (idx == 0) null else s.teamOverrides[pokemonId]
                     val level = ov?.level ?: s.level
                     val statConfig = ov?.statConfig ?: s.statConfig
                     val nature = ov?.nature ?: s.nature
@@ -388,7 +393,7 @@ class TurnBattleViewModel(
                     val detail = if (idx == 0) s.playerDetail else {
                         try { repo.getPokemonDetail(pokemonId) } catch (e: Exception) { s.playerDetail }
                     }
-                    val ov = s.teamOverrides[pokemonId]
+                    val ov = if (idx == 0) null else s.teamOverrides[pokemonId]
                     val level = ov?.level ?: s.level
                     val statConfig = ov?.statConfig ?: s.statConfig
                     val nature = ov?.nature ?: s.nature
@@ -461,7 +466,7 @@ class TurnBattleViewModel(
     }
 
     companion object {
-        fun factory(repo: PokemonRepository, settingsRepo: SettingsRepository) =
-            viewModelFactory { initializer { TurnBattleViewModel(repo, settingsRepo) } }
+        fun factory(repo: PokemonRepository, settingsRepo: SettingsRepository, syncRepository: SyncRepository) =
+            viewModelFactory { initializer { TurnBattleViewModel(repo, settingsRepo, syncRepository) } }
     }
 }

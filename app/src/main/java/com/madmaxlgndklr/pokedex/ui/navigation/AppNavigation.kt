@@ -77,10 +77,12 @@ private object Routes {
 fun AppNavigation() {
     val navController = rememberNavController()
     val context = LocalContext.current
-    val repo = (context.applicationContext as PokedexApplication).repository
-    val settingsRepo = (context.applicationContext as PokedexApplication).settingsRepository
+    val app = context.applicationContext as PokedexApplication
+    val repo = app.repository
+    val settingsRepo = app.settingsRepository
+    val syncRepository = app.syncRepository
 
-    val teamVm: TeamViewModel = viewModel(factory = TeamViewModel.factory(repo, settingsRepo))
+    val teamVm: TeamViewModel = viewModel(factory = TeamViewModel.factory(repo, settingsRepo, syncRepository))
 
     val scope = rememberCoroutineScope()
     var statusBarVisible by remember { mutableStateOf(false) }
@@ -237,7 +239,6 @@ fun AppNavigation() {
                 )
             }
             composable(Routes.SETTINGS) {
-                val app = context.applicationContext as PokedexApplication
                 val vm: SettingsViewModel = viewModel(factory = SettingsViewModel.factory(settingsRepo, repo, app.heldItemRepository))
                 SettingsScreen(
                     viewModel = vm,
@@ -262,7 +263,6 @@ fun AppNavigation() {
                 )
             }
             composable(Routes.PROFILE) {
-                val app = context.applicationContext as PokedexApplication
                 val vm: ProfileViewModel = viewModel(
                     factory = ProfileViewModel.factory(
                         app.settingsRepository,
@@ -337,7 +337,7 @@ fun AppNavigation() {
                     factory = DamageCalcViewModel.factory(repo, settingsRepo, preloadId)
                 )
                 val battleVm: TurnBattleViewModel = viewModel(
-                    factory = TurnBattleViewModel.factory(repo, settingsRepo)
+                    factory = TurnBattleViewModel.factory(repo, settingsRepo, syncRepository)
                 )
                 val matchupVm: MatchupViewModel = viewModel(
                     factory = MatchupViewModel.factory(repo)
@@ -346,13 +346,12 @@ fun AppNavigation() {
                 val trainerVm: TrainerSelectViewModel = viewModel(
                     factory = TrainerSelectViewModel.factory(trainerRepo)
                 )
-                val battleApp = context.applicationContext as PokedexApplication
                 val recordVm: RecordViewModel = viewModel(
-                    factory = RecordViewModel.factory(battleApp.battleRecordRepository, trainerRepo)
+                    factory = RecordViewModel.factory(app.battleRecordRepository, trainerRepo)
                 )
                 LaunchedEffect(Unit) {
-                    battleVm.loadHeldItems(battleApp.heldItemRepository)
-                    battleVm.setRecordRepository(battleApp.battleRecordRepository)
+                    battleVm.loadHeldItems(app.heldItemRepository)
+                    battleVm.setRecordRepository(app.battleRecordRepository)
                 }
                 BattleHubScreen(
                     calcVm = calcVm,

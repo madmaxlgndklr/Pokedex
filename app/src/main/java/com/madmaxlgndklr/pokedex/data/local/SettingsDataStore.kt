@@ -63,6 +63,13 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         }
     }
 
+    suspend fun setTeam(ids: List<Int>, updatedAt: Long) {
+        dataStore.edit { prefs ->
+            prefs[TEAM_KEY] = ids.take(6).joinToString(",")
+            prefs[TEAM_UPDATED_AT_KEY] = updatedAt
+        }
+    }
+
     private val SELECTED_GEN_KEY = intPreferencesKey("selected_gen")
 
     val selectedGen: Flow<Int> = dataStore.data.map { it[SELECTED_GEN_KEY] ?: 5 }
@@ -80,6 +87,13 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         dataStore.edit { prefs ->
             prefs[BATTLE_CONFIG_KEY] = json
             prefs[BATTLE_CONFIG_UPDATED_AT_KEY] = System.currentTimeMillis()
+        }
+    }
+
+    suspend fun saveBattleConfig(json: String, updatedAt: Long) {
+        dataStore.edit { prefs ->
+            prefs[BATTLE_CONFIG_KEY] = json
+            prefs[BATTLE_CONFIG_UPDATED_AT_KEY] = updatedAt
         }
     }
 
