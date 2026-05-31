@@ -122,6 +122,21 @@ class FullListViewModel(private val repository: PokemonRepository) : ViewModel()
         }
     }
 
+    fun selectAllVisible() {
+        val state = filteredState.value
+        if (state !is UiState.Success) return
+        val visible = state.data
+        val caught = caughtIds.value
+        val allCaught = visible.isNotEmpty() && visible.all { it.id in caught }
+        viewModelScope.launch {
+            if (allCaught) {
+                visible.forEach { repository.setCaught(it.id, it.name, false) }
+            } else {
+                visible.filter { it.id !in caught }.forEach { repository.setCaught(it.id, it.name, true) }
+            }
+        }
+    }
+
     companion object {
         fun factory(repository: PokemonRepository): ViewModelProvider.Factory = viewModelFactory {
             initializer { FullListViewModel(repository) }

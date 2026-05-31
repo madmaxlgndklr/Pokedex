@@ -302,6 +302,15 @@ fun FullListScreen(
                             onClick = { onPokemonClick(pokemon.id) }
                         )
                     }
+                    if (selectedDex is DexSelection.Regional) {
+                        item {
+                            val allCaught = state.data.isNotEmpty() && state.data.all { it.id in caughtIds }
+                            SelectAllItem(
+                                allCaught = allCaught,
+                                onClick = { viewModel.selectAllVisible() }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -409,6 +418,41 @@ fun FullListScreen(
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 20.dp)
         )
+    }
+}
+
+@Composable
+private fun SelectAllItem(allCaught: Boolean, onClick: () -> Unit) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .size(width = 80.dp, height = 140.dp)
+            .border(1.dp, CaughtGold.copy(alpha = 0.5f), RoundedCornerShape(6.dp))
+            .background(PokedexDark.copy(alpha = 0.5f), RoundedCornerShape(6.dp))
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onClick
+            )
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = if (allCaught) "✓" else "★",
+                fontFamily = PressStart2P,
+                fontSize = 18.sp,
+                color = CaughtGold,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = if (allCaught) "DESEL\nALL" else "SELECT\nALL",
+                fontFamily = PressStart2P,
+                fontSize = 5.sp,
+                color = CaughtGold,
+                textAlign = TextAlign.Center,
+                lineHeight = 8.sp,
+                modifier = Modifier.padding(top = 6.dp)
+            )
+        }
     }
 }
 
