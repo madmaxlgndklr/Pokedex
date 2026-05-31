@@ -10,6 +10,7 @@ import io.github.jan.supabase.auth.user.UserInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -35,12 +36,12 @@ class ProfileViewModel(
 
     fun saveTrainerName(name: String) {
         viewModelScope.launch {
+            val now = System.currentTimeMillis()
             settingsRepo.setTrainerName(name)
             val uid = authRepo.currentUserId() ?: return@launch
-            val gen = settingsRepo.selectedGen.stateIn(viewModelScope, SharingStarted.Eagerly, 5).value
-            val music = settingsRepo.musicOnLaunch.stateIn(viewModelScope, SharingStarted.Eagerly, true).value
-            val updatedAt = settingsRepo.settingsUpdatedAt.stateIn(viewModelScope, SharingStarted.Eagerly, 0L).value
-            syncRepo.pushSettings(gen, music, name.take(16), updatedAt)
+            val gen = settingsRepo.selectedGen.first()
+            val music = settingsRepo.musicOnLaunch.first()
+            syncRepo.pushSettings(gen, music, name.take(16), now)
         }
     }
 

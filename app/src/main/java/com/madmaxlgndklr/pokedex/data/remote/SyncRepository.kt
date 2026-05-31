@@ -312,6 +312,43 @@ class SyncRepository(
                 )
             })
         }
+
+        // team — push if no remote row exists
+        if (remote.team == null) {
+            val teamIds = settingsRepo.team.first()
+            val teamUpdatedAt = settingsRepo.teamUpdatedAt.first()
+            if (teamIds.isNotEmpty()) {
+                pg.from("team").upsert(mapOf("user_id" to userId, "team_json" to teamIds, "updated_at" to teamUpdatedAt))
+            }
+        }
+
+        // battle_config — push if no remote row exists
+        if (remote.battleConfig == null) {
+            val configJson = settingsRepo.loadBattleConfigJson()
+            val configUpdatedAt = settingsRepo.battleConfigUpdatedAt.first()
+            if (configJson != null && configJson != "{}") {
+                pg.from("battle_config").upsert(mapOf(
+                    "user_id" to userId,
+                    "config_json" to kotlinx.serialization.json.Json.parseToJsonElement(configJson),
+                    "updated_at" to configUpdatedAt
+                ))
+            }
+        }
+
+        // settings — push if no remote row exists
+        if (remote.settings == null) {
+            val gen = settingsRepo.selectedGen.first()
+            val music = settingsRepo.musicOnLaunch.first()
+            val trainerName = settingsRepo.trainerName.first()
+            val settingsUpdatedAt = settingsRepo.settingsUpdatedAt.first()
+            pg.from("settings").upsert(mapOf(
+                "user_id" to userId,
+                "generation" to gen,
+                "music_on_launch" to music,
+                "trainer_name" to trainerName,
+                "updated_at" to settingsUpdatedAt
+            ))
+        }
     }
 
     fun pushCaughtToggle(pokemonId: Int, isCaught: Boolean) {
