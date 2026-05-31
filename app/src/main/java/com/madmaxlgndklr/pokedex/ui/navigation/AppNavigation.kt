@@ -181,7 +181,7 @@ fun AppNavigation() {
                 FullListScreen(
                     viewModel = vm,
                     onPokemonClick = { id -> navController.navigate(Routes.detail(id)) },
-                    onBack = { navController.popBackStack() },
+                    onBack = { if (!navController.popBackStack()) activity?.finish() },
                     onNavigateMyCollection = {
                         navController.navigate(Routes.MY_COLLECTION) {
                             popUpTo(Routes.FULL_LIST) { inclusive = true }
@@ -197,7 +197,7 @@ fun AppNavigation() {
                 MyCollectionScreen(
                     viewModel = vm,
                     onPokemonClick = { id -> navController.navigate(Routes.detail(id)) },
-                    onBack = { navController.popBackStack() },
+                    onBack = { if (!navController.popBackStack()) activity?.finish() },
                     onNavigateFullList = {
                         navController.navigate(Routes.FULL_LIST) {
                             popUpTo(Routes.MY_COLLECTION) { inclusive = true }

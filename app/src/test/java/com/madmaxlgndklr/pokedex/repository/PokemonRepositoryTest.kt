@@ -227,6 +227,14 @@ class FakeCaughtPokemonDao : CaughtPokemonDao {
 
     override fun isCaught(id: Int): Flow<Boolean> =
         _all.map { list -> list.any { it.id == id } }
+
+    override suspend fun getAllIds(): List<Int> = _all.value.map { it.id }
+
+    override suspend fun insertAll(entities: List<CaughtPokemonEntity>) {
+        val existing = _all.value.associateBy { it.id }.toMutableMap()
+        entities.forEach { if (!existing.containsKey(it.id)) existing[it.id] = it }
+        _all.value = existing.values.toList()
+    }
 }
 
 class FakePokemonListCacheDao : PokemonListCacheDao {

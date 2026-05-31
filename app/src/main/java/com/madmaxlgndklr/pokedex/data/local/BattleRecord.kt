@@ -49,4 +49,16 @@ interface BattleRecordDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertWildRecord(record: WildRecord)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllTrainerRecords(records: List<TrainerRecord>)
+
+    @Query("DELETE FROM trainer_records")
+    suspend fun deleteAllTrainerRecords()
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllWildRecords(records: List<WildRecord>)
+
+    @Query("DELETE FROM wild_records")
+    suspend fun deleteAllWildRecords()
 }
