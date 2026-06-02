@@ -77,7 +77,8 @@ data class RemoteSettingsRow(
     val generation: Int,
     @SerialName("music_on_launch") val musicOnLaunch: Boolean,
     @SerialName("trainer_name") val trainerName: String,
-    @SerialName("updated_at") val updatedAt: Long
+    @SerialName("updated_at") val updatedAt: Long,
+    @SerialName("sprite_mode") val spriteMode: String = "modern"
 )
 
 // ── Pure merge helpers ────────────────────────────────────────────────────────
@@ -87,12 +88,14 @@ object MergeUtils {
         val generation: Int,
         val musicOnLaunch: Boolean,
         val trainerName: String,
+        val spriteMode: String,
         val updatedAt: Long
     )
     data class RemoteSettings(
         val generation: Int,
         val musicOnLaunch: Boolean,
         val trainerName: String,
+        val spriteMode: String,
         val updatedAt: Long
     )
 
@@ -160,7 +163,7 @@ object MergeUtils {
     fun mergeSettings(local: LocalSettings, remote: RemoteSettings?): LocalSettings {
         if (remote == null) return local
         return if (remote.updatedAt > local.updatedAt)
-            LocalSettings(remote.generation, remote.musicOnLaunch, remote.trainerName, remote.updatedAt)
+            LocalSettings(remote.generation, remote.musicOnLaunch, remote.trainerName, remote.spriteMode, remote.updatedAt)
         else local
     }
 }
@@ -215,7 +218,7 @@ class SyncRepository(
             .decodeSingleOrNull<RemoteBattleConfigRow>()
 
         val settings = pg.from("settings")
-            .select(Columns.list("generation", "music_on_launch", "trainer_name", "updated_at")) { filter { eq("user_id", userId) } }
+            .select(Columns.list("generation", "music_on_launch", "trainer_name", "sprite_mode", "updated_at")) { filter { eq("user_id", userId) } }
             .decodeSingleOrNull<RemoteSettingsRow>()
 
         return RemoteState(caught, team, trainers, wild, config, settings)
@@ -280,16 +283,18 @@ class SyncRepository(
         val localGen = settingsRepo.selectedGen.first()
         val localMusic = settingsRepo.musicOnLaunch.first()
         val localTrainerName = settingsRepo.trainerName.first()
+        val localSpriteMode = settingsRepo.spriteMode.first()
         val localSettingsUpdatedAt = settingsRepo.settingsUpdatedAt.first()
-        val localSettings = MergeUtils.LocalSettings(localGen, localMusic, localTrainerName, localSettingsUpdatedAt)
+        val localSettings = MergeUtils.LocalSettings(localGen, localMusic, localTrainerName, localSpriteMode, localSettingsUpdatedAt)
         val remoteSettings = remote.settings?.let {
-            MergeUtils.RemoteSettings(it.generation, it.musicOnLaunch, it.trainerName, it.updatedAt)
+            MergeUtils.RemoteSettings(it.generation, it.musicOnLaunch, it.trainerName, it.spriteMode, it.updatedAt)
         }
         val merged = MergeUtils.mergeSettings(localSettings, remoteSettings)
         if (merged != localSettings) {
             settingsRepo.setGen(merged.generation)
             settingsRepo.setMusicOnLaunch(merged.musicOnLaunch)
             settingsRepo.setTrainerName(merged.trainerName)
+            settingsRepo.setSpriteMode(merged.spriteMode, merged.updatedAt)
         }
     }
 
@@ -378,12 +383,14 @@ class SyncRepository(
             val gen = settingsRepo.selectedGen.first()
             val music = settingsRepo.musicOnLaunch.first()
             val trainerName = settingsRepo.trainerName.first()
+            val spriteMode = settingsRepo.spriteMode.first()
             val settingsUpdatedAt = settingsRepo.settingsUpdatedAt.first()
             pg.from("settings").upsert(buildJsonObject {
                 put("user_id", userId)
                 put("generation", gen)
                 put("music_on_launch", music)
                 put("trainer_name", trainerName)
+                put("sprite_mode", spriteMode)
                 put("updated_at", settingsUpdatedAt)
             })
         }
@@ -472,7 +479,7 @@ class SyncRepository(
         }
     }
 
-    fun pushSettings(generation: Int, musicOnLaunch: Boolean, trainerName: String, updatedAt: Long) {
+    fun pushSettings(generation: Int, musicOnLaunch: Boolean, trainerName: String, spriteMode: String, updatedAt: Long) {
         val uid = userId() ?: return
         scope.launch(Dispatchers.IO) {
             runCatching {
@@ -481,6 +488,7 @@ class SyncRepository(
                     put("generation", generation)
                     put("music_on_launch", musicOnLaunch)
                     put("trainer_name", trainerName)
+                    put("sprite_mode", spriteMode)
                     put("updated_at", updatedAt)
                 })
             }.onFailure { Log.e("Sync", "pushSettings failed", it) }

@@ -17,8 +17,8 @@ android {
         applicationId = "com.madmaxlgndklr.pokedex"
         minSdk = 24
         targetSdk = 36
-        versionCode = 33
-        versionName = "0.33"
+        versionCode = 34
+        versionName = "0.34"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         val localProps = org.jetbrains.kotlin.konan.properties.Properties()
         localProps.load(rootProject.file("local.properties").inputStream())

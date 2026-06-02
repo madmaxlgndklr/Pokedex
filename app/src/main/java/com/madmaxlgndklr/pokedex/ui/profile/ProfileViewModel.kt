@@ -41,7 +41,8 @@ class ProfileViewModel(
             val uid = authRepo.currentUserId() ?: return@launch
             val gen = settingsRepo.selectedGen.first()
             val music = settingsRepo.musicOnLaunch.first()
-            syncRepo.pushSettings(gen, music, name.take(16), now)
+            val spriteMode = settingsRepo.spriteMode.first()
+            syncRepo.pushSettings(gen, music, name.take(16), spriteMode, now)
         }
     }
 

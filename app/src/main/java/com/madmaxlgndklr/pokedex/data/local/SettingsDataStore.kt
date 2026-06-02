@@ -131,6 +131,16 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
     val spriteMode: Flow<String> = dataStore.data.map { it[SPRITE_MODE_KEY] ?: "modern" }
 
     suspend fun setSpriteMode(mode: String) {
-        dataStore.edit { it[SPRITE_MODE_KEY] = mode }
+        dataStore.edit {
+            it[SPRITE_MODE_KEY] = mode
+            it[SETTINGS_UPDATED_AT_KEY] = System.currentTimeMillis()
+        }
+    }
+
+    suspend fun setSpriteMode(mode: String, updatedAt: Long) {
+        dataStore.edit {
+            it[SPRITE_MODE_KEY] = mode
+            it[SETTINGS_UPDATED_AT_KEY] = updatedAt
+        }
     }
 }

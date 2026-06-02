@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.madmaxlgndklr.pokedex.data.local.SettingsRepository
+import com.madmaxlgndklr.pokedex.data.remote.SyncRepository
 import com.madmaxlgndklr.pokedex.data.repository.HeldItemRepository
 import com.madmaxlgndklr.pokedex.data.repository.PokemonRepository
 import com.madmaxlgndklr.pokedex.ui.common.CryPlayer
@@ -33,7 +34,8 @@ sealed class SyncState {
 class SettingsViewModel(
     private val settingsRepo: SettingsRepository,
     private val pokemonRepo: PokemonRepository,
-    private val heldItemRepo: HeldItemRepository
+    private val heldItemRepo: HeldItemRepository,
+    private val syncRepository: SyncRepository
 ) : ViewModel() {
 
     val musicOnLaunch: StateFlow<Boolean> = settingsRepo.musicOnLaunch
@@ -50,7 +52,17 @@ class SettingsViewModel(
     }
 
     fun setSpriteMode(mode: String) {
-        viewModelScope.launch { settingsRepo.setSpriteMode(mode) }
+        viewModelScope.launch {
+            val now = System.currentTimeMillis()
+            settingsRepo.setSpriteMode(mode, now)
+            syncRepository.pushSettings(
+                generation = settingsRepo.selectedGen.first(),
+                musicOnLaunch = settingsRepo.musicOnLaunch.first(),
+                trainerName = settingsRepo.trainerName.first(),
+                spriteMode = mode,
+                updatedAt = now
+            )
+        }
     }
 
     fun syncWithOptions(options: SyncOptions) {
@@ -94,9 +106,10 @@ class SettingsViewModel(
         fun factory(
             settingsRepo: SettingsRepository,
             pokemonRepo: PokemonRepository,
-            heldItemRepo: HeldItemRepository
+            heldItemRepo: HeldItemRepository,
+            syncRepository: SyncRepository
         ): ViewModelProvider.Factory = viewModelFactory {
-            initializer { SettingsViewModel(settingsRepo, pokemonRepo, heldItemRepo) }
+            initializer { SettingsViewModel(settingsRepo, pokemonRepo, heldItemRepo, syncRepository) }
         }
     }
 }

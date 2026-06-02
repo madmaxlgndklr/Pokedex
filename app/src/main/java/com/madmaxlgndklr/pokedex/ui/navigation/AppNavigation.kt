@@ -1,7 +1,10 @@
 package com.madmaxlgndklr.pokedex.ui.navigation
 
-import android.media.MediaPlayer
+import android.net.Uri
 import androidx.activity.ComponentActivity
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -54,6 +57,7 @@ import com.madmaxlgndklr.pokedex.ui.battle.RecordViewModel
 import com.madmaxlgndklr.pokedex.ui.battle.TrainerSelectViewModel
 import com.madmaxlgndklr.pokedex.ui.team.TeamScreen
 import com.madmaxlgndklr.pokedex.ui.team.TeamViewModel
+import com.madmaxlgndklr.pokedex.ui.common.RbyPlaylist
 import com.madmaxlgndklr.pokedex.ui.common.SpriteModeProvider
 
 private object Routes {
@@ -95,39 +99,55 @@ fun AppNavigation() {
 
     // null = not yet loaded from DataStore; avoids starting music before we know the preference
     val musicOnLaunch: Boolean? by settingsRepo.musicOnLaunch.collectAsState(initial = null)
-    val spriteMode: String by settingsRepo.spriteMode.collectAsState(initial = "modern")
+    val spriteMode: String? by settingsRepo.spriteMode.collectAsState(initial = null)
 
     val currentMusicOnLaunch by rememberUpdatedState(musicOnLaunch ?: true)
 
-    val mediaPlayer = remember {
-        MediaPlayer.create(context, R.raw.title_screen).apply { isLooping = true }
+    val exoPlayer = remember {
+        ExoPlayer.Builder(context).build().apply {
+            repeatMode = Player.REPEAT_MODE_ALL
+        }
     }
 
-    // Start or stop music whenever the launch preference changes
+    // Build playlist whenever sprite mode loads or changes
+    LaunchedEffect(spriteMode) {
+        val mode = spriteMode ?: return@LaunchedEffect
+        val wasPlaying = exoPlayer.isPlaying
+        exoPlayer.stop()
+        exoPlayer.clearMediaItems()
+        if (mode == "retro") {
+            exoPlayer.setMediaItems(RbyPlaylist.buildItems())
+        } else {
+            exoPlayer.setMediaItem(
+                MediaItem.fromUri(Uri.parse("android.resource://${context.packageName}/${R.raw.title_screen}"))
+            )
+        }
+        exoPlayer.prepare()
+        if (wasPlaying) exoPlayer.play()
+    }
+
+    // Start or stop music whenever the launch preference loads or changes
     LaunchedEffect(musicOnLaunch) {
         val pref = musicOnLaunch ?: return@LaunchedEffect
-        if (pref && !isMuted && !mediaPlayer.isPlaying) mediaPlayer.start()
-        else if (!pref && mediaPlayer.isPlaying) mediaPlayer.pause()
+        if (pref && !isMuted && !exoPlayer.isPlaying) exoPlayer.play()
+        else if (!pref && exoPlayer.isPlaying) exoPlayer.pause()
     }
 
-    // Music control tied to Pokédex state:
-    // - Silence immediately on close/closing.
-    // - Resume at the START of the opening animation (not after it finishes),
-    //   but only if the user has music enabled and hasn't muted.
+    // Music control tied to Pokédex state
     LaunchedEffect(pokedexState) {
         when (pokedexState) {
             PokedexState.CLOSING, PokedexState.CLOSED -> {
-                if (mediaPlayer.isPlaying) mediaPlayer.pause()
+                if (exoPlayer.isPlaying) exoPlayer.pause()
             }
             PokedexState.OPENING -> {
                 if (currentMusicOnLaunch && !currentIsMuted) {
-                    mediaPlayer.seekTo(0)
-                    mediaPlayer.start()
+                    exoPlayer.seekTo(0, 0)
+                    exoPlayer.play()
                 }
             }
             PokedexState.OPEN -> {
-                if (currentMusicOnLaunch && !currentIsMuted && !mediaPlayer.isPlaying)
-                    mediaPlayer.start()
+                if (currentMusicOnLaunch && !currentIsMuted && !exoPlayer.isPlaying)
+                    exoPlayer.play()
             }
         }
     }
@@ -137,21 +157,21 @@ fun AppNavigation() {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_RESUME ->
-                    if (currentMusicOnLaunch && !currentIsMuted && !mediaPlayer.isPlaying)
-                        mediaPlayer.start()
+                    if (currentMusicOnLaunch && !currentIsMuted && !exoPlayer.isPlaying)
+                        exoPlayer.play()
                 Lifecycle.Event.ON_PAUSE ->
-                    if (mediaPlayer.isPlaying) mediaPlayer.pause()
+                    if (exoPlayer.isPlaying) exoPlayer.pause()
                 else -> {}
             }
         }
         activity?.lifecycle?.addObserver(observer)
         onDispose {
             activity?.lifecycle?.removeObserver(observer)
-            mediaPlayer.release()
+            exoPlayer.release()
         }
     }
 
-    SpriteModeProvider(mode = spriteMode) {
+    SpriteModeProvider(mode = spriteMode ?: "modern") {
     Box(Modifier.fillMaxSize()) {
         NavHost(
             navController = navController,
@@ -239,14 +259,14 @@ fun AppNavigation() {
                 )
             }
             composable(Routes.SETTINGS) {
-                val vm: SettingsViewModel = viewModel(factory = SettingsViewModel.factory(settingsRepo, repo, app.heldItemRepository))
+                val vm: SettingsViewModel = viewModel(factory = SettingsViewModel.factory(settingsRepo, repo, app.heldItemRepository, syncRepository))
                 SettingsScreen(
                     viewModel = vm,
                     isMuted = isMuted,
                     onToggleMute = {
                         isMuted = !isMuted
-                        if (isMuted) mediaPlayer.pause()
-                        else if (currentMusicOnLaunch && !mediaPlayer.isPlaying) mediaPlayer.start()
+                        if (isMuted) exoPlayer.pause()
+                        else if (currentMusicOnLaunch && !exoPlayer.isPlaying) exoPlayer.play()
                     },
                     onBack = { navController.popBackStack() },
                     onNavigateFullList = {
